@@ -1,70 +1,256 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>دوري المعبوج</title>
-  <style>
-    body {
-      font-family: 'Cairo', sans-serif;
-      background-color: #f5f5f5;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: #d32f2f;
-      color: white;
-      padding: 20px 10px;
-      font-size: 26px;
-      font-weight: bold;
-    }
-    img {
-      margin-top: 20px;
-      width: 220px;
-      border-radius: 14px;
-    }
-    .section {
-      background: white;
-      margin: 20px auto;
-      padding: 15px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 600px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    h2 {
-      color: #d32f2f;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مصمم الشهادات الاحترافية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f3f4f6;
+        }
+        
+        /* تنسيق خاص للشهادة */
+        .certificate-font {
+            font-family: 'Amiri', serif;
+        }
+
+        .certificate-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* A4 Landscape ratio approx */
+            aspect-ratio: 1.414 / 1;
+            background-color: #fff;
+            background-image: radial-gradient(#fdfbf7 15%, transparent 16%), radial-gradient(#fdfbf7 15%, transparent 16%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* الإطار المزخرف */
+        .ornate-border {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            border: 2px solid #B45309; /* Amber 700 */
+            outline: 4px double #B45309;
+            outline-offset: 4px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .corner-decoration {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 4px double #B45309;
+            z-index: 11;
+        }
+
+        .top-right { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+        .top-left { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+        .bottom-right { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+        .bottom-left { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+
+        .seal {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100px;
+            opacity: 0.8;
+        }
+        
+        /* تحسينات للطباعة */
+        @media print {
+            @page {
+                size: landscape;
+                margin: 0;
+            }
+            body * {
+                visibility: hidden;
+            }
+            #certificate-preview, #certificate-preview * {
+                visibility: visible;
+            }
+            #certificate-preview {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                border: none;
+                box-shadow: none;
+                transform: none;
+                background-color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col items-center py-8 px-4">
 
-  <header>🏆 دوري المعبوج 🏆</header>
+    <!-- رأس الصفحة (لا يظهر في الطباعة) -->
+    <header class="text-center mb-8 no-print">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">مصمم الشهادات الاحترافية</h1>
+        <p class="text-gray-600">قم بتعديل البيانات أدناه ثم اضغط على طباعة</p>
+    </header>
 
-  <!-- شعار البطولة -->
-  <a href="https://ismalraed1-netizen.github.io/dawri-almabooj/">
-    <img src="logo" alt="شعار دوري المعبوج">
-  </a>
+    <!-- لوحة التحكم (لا تظهر في الطباعة) -->
+    <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-3xl mb-8 no-print border border-gray-100">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">عنوان الشهادة</label>
+                <input type="text" id="inputTitle" value="شهادة تقدير وإتمام" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition" oninput="updateCertificate()">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">اسم المؤسسة/الشركة</label>
+                <input type="text" id="inputOrg" value="أكاديمية المستقبل للتدريب" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition" oninput="updateCertificate()">
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">اسم المستلم</label>
+                <input type="text" id="inputName" value="أحمد بن محمد العلي" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition text-lg font-bold">
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">نص الشهادة (السبب)</label>
+                <textarea id="inputBody" rows="2" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition" oninput="updateCertificate()">تقديرًا لجهوده المتميزة وإتمامه بنجاح للدورة التدريبية المكثفة في مجال إدارة المشاريع الاحترافية.</textarea>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">اسم الموقع الأول (المدير)</label>
+                <input type="text" id="inputSign1" value="د. خالد السعيد" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition" oninput="updateCertificate()">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">تاريخ الإصدار</label>
+                <input type="date" id="inputDate" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition" oninput="updateCertificate()">
+            </div>
+        </div>
+        <div class="mt-6 flex justify-end">
+            <button onclick="window.print()" class="flex items-center gap-2 bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 px-6 rounded-lg transition shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                طباعة / حفظ كـ PDF
+            </button>
+        </div>
+    </div>
 
-  <div class="section">
-    <h2>📅 جدول المباريات</h2>
-    <p>سيتم تحديث الجدول قريبًا...</p>
-  </div>
+    <!-- معاينة الشهادة -->
+    <div id="certificate-preview" class="certificate-container certificate-font text-gray-800 flex flex-col justify-between p-16 text-center relative">
+        
+        <!-- الزخارف -->
+        <div class="ornate-border"></div>
+        <div class="corner-decoration top-right"></div>
+        <div class="corner-decoration top-left"></div>
+        <div class="corner-decoration bottom-right"></div>
+        <div class="corner-decoration bottom-left"></div>
 
-  <div class="section">
-    <h2>⚽ الهدافين</h2>
-    <p>قريبًا...</p>
-  </div>
+        <!-- المحتوى -->
+        <div class="relative z-20 flex-1 flex flex-col justify-center">
+            
+            <!-- الشعار واسم المؤسسة -->
+            <div class="mb-8">
+                <div class="text-amber-700 text-5xl mb-2 mx-auto opacity-90">
+                    <!-- SVG Icon similar to a badge/laurel -->
+                    <svg class="w-16 h-16 mx-auto" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                    </svg>
+                </div>
+                <h2 id="dispOrg" class="text-2xl font-bold text-gray-600 tracking-wide">أكاديمية المستقبل للتدريب</h2>
+            </div>
 
-  <div class="section">
-    <h2>🏅 الفرق المشاركة</h2>
-    <p>يتم الإعداد حاليًا...</p>
-  </div>
+            <!-- العنوان -->
+            <h1 id="dispTitle" class="text-5xl md:text-6xl font-bold text-amber-800 mb-6 drop-shadow-sm" style="line-height: 1.4;">
+                شهادة تقدير وإتمام
+            </h1>
 
-  <footer style="margin:30px 0; color:#888;">
-    © 2025 دوري المعبوج - جميع الحقوق محفوظة
-  </footer>
+            <p class="text-xl text-gray-500 mb-4">تتشرف الإدارة بمنح هذه الشهادة إلى</p>
 
+            <!-- اسم المستلم -->
+            <div class="mb-8">
+                <h2 id="dispName" class="text-4xl md:text-5xl font-bold text-black border-b-2 border-amber-200 inline-block pb-2 px-8">
+                    أحمد بن محمد العلي
+                </h2>
+            </div>
+
+            <!-- نص الشهادة -->
+            <div class="w-3/4 mx-auto mb-12">
+                <p id="dispBody" class="text-2xl text-gray-700 leading-relaxed">
+                    تقديرًا لجهوده المتميزة وإتمامه بنجاح للدورة التدريبية المكثفة في مجال إدارة المشاريع الاحترافية.
+                </p>
+            </div>
+
+            <!-- التوقيعات والتاريخ -->
+            <div class="flex justify-between items-end px-12 mt-auto">
+                <div class="text-center">
+                    <p class="text-lg text-gray-500 mb-2">التاريخ</p>
+                    <p id="dispDate" class="text-xl font-bold text-gray-800 border-t border-gray-300 pt-2 px-4">
+                        <!-- سيتم تعبئته بواسطة JS -->
+                    </p>
+                </div>
+
+                <!-- الختم الذهبي -->
+                <div class="relative">
+                    <div class="w-24 h-24 rounded-full border-4 border-double border-amber-600 flex items-center justify-center text-amber-700 bg-amber-50 bg-opacity-50">
+                        <div class="text-center text-xs font-bold leading-tight">
+                            ختم<br>معتمد<br>2024
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <p class="text-lg text-gray-500 mb-2">المدير العام</p>
+                    <!-- توقيع مزيف بخط اليد -->
+                    <p id="dispSign1" class="text-2xl text-amber-800 pt-2 px-4" style="font-family: 'Reem Kufi', cursive; font-style: italic;">
+                        د. خالد السعيد
+                    </p>
+                    <div class="border-t border-gray-300 w-40 mx-auto mt-1"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // تعيين التاريخ الحالي كقيمة افتراضية
+        const today = new Date();
+        const dateString = today.toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+        
+        document.getElementById('inputDate').valueAsDate = new Date();
+        document.getElementById('dispDate').textContent = dateString;
+
+        // دالة تحديث الشهادة
+        function updateCertificate() {
+            const fields = ['Title', 'Org', 'Name', 'Body', 'Sign1'];
+            
+            fields.forEach(field => {
+                const inputVal = document.getElementById('input' + field).value;
+                if(inputVal) {
+                    document.getElementById('disp' + field).textContent = inputVal;
+                }
+            });
+
+            // تحديث التاريخ بشكل خاص لتنسيقه
+            const dateInput = document.getElementById('inputDate').value;
+            if (dateInput) {
+                const dateObj = new Date(dateInput);
+                const formattedDate = dateObj.toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+                document.getElementById('dispDate').textContent = formattedDate;
+            }
+        }
+
+        // الاستماع للتغييرات في حقل الاسم بشكل فوري
+        document.getElementById('inputName').addEventListener('input', updateCertificate);
+    </script>
 </body>
-</html>
+  </html>
