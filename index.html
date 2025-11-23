@@ -2,606 +2,471 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>أكاديمية عمر | برمجة FiveM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحدي عمر FEUD</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        dark: {
-                            900: '#0f172a',
-                            800: '#1e293b',
-                            700: '#334155',
-                            600: '#475569',
-                        },
-                        brand: {
-                            blue: '#3b82f6',
-                            purple: '#8b5cf6',
-                            green: '#10b981',
-                            red: '#ef4444',
-                            yellow: '#f59e0b',
-                            pink: '#ec4899',
-                            cyan: '#06b6d4'
-                        }
-                    },
-                    fontFamily: {
-                        tajawal: ['Tajawal', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
     <style>
-        body { font-family: 'Tajawal', sans-serif; background-color: #0f172a; color: #f8fafc; overflow: hidden; }
-        
-        /* Code Block Styling */
-        pre {
-            background: #1e1e1e !important;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid #334155;
-            direction: ltr;
-            text-align: left;
-            overflow-x: auto;
-            position: relative;
-            margin: 1rem 0;
-        }
-        code { font-family: 'Consolas', monospace; color: #a5f3fc; font-size: 0.9rem; }
-        
-        .copy-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #334155;
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%);
             color: white;
-            padding: 2px 8px;
-            font-size: 0.7rem;
-            border-radius: 4px;
-            cursor: pointer;
-            opacity: 0.7;
-            transition: 0.2s;
+            overflow-x: hidden;
+            user-select: none;
         }
-        .copy-btn:hover { opacity: 1; background: #475569; }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
-        
-        /* Chat Bubbles */
-        .chat-container { padding-bottom: 80px; }
-        .bubble { max-width: 85%; padding: 12px; border-radius: 16px; margin-bottom: 12px; font-size: 0.95rem; line-height: 1.5; position: relative; animation: slideUp 0.3s ease-out; }
-        .bubble-user { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; align-self: flex-end; border-bottom-left-radius: 4px; }
-        .bubble-ai { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; align-self: flex-start; border-bottom-right-radius: 4px; }
-        
-        /* Special Cards */
-        .native-card { border-left: 4px solid #f59e0b; background: #2a2f3e; padding: 10px; border-radius: 8px; margin-top: 5px; }
-        .native-title { font-family: 'Consolas', monospace; color: #fcd34d; font-weight: bold; font-size: 1.1em; }
-        
-        .doctor-card { border-top: 4px solid #ef4444; background: #2a2f3e; padding: 15px; border-radius: 8px; }
-        .score-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-weight: bold; font-size: 0.8em; }
-        .score-high { background: #065f46; color: #6ee7b7; }
-        .score-med { background: #78350f; color: #fcd34d; }
-        .score-low { background: #7f1d1d; color: #fca5a5; }
+        .feud-card {
+            background: linear-gradient(180deg, #2563eb 0%, #1e40af 100%);
+            border: 2px solid #60a5fa;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
 
-        .scenario-card { border-right: 4px solid #ec4899; background: #2a2f3e; padding: 15px; border-radius: 8px; }
-        .step-item { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
-        .step-num { background: #ec4899; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7em; flex-shrink: 0; margin-top: 3px; }
-
-        /* NUI Preview Styles - SAFE IFRAME */
-        .nui-card { border-bottom: 4px solid #06b6d4; background: #2a2f3e; padding: 15px; border-radius: 8px; width: 100%; }
-        .nui-container {
+        .card-inner {
+            position: relative;
             width: 100%;
-            height: 350px;
-            background-color: #333;
-            background-image: 
-                linear-gradient(45deg, #444 25%, transparent 25%), 
-                linear-gradient(-45deg, #444 25%, transparent 25%), 
-                linear-gradient(45deg, transparent 75%, #444 75%), 
-                linear-gradient(-45deg, transparent 75%, #444 75%);
-            background-size: 20px 20px;
-            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-top: 10px;
-            border: 1px solid #555;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
         }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .feud-card.revealed .card-inner {
+            transform: rotateX(180deg);
+        }
 
-        .quiz-option { transition: all 0.2s; border: 1px solid #334155; }
-        .quiz-option:hover { background-color: #334155; }
-        .quiz-option.correct { background-color: #065f46; border-color: #10b981; }
-        .quiz-option.wrong { background-color: #7f1d1d; border-color: #ef4444; }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+        }
 
-        .mobile-view-hidden { display: none; }
-        .mobile-view-active { display: flex; flex-direction: column; height: 100%; }
-        @media (min-width: 768px) { .mobile-view-hidden { display: flex; } }
+        .card-front {
+            background: linear-gradient(180deg, #1e3a8a 0%, #172554 100%);
+            border: 2px solid #3b82f6;
+            color: #fff;
+            font-weight: 900;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* The Oval Number Background */
+        .number-oval {
+            background: #1e40af;
+            border: 2px solid #60a5fa;
+            border-radius: 50%;
+            width: 60px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .card-back {
+            background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 100%); /* Yellow gradient for reveal */
+            color: #000;
+            transform: rotateX(180deg);
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-weight: bold;
+            font-size: 1.25rem;
+            border: 2px solid #fff;
+        }
+
+        .strike-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .big-x {
+            font-size: 15rem;
+            color: #ef4444;
+            text-shadow: 0 0 20px red, 4px 4px 0px #7f1d1d;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .team-score-box {
+            background: linear-gradient(180deg, #1e40af 0%, #172554 100%);
+            border: 4px solid #f59e0b;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .lcd-text {
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 2px;
+            background: #000;
+            color: #ef4444;
+            padding: 5px 15px;
+            border: 2px solid #333;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.8);
+        }
+
+        /* Control Panel Button Style */
+        .ctrl-btn {
+            transition: all 0.1s;
+        }
+        .ctrl-btn:active {
+            transform: translateY(2px);
+        }
     </style>
 </head>
-<body class="h-[100dvh] flex flex-col">
+<body class="min-h-screen flex flex-col items-center">
 
     <!-- Header -->
-    <header class="bg-dark-800 border-b border-dark-700 h-16 flex items-center justify-between px-4 md:px-6 shrink-0 z-30 shadow-md">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
-                <i class="fas fa-code text-lg"></i>
-            </div>
-            <div>
-                <h1 class="font-bold text-lg md:text-xl leading-tight">أكاديمية عمر</h1>
-                <p class="text-[10px] text-gray-400">تعلم برمجة FiveM من الصفر</p>
-            </div>
+    <header class="w-full p-4 flex justify-between items-center bg-blue-900/50 backdrop-blur-sm border-b border-blue-700 shadow-lg">
+        <div class="text-3xl font-black text-yellow-400 drop-shadow-lg tracking-wider">
+            <i class="fas fa-trophy mr-2"></i> تحدي عمر FEUD
         </div>
-        <div class="hidden md:flex items-center gap-2 bg-dark-900 px-3 py-1 rounded-full border border-dark-700">
-            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="text-xs text-gray-300">عمر متصل</span>
-        </div>
+        <div class="text-white/80 text-sm hidden md:block">لوحة التحكم للمضيف</div>
     </header>
 
-    <!-- Main Layout -->
-    <div class="flex-1 flex overflow-hidden relative">
+    <!-- Main Game Area -->
+    <main class="flex-grow w-full max-w-6xl p-4 flex flex-col items-center">
         
-        <!-- Sidebar -->
-        <aside class="hidden md:flex w-64 bg-dark-900 border-l border-dark-700 flex-col shrink-0">
-            <div class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">المنهج الدراسي</div>
-            <nav id="desktopLessonList" class="flex-1 overflow-y-auto px-2 space-y-1">
-                <!-- Lessons injected via JS -->
-            </nav>
+        <!-- Scoreboard Section -->
+        <div class="w-full grid grid-cols-2 md:grid-cols-3 gap-6 mb-8 mt-4">
+            <!-- Team 1 -->
+            <div class="team-score-box rounded-xl p-4 flex flex-col items-center justify-center transform hover:scale-105 transition duration-300">
+                <h2 class="text-xl md:text-2xl font-bold text-white mb-2">الفريق الأول</h2>
+                <div class="flex items-center gap-4">
+                    <button onclick="adjustScore(1, -10)" class="text-red-400 hover:text-red-300"><i class="fas fa-minus-circle fa-lg"></i></button>
+                    <div id="score1" class="lcd-text text-3xl md:text-5xl font-bold rounded">0</div>
+                    <button onclick="adjustScore(1, 10)" class="text-green-400 hover:text-green-300"><i class="fas fa-plus-circle fa-lg"></i></button>
+                </div>
+                <div class="mt-2 text-sm text-blue-300">مجموع النقاط</div>
+            </div>
+
+            <!-- Current Pot (Center) -->
+            <div class="hidden md:flex flex-col items-center justify-center">
+                <div class="text-yellow-400 text-lg font-bold mb-1">السؤال الحالي</div>
+                <div id="question-text" class="text-white text-xl text-center font-bold bg-blue-800/80 p-4 rounded-lg border border-blue-500 w-full min-h-[100px] flex items-center justify-center shadow-inner">
+                    جاهز للبدء؟ اضغط "السؤال التالي"
+                </div>
+            </div>
+
+            <!-- Team 2 -->
+            <div class="team-score-box rounded-xl p-4 flex flex-col items-center justify-center transform hover:scale-105 transition duration-300">
+                <h2 class="text-xl md:text-2xl font-bold text-white mb-2">الفريق الثاني</h2>
+                <div class="flex items-center gap-4">
+                    <button onclick="adjustScore(2, -10)" class="text-red-400 hover:text-red-300"><i class="fas fa-minus-circle fa-lg"></i></button>
+                    <div id="score2" class="lcd-text text-3xl md:text-5xl font-bold rounded">0</div>
+                    <button onclick="adjustScore(2, 10)" class="text-green-400 hover:text-green-300"><i class="fas fa-plus-circle fa-lg"></i></button>
+                </div>
+                <div class="mt-2 text-sm text-blue-300">مجموع النقاط</div>
+            </div>
+        </div>
+
+        <!-- Mobile Question Display -->
+        <div class="md:hidden w-full mb-6">
+            <div id="question-text-mobile" class="text-white text-lg text-center font-bold bg-blue-800/80 p-3 rounded-lg border border-blue-500 min-h-[80px] flex items-center justify-center">
+                 جاهز للبدء؟
+            </div>
+        </div>
+
+        <!-- The Board -->
+        <div class="w-full max-w-4xl bg-gray-900 p-2 md:p-6 rounded-3xl border-4 border-gray-700 shadow-2xl relative">
+            <!-- Screen Glare Effect -->
+            <div class="absolute top-0 left-0 w-full h-full rounded-2xl pointer-events-none bg-gradient-to-tr from-white/5 to-transparent z-10"></div>
             
-            <!-- Tools Section -->
-            <div class="p-4 border-t border-dark-700 space-y-2 overflow-y-auto max-h-64 custom-scroll">
-                <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">أدوات ذكية</div>
-                <button onclick="activateTool('native')" class="w-full bg-dark-800 hover:bg-dark-700 text-brand-yellow border border-dark-600 border-dashed rounded-lg p-2 text-xs font-bold flex items-center gap-2 transition">
-                    <i class="fas fa-search"></i> باحث النيتفز
-                </button>
-                <button onclick="activateTool('doctor')" class="w-full bg-dark-800 hover:bg-dark-700 text-brand-red border border-dark-600 border-dashed rounded-lg p-2 text-xs font-bold flex items-center gap-2 transition">
-                    <i class="fas fa-user-md"></i> طبيب الكود
-                </button>
-                <button onclick="activateTool('scenario')" class="w-full bg-dark-800 hover:bg-dark-700 text-brand-pink border border-dark-600 border-dashed rounded-lg p-2 text-xs font-bold flex items-center gap-2 transition">
-                    <i class="fas fa-project-diagram"></i> مهندس السيناريو
-                </button>
-                <button onclick="activateTool('nui')" class="w-full bg-dark-800 hover:bg-dark-700 text-brand-cyan border border-dark-600 border-dashed rounded-lg p-2 text-xs font-bold flex items-center gap-2 transition">
-                    <i class="fas fa-palette"></i> مصمم الواجهات (NUI)
-                </button>
+            <div id="board-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 relative z-20">
+                <!-- Cards will be injected here by JS -->
             </div>
-        </aside>
+        </div>
 
-        <!-- Main Content -->
-        <main id="mainView" class="flex-1 bg-dark-900 overflow-y-auto relative w-full mobile-view-active">
-            <div id="lessonContent" class="max-w-4xl mx-auto p-4 md:p-8 pb-24 md:pb-8">
-                <!-- Content injected via JS -->
-            </div>
-            
-            <!-- Quiz Modal -->
-            <div id="quizContainer" class="hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                <div class="bg-dark-800 w-full max-w-md rounded-2xl border border-dark-700 shadow-2xl overflow-hidden relative">
-                    <button onclick="closeQuiz()" class="absolute top-4 left-4 text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
-                    <div class="p-6">
-                        <div class="w-12 h-12 rounded-full bg-brand-purple/20 flex items-center justify-center mb-4 mx-auto">
-                            <i class="fas fa-brain text-brand-purple text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-center mb-2">اختبر فهمك</h3>
-                        <div id="quizContent" class="space-y-4"></div>
-                    </div>
-                </div>
-            </div>
-        </main>
+        <!-- Strike Controls -->
+        <div class="mt-8 flex gap-4 justify-center flex-wrap">
+            <button onclick="showStrike(1)" class="ctrl-btn bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg border-b-4 border-red-800 flex items-center gap-2">
+                <i class="fas fa-times"></i> خطأ 1
+            </button>
+            <button onclick="showStrike(2)" class="ctrl-btn bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg border-b-4 border-red-800 flex items-center gap-2">
+                <i class="fas fa-times"></i> خطأ 2
+            </button>
+            <button onclick="showStrike(3)" class="ctrl-btn bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg border-b-4 border-red-800 flex items-center gap-2">
+                <i class="fas fa-times"></i> خطأ 3
+            </button>
+        </div>
 
-        <!-- Chat Sidebar -->
-        <aside id="chatView" class="hidden md:flex md:w-96 bg-dark-800 border-r border-dark-700 flex-col absolute md:relative inset-0 z-20 md:z-auto">
-            
-            <!-- Chat Header (Mobile Only) -->
-            <div class="md:hidden h-16 border-b border-dark-700 flex items-center px-4 bg-dark-800 shrink-0">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Omar&backgroundColor=b6e3f4" class="w-10 h-10 rounded-full border-2 border-brand-blue mr-3">
-                <div>
-                    <h3 class="font-bold">المعلم عمر</h3>
-                    <p class="text-xs text-brand-blue">خبير برمجة Lua</p>
-                </div>
-            </div>
+        <!-- Game Controls -->
+        <div class="mt-6 flex gap-4 justify-center flex-wrap border-t border-white/10 pt-6 w-full">
+            <button onclick="nextQuestion()" class="ctrl-btn bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-full shadow-lg flex items-center gap-2">
+                <i class="fas fa-forward"></i> السؤال التالي
+            </button>
+            <button onclick="resetScores()" class="ctrl-btn bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-full shadow-lg flex items-center gap-2">
+                <i class="fas fa-rotate-left"></i> تصفير النقاط
+            </button>
+             <button onclick="toggleMusic()" id="musicBtn" class="ctrl-btn bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-full shadow-lg flex items-center gap-2">
+                <i class="fas fa-music"></i> موسيقى الخلفية
+            </button>
+        </div>
 
-            <!-- Active Tool Indicator -->
-            <div id="activeToolBanner" class="hidden bg-dark-900 border-b p-2 flex items-center justify-between">
-                <span id="toolName" class="text-xs font-bold flex items-center gap-2"></span>
-                <button onclick="cancelTool()" class="text-xs text-gray-400 hover:text-white"><i class="fas fa-times"></i> إلغاء</button>
-            </div>
+    </main>
 
-            <!-- Messages Area -->
-            <div id="chatHistory" class="flex-1 overflow-y-auto p-4 flex flex-col bg-dark-900/50 chat-container custom-scroll">
-                <div class="bubble bubble-ai">
-                    حياك الله يا بطل! 🫡 <br>
-                    أنا عمر، موجود هنا عشان أساعدك. اختر أداة من القائمة أو اسألني مباشرة.
-                </div>
-            </div>
-
-            <!-- Input Area -->
-            <div class="p-3 bg-dark-800 border-t border-dark-700 shrink-0">
-                <!-- Quick Suggestions -->
-                <div class="flex gap-2 overflow-x-auto pb-3 mb-1 custom-scroll no-scrollbar">
-                    <button onclick="activateTool('native')" class="text-[10px] bg-dark-700 px-3 py-1.5 rounded-full text-brand-yellow whitespace-nowrap border border-brand-yellow/30 hover:bg-brand-yellow/10 transition"><i class="fas fa-search"></i> باحث النيتفز</button>
-                    <button onclick="activateTool('scenario')" class="text-[10px] bg-dark-700 px-3 py-1.5 rounded-full text-brand-pink whitespace-nowrap border border-brand-pink/30 hover:bg-brand-pink/10 transition"><i class="fas fa-project-diagram"></i> مهندس السيناريو</button>
-                    <button onclick="activateTool('nui')" class="text-[10px] bg-dark-700 px-3 py-1.5 rounded-full text-brand-cyan whitespace-nowrap border border-brand-cyan/30 hover:bg-brand-cyan/10 transition"><i class="fas fa-palette"></i> مصمم NUI</button>
-                </div>
-
-                <div class="flex gap-2 items-end">
-                    <textarea id="userMsg" rows="1" class="flex-1 bg-dark-900 border border-dark-600 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-blue transition resize-none max-h-32" placeholder="اكتب سؤالك هنا..." oninput="autoResize(this)" onkeypress="handleEnter(event)"></textarea>
-                    <button onclick="sendMessage()" class="bg-brand-blue hover:bg-blue-600 text-white w-10 h-10 rounded-xl flex items-center justify-center transition shadow-lg shadow-blue-500/20 shrink-0">
-                        <i class="fas fa-paper-plane text-sm"></i>
-                    </button>
-                </div>
-            </div>
-        </aside>
-
-    </div>
-
-    <!-- Mobile Nav -->
-    <nav class="md:hidden h-16 bg-dark-800 border-t border-dark-700 flex justify-around items-center shrink-0 z-40 pb-safe">
-        <button onclick="switchTab('lessons')" id="tabLessons" class="flex flex-col items-center gap-1 text-brand-blue w-full h-full justify-center transition active:scale-95">
-            <i class="fas fa-book-open text-xl mb-0.5"></i>
-            <span class="text-[10px] font-medium">الدروس</span>
-        </button>
-        <div class="w-px h-8 bg-dark-700"></div>
-        <button onclick="switchTab('chat')" id="tabChat" class="flex flex-col items-center gap-1 text-gray-500 w-full h-full justify-center transition active:scale-95">
-            <i class="fas fa-comment-alt text-xl mb-0.5 relative">
-                <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-dark-800"></span>
-            </i>
-            <span class="text-[10px] font-medium">اسأل عمر</span>
-        </button>
-    </nav>
-    
-    <!-- Mobile Lesson Modal -->
-    <div id="lessonModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end md:hidden">
-        <div class="bg-dark-800 w-full rounded-t-2xl max-h-[70vh] flex flex-col animate-[slideUp_0.3s_ease-out]">
-            <div class="p-4 border-b border-dark-700 flex justify-between items-center">
-                <h3 class="font-bold text-lg">اختر الدرس</h3>
-                <button onclick="toggleLessonModal()" class="w-8 h-8 rounded-full bg-dark-700 flex items-center justify-center"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="p-2 overflow-y-auto" id="mobileLessonList"></div>
+    <!-- Strike Modal (Overlay) -->
+    <div id="strike-modal" class="strike-modal" onclick="hideStrike()">
+        <div id="strike-container" class="flex gap-4">
+            <!-- X's will appear here -->
         </div>
     </div>
-
-    <!-- API Key Modal (Only if error persists) -->
-    <div id="keyModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
-        <div class="bg-dark-800 w-full max-w-sm p-6 rounded-xl border border-red-500/50 shadow-2xl">
-            <h3 class="text-xl font-bold mb-2 text-red-400"><i class="fas fa-exclamation-triangle"></i> مشكلة في الاتصال</h3>
-            <p class="text-sm text-gray-300 mb-4">المفتاح الحالي لا يعمل. يرجى التأكد من صلاحيته.</p>
-            <input type="password" id="emergencyKeyInput" class="w-full bg-dark-900 border border-dark-600 rounded p-2 text-white mb-4 focus:border-brand-blue outline-none" placeholder="ألصق مفتاح Gemini API هنا">
-            <button onclick="saveEmergencyKey()" class="w-full bg-brand-blue hover:bg-blue-600 p-2 rounded font-bold">حفظ ومتابعة</button>
-        </div>
-    </div>
-
-    <!-- Floating Btn -->
-    <button id="floatingLessonBtn" onclick="toggleLessonModal()" class="md:hidden fixed bottom-20 left-4 bg-dark-800 border border-dark-600 text-white px-4 py-2 rounded-full shadow-xl z-30 flex items-center gap-2 text-sm font-bold backdrop-blur">
-        <i class="fas fa-list-ul text-brand-blue"></i> قائمة الدروس
-    </button>
 
     <script>
-        // --- Configuration ---
-        // NEW KEY INTEGRATED HERE
-        const defaultKey = "AIzaSyDU7MBbiRRxhKoURNOpazboCrMBrBfXflo";
-        let activeTool = null;
-
-        function getApiKey() {
-            // Logic: If localStorage has a key, use it. If not, use default. 
-            // If default fails, we clear localStorage to force default again or prompt user.
-            // For this update, we clear bad keys on init.
-            return localStorage.getItem('gemini_api_key') || defaultKey;
-        }
-
-        // Clean up old keys on load to ensure new default key works
-        window.onload = function() {
-            const storedKey = localStorage.getItem('gemini_api_key');
-            // If stored key is short/invalid or just to be safe with the new update
-            if (storedKey && storedKey.length < 30) {
-                localStorage.removeItem('gemini_api_key');
+        // --- Game Data (Questions) ---
+        // You can edit these questions directly here!
+        const gameData = [
+            {
+                question: "شيء تفعله أول ما تصحى من النوم؟",
+                answers: [
+                    { text: "تغسل وجهك / تتوضأ", points: 35 },
+                    { text: "تشيك على الجوال", points: 28 },
+                    { text: "تشرب ماء", points: 15 },
+                    { text: "تفرش أسنانك", points: 12 },
+                    { text: "تطفي المنبه", points: 7 },
+                    { text: "ترجع تنام", points: 3 }
+                ]
+            },
+            {
+                question: "أكلة سعودية مشهورة؟",
+                answers: [
+                    { text: "كبسة", points: 40 },
+                    { text: "جريش", points: 20 },
+                    { text: "قرصان", points: 15 },
+                    { text: "سليق", points: 10 },
+                    { text: "مندي", points: 8 },
+                    { text: "حنيني", points: 7 }
+                ]
+            },
+            {
+                question: "شيء ممكن تنساه في البيت قبل ما تطلع؟",
+                answers: [
+                    { text: "المفتاح", points: 32 },
+                    { text: "الجوال", points: 25 },
+                    { text: "المحفظة", points: 20 },
+                    { text: "الكمامة", points: 10 },
+                    { text: "النظارة", points: 8 },
+                    { text: "الشاحن", points: 5 }
+                ]
+            },
+            {
+                question: "هدية يشتريها الزوج لزوجته؟",
+                answers: [
+                    { text: "ذهب / مجوهرات", points: 38 },
+                    { text: "ورد", points: 22 },
+                    { text: "عطر", points: 18 },
+                    { text: "شنطة", points: 10 },
+                    { text: "فلوس", points: 8 },
+                    { text: "شوكولاتة", points: 4 }
+                ]
+            },
+            {
+                question: "مكان تروح له في الويكند؟",
+                answers: [
+                    { text: "المول / السوق", points: 30 },
+                    { text: "المطعم / كوفي", points: 25 },
+                    { text: "بيت الأهل", points: 20 },
+                    { text: "البر / استراحة", points: 15 },
+                    { text: "البحر", points: 6 },
+                    { text: "البيت (ما أطلع)", points: 4 }
+                ]
             }
-            init();
-        };
-
-        // --- Data ---
-        const lessons = [
-            { id: 1, title: "1. المقدمة: وش هي فايف ام؟", content: `<h1 class="text-3xl font-bold text-blue-400 mb-4">بداية الطريق 🚀</h1><p class="text-gray-300 mb-4 leading-relaxed">حياك الله يا وحش! تبي تصير مبرمج في فايف ام؟ وصلت للمكان الصح.<br><strong>FiveM</strong> باختصار هو منصة تسمح لك تعدل على GTA V وتضيف سيارات، ملابس، وأنظمة لعب كاملة (Roleplay).</p><div class="bg-dark-800 p-4 rounded-xl border border-dark-700 mb-6"><h3 class="font-bold text-white mb-2 flex items-center gap-2"><i class="fas fa-info-circle text-blue-500"></i> معلومة عالطاير</h3><p class="text-sm text-gray-400">لغة البرمجة اللي بنستخدمها هي <strong>Lua</strong>. لغة خفيفة وسهلة جداً، يعني لا تشيل هم التعقيد.</p></div>` },
-            { id: 2, title: "2. شرح ملف fxmanifest.lua", content: `<h1 class="text-2xl font-bold text-blue-400 mb-4">هوية السكربت 🆔</h1><p class="text-gray-300 mb-4">أي سكربت تسويه لازم يكون له "بطاقة تعريف" عشان السيرفر يتعرف عليه. هذا الملف اسمه <code>fxmanifest.lua</code>.</p><p class="text-sm text-gray-400 mb-2">انسخ الكود هذا وحطه في ملفك الجديد:</p><div class="relative"><pre><code>fx_version 'cerulean'\ngame 'gta5'\n\ndescription 'My First Script'\nversion '1.0.0'\n\nclient_script 'client.lua'\nserver_script 'server.lua'</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre></div>` },
-            { id: 3, title: "3. كيف تطبع رسالة (Print)", content: `<h1 class="text-2xl font-bold text-blue-400 mb-4">أول كود لك 💻</h1><p class="text-gray-300 mb-4">عشان نتأكد أن السكربت شغال، نستخدم دالة الطباعة. هذي تطبع كلام في كونسول F8 داخل اللعبة.</p><div class="relative"><pre><code>print('يا هلا والله! السكربت اشتغل بنجاح 🎉')\n\n-- أمر ترحيبي\nRegisterCommand('hi', function()\n    print('مرحباً بك في السيرفر!')\nend, false)</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre></div>` },
-            { id: 4, title: "4. صناعة سيارة (Native)", content: `<h1 class="text-2xl font-bold text-blue-400 mb-4">كيف ترسبن سيارة؟ 🚗</h1><p class="text-gray-300 mb-4">نستخدم شي اسمه <strong>Natives</strong> (أوامر جاهزة من اللعبة).</p><div class="relative"><pre><code>RegisterCommand('car', function(source, args)\n    local vehicleName = args[1] or 'adder'\n    \n    RequestModel(vehicleName)\n    while not HasModelLoaded(vehicleName) do\n        Wait(10)\n    end\n\n    local ped = PlayerPedId()\n    local pos = GetEntityCoords(ped)\n    local veh = CreateVehicle(vehicleName, pos.x, pos.y, pos.z, GetEntityHeading(ped), true, false)\n    \n    SetPedIntoVehicle(ped, veh, -1)\n    print('مبروك الموتر الجديد! 😎')\nend, false)</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre></div>` }
         ];
 
-        // --- UI & Init ---
-        function init() {
-            renderLessonList();
-            loadLesson(1);
+        // --- State ---
+        let currentQuestionIndex = -1;
+        let scores = { 1: 0, 2: 0 };
+        let audioCtx = null;
+        let isMusicPlaying = false; // Placeholder for logic
+        
+        // --- Audio Context Setup (Browser Synth) ---
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
         }
 
-        function renderLessonList() {
-            const desktopList = document.getElementById('desktopLessonList');
-            const mobileList = document.getElementById('mobileLessonList');
-            lessons.forEach(lesson => {
-                const dBtn = document.createElement('button');
-                dBtn.className = `w-full text-right px-3 py-3 rounded-lg text-sm mb-1 transition flex items-center gap-3 hover:bg-dark-800 ${lesson.id === 1 ? 'bg-dark-800 text-brand-blue font-bold' : 'text-gray-400'}`;
-                dBtn.id = `d-lesson-${lesson.id}`;
-                dBtn.innerHTML = `<i class="fas fa-book w-5 text-center"></i> ${lesson.title}`;
-                dBtn.onclick = () => loadLesson(lesson.id);
-                desktopList.appendChild(dBtn);
-
-                const mBtn = document.createElement('button');
-                mBtn.className = "w-full text-right p-4 border-b border-dark-700 text-gray-200 active:bg-dark-700 flex items-center gap-3";
-                mBtn.innerHTML = `<i class="fas fa-book text-brand-blue"></i> ${lesson.title}`;
-                mBtn.onclick = () => { loadLesson(lesson.id); toggleLessonModal(); };
-                mobileList.appendChild(mBtn);
-            });
-        }
-
-        function loadLesson(id) {
-            const lesson = lessons.find(l => l.id === id);
-            const container = document.getElementById('lessonContent');
-            const quizBtnHTML = `<div class="mt-8 pt-8 border-t border-dark-700"><button onclick="startQuiz('${lesson.title}')" class="w-full bg-gradient-to-r from-brand-purple to-brand-blue p-4 rounded-xl shadow-lg flex items-center justify-center gap-2 hover:opacity-90 transition font-bold text-white"><i class="fas fa-brain"></i> اختبر فهمك لهذا الدرس</button></div>`;
-            container.innerHTML = `<div class="animate-[slideUp_0.4s_ease-out]">${lesson.content}${quizBtnHTML}</div>`;
+        function playTone(freq, type, duration) {
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
             
-            document.querySelectorAll('#desktopLessonList button').forEach(b => b.className = b.className.replace('bg-dark-800 text-brand-blue font-bold shadow-sm', '').replace('text-gray-400', 'text-gray-400'));
-            const activeBtn = document.getElementById(`d-lesson-${id}`);
-            if(activeBtn) activeBtn.className = activeBtn.className.replace('text-gray-400', 'bg-dark-800 text-brand-blue font-bold shadow-sm');
-            document.getElementById('mainView').scrollTop = 0;
-        }
-
-        function switchTab(tab) {
-            const mainView = document.getElementById('mainView');
-            const chatView = document.getElementById('chatView');
-            const tabLessons = document.getElementById('tabLessons');
-            const tabChat = document.getElementById('tabChat');
-            const floatBtn = document.getElementById('floatingLessonBtn');
-
-            if (tab === 'lessons') {
-                mainView.classList.remove('hidden'); chatView.classList.add('hidden');
-                tabLessons.classList.add('text-brand-blue'); tabChat.classList.remove('text-brand-blue');
-                floatBtn.classList.remove('hidden');
-            } else {
-                mainView.classList.add('hidden'); chatView.classList.remove('hidden'); chatView.classList.add('flex');
-                tabChat.classList.add('text-brand-blue'); tabLessons.classList.remove('text-brand-blue');
-                floatBtn.classList.add('hidden');
-            }
-        }
-        function toggleLessonModal() { document.getElementById('lessonModal').classList.toggle('hidden'); }
-
-        // --- Tools Logic ---
-        function activateTool(tool) {
-            activeTool = tool;
-            switchTab('chat');
-            const banner = document.getElementById('activeToolBanner');
-            const bannerText = document.getElementById('toolName');
-            banner.classList.remove('hidden');
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
             
-            let colorClass = 'brand-yellow'; let icon = 'fa-search'; let title = ''; let msg = '';
-
-            if (tool === 'native') {
-                colorClass = 'brand-yellow'; icon = 'fa-search'; title = 'باحث النيتفز';
-                msg = 'أدخل وصف الأمر الذي تبحث عنه (مثلاً: "إصلاح السيارة" أو "إخفاء اللاعب").';
-            } else if (tool === 'doctor') {
-                colorClass = 'brand-red'; icon = 'fa-user-md'; title = 'طبيب الكود';
-                msg = 'أرسل لي الكود الذي يحتوي على مشاكل وسأقوم بفحصه لك.';
-            } else if (tool === 'scenario') {
-                colorClass = 'brand-pink'; icon = 'fa-project-diagram'; title = 'مهندس السيناريو';
-                msg = 'اشرح لي فكرة السكربت أو السيناريو وسأقوم بتخطيطه لك.';
-            } else if (tool === 'nui') {
-                colorClass = 'brand-cyan'; icon = 'fa-palette'; title = 'مصمم الواجهات';
-                msg = 'صف لي شكل الواجهة التي تريدها وسأقوم بتصميمها لك.';
-            }
-
-            banner.className = `bg-dark-900 border-b border-${colorClass} p-2 flex items-center justify-between`;
-            bannerText.innerHTML = `<i class="fas ${icon}"></i> ${title} مفعل`;
-            bannerText.className = `text-xs font-bold text-${colorClass} flex items-center gap-2`;
-            addBubble(msg, 'ai');
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
         }
 
-        function cancelTool() {
-            activeTool = null;
-            document.getElementById('activeToolBanner').classList.add('hidden');
-            addBubble('تم إلغاء الأداة. عدنا للدردشة العادية.', 'ai');
+        function playCorrectSound() {
+            // Ding sound (High sine waves)
+            playTone(880, 'sine', 0.1);
+            setTimeout(() => playTone(1760, 'sine', 0.4), 100);
         }
 
-        // --- Chat & AI ---
-        let isTyping = false;
-        function setQuickMsg(msg) { document.getElementById('userMsg').value = msg; autoResize(document.getElementById('userMsg')); sendMessage(); }
-        function autoResize(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
-        function handleEnter(e) { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
-        function copyCode(btn) { navigator.clipboard.writeText(btn.previousElementSibling.innerText); btn.innerText = "تم النسخ!"; setTimeout(() => btn.innerText = "نسخ", 2000); }
+        function playWrongSound() {
+            // Buzz sound (Low saw waves)
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime); // Low freq
+            // Add some dissonance
+            const osc2 = audioCtx.createOscillator();
+            osc2.type = 'sawtooth';
+            osc2.frequency.setValueAtTime(145, audioCtx.currentTime);
 
-        async function sendMessage() {
-            if(isTyping) return;
-            const input = document.getElementById('userMsg');
-            const text = input.value.trim();
-            if(!text) return;
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
 
-            addBubble(text, 'user');
-            input.value = ''; input.style.height = 'auto';
-            isTyping = true;
-            const typingId = addTypingIndicator();
-
-            try {
-                let systemPrompt = ""; let jsonMode = false; let userPrompt = text;
-
-                if (activeTool === 'native') {
-                    jsonMode = true;
-                    systemPrompt = `You are a FiveM Native Search Engine. User asks for functionality. Return JSON: "nativeName" (string), "description" (Arabic string), "exampleCode" (Lua string code block). Return ONLY JSON.`;
-                } else if (activeTool === 'doctor') {
-                    jsonMode = true;
-                    systemPrompt = `You are a Code Doctor for FiveM Lua. User provides code. Return JSON: "rating" (number 1-10), "summary" (Arabic string), "fixedCode" (Lua string), "issues" (array of Arabic strings). Return ONLY JSON.`;
-                } else if (activeTool === 'scenario') {
-                    jsonMode = true;
-                    systemPrompt = `You are a FiveM Scenario Architect. User describes a gameplay scenario. Return JSON: "title" (Arabic string), "steps" (array of objects with "step" (Arabic string) and "tech" (technical details like Event Name or Native)). Return ONLY JSON.`;
-                } else if (activeTool === 'nui') {
-                    jsonMode = true;
-                    systemPrompt = `You are a FiveM NUI Designer. User describes a UI. Return JSON: "html" (string with just the component HTML), "css" (string with CSS styles). Ensure CSS makes it visible, centered. Return ONLY JSON.`;
-                } else {
-                    systemPrompt = `أنت "عمر"، مبرمج خبير في FiveM ومعلم للمبتدئين. لغتك: عربية ودية. اشرح المفاهيم ببساطة. عند كتابة كود، ضعه في Markdown Code Block.`;
-                }
-
-                const response = await callGemini(userPrompt, systemPrompt, jsonMode);
-                removeBubble(typingId);
-
-                if (jsonMode) {
-                    const cleanJson = response.replace(/```json/g, '').replace(/```/g, '').trim();
-                    const data = JSON.parse(cleanJson);
-                    
-                    if (activeTool === 'native') {
-                        const html = `<div class="native-card"><div class="native-title">${data.nativeName}</div><div class="text-sm text-gray-300 mb-2">${data.description}</div><pre><code>${data.exampleCode}</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre></div>`;
-                        addBubbleHtml(html, 'ai');
-                    } else if (activeTool === 'doctor') {
-                        let badgeClass = data.rating >= 8 ? 'score-high' : (data.rating >= 5 ? 'score-med' : 'score-low');
-                        const html = `<div class="doctor-card"><div class="flex justify-between items-center mb-2"><h4 class="font-bold text-white">التقرير الطبي</h4><span class="score-badge ${badgeClass}">التقييم: ${data.rating}/10</span></div><p class="text-sm text-gray-300 mb-3">${data.summary}</p><div class="mb-2 text-xs font-bold text-gray-400">الأخطاء:</div><ul class="list-disc list-inside text-xs text-red-300 mb-3">${data.issues.map(i => `<li>${i}</li>`).join('')}</ul><div class="text-xs font-bold text-gray-400 mb-1">الكود المصحح:</div><pre><code>${data.fixedCode}</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre></div>`;
-                        addBubbleHtml(html, 'ai');
-                    } else if (activeTool === 'scenario') {
-                        const stepsHtml = data.steps.map((s, i) => `<div class="step-item"><div class="step-num">${i+1}</div><div><div class="text-sm font-bold text-gray-200">${s.step}</div><div class="text-xs text-pink-400 font-mono">${s.tech}</div></div></div>`).join('');
-                        const html = `<div class="scenario-card"><h4 class="font-bold text-pink-400 mb-3 border-b border-pink-500/30 pb-2"><i class="fas fa-project-diagram"></i> ${data.title}</h4><div class="space-y-2">${stepsHtml}</div></div>`;
-                        addBubbleHtml(html, 'ai');
-                    } else if (activeTool === 'nui') {
-                        const iframeId = 'nui-preview-' + Date.now();
-                        const html = `<div class="nui-card"><h4 class="font-bold text-cyan-400 mb-2"><i class="fas fa-palette"></i> معاينة التصميم</h4><div class="nui-container"><iframe id="${iframeId}" style="width:100%; height:100%; border:none;"></iframe></div><div class="text-xs font-bold text-gray-400 mt-2 mb-1">HTML:</div><pre><code>${data.html.replace(/</g, '&lt;')}</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre><div class="text-xs font-bold text-gray-400 mt-2 mb-1">CSS:</div><pre><code>${data.css}</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre></div>`;
-                        addBubbleHtml(html, 'ai');
-                        setTimeout(() => {
-                            const iframe = document.getElementById(iframeId);
-                            if(iframe) {
-                                const doc = iframe.contentWindow.document;
-                                doc.open();
-                                doc.write(`<html><head><style>body { margin: 0; padding: 20px; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; background: transparent; } ${data.css}</style></head><body>${data.html}</body></html>`);
-                                doc.close();
-                            }
-                        }, 100);
-                    }
-                } else {
-                    addBubble(response, 'ai');
-                }
-
-            } catch (error) {
-                removeBubble(typingId);
-                if (error.message.includes('403') || error.message.includes('400')) {
-                    document.getElementById('keyModal').classList.remove('hidden');
-                } else if (error.message.includes('429')) {
-                    addBubble("السيرفر مشغول حالياً 🤯، حاول بعد دقيقة.", 'ai');
-                } else {
-                    addBubble("حدث خطأ غير متوقع. حاول مرة أخرى.", 'ai');
-                }
-            } finally {
-                isTyping = false;
-            }
+            osc.connect(gainNode);
+            osc2.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            osc.start();
+            osc2.start();
+            osc.stop(audioCtx.currentTime + 0.5);
+            osc2.stop(audioCtx.currentTime + 0.5);
         }
 
-        async function callGemini(prompt, sysPrompt, jsonMode) {
-            const key = getApiKey();
-            // Simple Retry Logic
-            for (let i = 0; i < 3; i++) {
-                try {
-                    const response = await fetch(
-                        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`,
-                        {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                contents: [{ parts: [{ text: prompt }] }],
-                                systemInstruction: { parts: [{ text: sysPrompt }] },
-                                generationConfig: jsonMode ? { responseMimeType: "application/json" } : {}
-                            })
-                        }
-                    );
+        // --- Game Logic ---
 
-                    if (!response.ok) {
-                        if (response.status === 429) {
-                            await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))); // Backoff
-                            continue; 
-                        }
-                        throw new Error(`${response.status}`);
-                    }
+        function updateBoard() {
+            const grid = document.getElementById('board-grid');
+            grid.innerHTML = ''; // Clear board
+            
+            const q = gameData[currentQuestionIndex];
+            document.getElementById('question-text').innerText = q.question;
+            document.getElementById('question-text-mobile').innerText = q.question;
 
-                    const data = await response.json();
-                    return data.candidates[0].content.parts[0].text;
-                } catch (e) {
-                    if (i === 2) throw e; // Throw on last retry
-                }
-            }
-        }
-
-        function saveEmergencyKey() {
-            const input = document.getElementById('emergencyKeyInput').value.trim();
-            if(input) {
-                localStorage.setItem('gemini_api_key', input);
-                document.getElementById('keyModal').classList.add('hidden');
-                alert('تم حفظ المفتاح. حاول استخدام الأدوات الآن.');
-            }
-        }
-
-        // --- Chat UI Helpers ---
-        function addBubble(text, type) {
-            const div = document.createElement('div');
-            div.className = `bubble bubble-${type}`;
-            if(type === 'ai') {
-                div.innerHTML = marked.parse(text);
-                addCopyButtons(div);
-            } else { div.innerText = text; }
-            document.getElementById('chatHistory').appendChild(div);
-            scrollToBottom();
-        }
-
-        function addBubbleHtml(html, type) {
-            const div = document.createElement('div');
-            div.className = `bubble bubble-${type}`;
-            div.innerHTML = html;
-            document.getElementById('chatHistory').appendChild(div);
-            scrollToBottom();
-        }
-
-        function addTypingIndicator() {
-            const id = 'typing-' + Date.now();
-            const div = document.createElement('div');
-            div.id = id; div.className = 'bubble bubble-ai text-gray-500 text-xs italic'; div.innerText = 'عمر يكتب...';
-            document.getElementById('chatHistory').appendChild(div); scrollToBottom(); return id;
-        }
-        function removeBubble(id) { const el = document.getElementById(id); if(el) el.remove(); }
-        function scrollToBottom() { const c = document.getElementById('chatHistory'); c.scrollTop = c.scrollHeight; }
-        function addCopyButtons(parent) {
-            setTimeout(() => {
-                parent.querySelectorAll('pre code').forEach(block => {
-                    const pre = block.parentElement;
-                    if (!pre.querySelector('.copy-btn')) {
-                        const btn = document.createElement('button');
-                        btn.className = 'copy-btn'; btn.innerText = 'نسخ'; btn.onclick = function() { copyCode(this); };
-                        pre.appendChild(btn);
-                    }
-                });
-            }, 100);
-        }
-
-        // --- Quiz Logic ---
-        async function startQuiz(lessonTitle) {
-            document.getElementById('quizContainer').classList.remove('hidden');
-            document.getElementById('quizContent').innerHTML = `<div class="flex flex-col items-center py-8"><i class="fas fa-circle-notch fa-spin text-3xl text-brand-blue mb-3"></i><span class="text-sm text-gray-400">عمر يكتب السؤال...</span></div>`;
-            try {
-                const prompt = `Generate a multiple-choice question in Arabic about: "${lessonTitle}". Format: JSON { "question": string, "options": string[], "correctIndex": number }.`;
-                const jsonStr = await callGemini(prompt, "You are a JSON generator. Respond ONLY with valid JSON.", true);
-                const data = JSON.parse(jsonStr.replace(/```json/g, '').replace(/```/g, '').trim());
+            // Always create 8 slots for visual consistency, even if fewer answers
+            for (let i = 0; i < 8; i++) {
+                const answer = q.answers[i];
                 
-                let optionsHTML = '';
-                data.options.forEach((opt, idx) => {
-                    optionsHTML += `<button onclick="checkAnswer(this, ${idx}, ${data.correctIndex})" class="quiz-option w-full text-right p-3 rounded-lg bg-dark-700 text-sm mb-2">${opt}</button>`;
-                });
-                document.getElementById('quizContent').innerHTML = `<div class="text-white font-bold mb-4 text-lg leading-relaxed">${data.question}</div><div class="space-y-2">${optionsHTML}</div><div id="quizResult" class="mt-4 text-center font-bold h-6"></div>`;
-            } catch (e) { 
-                if(e.message.includes('403') || e.message.includes('400')) { document.getElementById('keyModal').classList.remove('hidden'); document.getElementById('quizContainer').classList.add('hidden'); }
-                else document.getElementById('quizContent').innerHTML = `<div class="text-red-400 text-center">خطأ في توليد السؤال.</div>`; 
+                const cardDiv = document.createElement('div');
+                cardDiv.className = `feud-card h-20 md:h-24 w-full cursor-pointer rounded-lg relative ${!answer ? 'opacity-50 pointer-events-none' : ''}`;
+                
+                if (answer) {
+                    cardDiv.onclick = () => toggleCard(cardDiv, answer.points);
+                    cardDiv.innerHTML = `
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <div class="number-oval text-xl md:text-2xl">${i + 1}</div>
+                            </div>
+                            <div class="card-back">
+                                <span class="text-right truncate ml-2">${answer.text}</span>
+                                <span class="text-2xl font-black border-r-2 border-black pr-3 pl-1">${answer.points}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Empty decorative card
+                    cardDiv.innerHTML = `
+                        <div class="card-inner">
+                            <div class="card-front bg-blue-900 border-blue-800">
+                                <!-- Empty -->
+                            </div>
+                        </div>
+                    `;
+                }
+                grid.appendChild(cardDiv);
             }
         }
-        function checkAnswer(btn, selected, correct) {
-            const allBtns = document.querySelectorAll('.quiz-option');
-            allBtns.forEach(b => b.disabled = true);
-            if (selected === correct) { btn.classList.add('correct'); document.getElementById('quizResult').innerHTML = '<span class="text-green-400">إجابة صحيحة 🎉</span>'; } 
-            else { btn.classList.add('wrong'); allBtns[correct].classList.add('correct'); document.getElementById('quizResult').innerHTML = '<span class="text-red-400">إجابة خاطئة 😅</span>'; }
+
+        function toggleCard(element, points) {
+            if (!element.classList.contains('revealed')) {
+                element.classList.add('revealed');
+                playCorrectSound();
+                // Optional: Auto add to a temporary pot? For now manual score is more flexible for "Challenge" mode
+            }
         }
-        function closeQuiz() { document.getElementById('quizContainer').classList.add('hidden'); }
+
+        function showStrike(count) {
+            playWrongSound();
+            const modal = document.getElementById('strike-modal');
+            const container = document.getElementById('strike-container');
+            container.innerHTML = '';
+            
+            for(let i=0; i<count; i++) {
+                const x = document.createElement('div');
+                x.className = 'big-x';
+                x.innerText = 'X';
+                container.appendChild(x);
+            }
+
+            modal.style.display = 'flex';
+            
+            // Auto hide after 1.5 seconds
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 1500);
+        }
+
+        function hideStrike() {
+            document.getElementById('strike-modal').style.display = 'none';
+        }
+
+        function adjustScore(team, amount) {
+            scores[team] += amount;
+            if(scores[team] < 0) scores[team] = 0;
+            document.getElementById(`score${team}`).innerText = scores[team];
+        }
+
+        function resetScores() {
+            if(confirm("هل أنت متأكد من تصفير النقاط؟")) {
+                scores = { 1: 0, 2: 0 };
+                document.getElementById('score1').innerText = 0;
+                document.getElementById('score2').innerText = 0;
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex >= gameData.length) {
+                currentQuestionIndex = 0; // Loop back
+            }
+            // Reset revealed cards
+            updateBoard();
+            initAudio(); // Ensure audio context is ready on user interaction
+        }
+        
+        function toggleMusic() {
+           alert("الموسيقى غير متوفرة حالياً لعدم وجود ملفات صوتية خارجية، لكن المؤثرات الصوتية تعمل!");
+        }
+
+        // Init
+        nextQuestion();
 
     </script>
 </body>
-            </html>
+    </html>
