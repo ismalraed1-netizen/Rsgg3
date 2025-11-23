@@ -1,312 +1,234 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ShoppingCart, Menu, X, Bell, Terminal, Car, Map, Shirt, Clock, Mail, Zap, Bot, Send, Loader2, Sparkles, Instagram, Twitter, Gamepad2 } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر عمر - قريباً</title>
+    
+    <!-- استدعاء Tailwind CSS للتصميم -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- استدعاء مكتبات React و ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- استدعاء Babel لترجمة الكود في المتصفح -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- استدعاء الأيقونات (Lucide) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-export default function OmarStoreComingSoon() {
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [email, setEmail] = useState('');
-  const [showNotification, setShowNotification] = useState(false);
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .animate-gradient { background-size: 200% 200%; animation: gradient 8s ease infinite; }
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    </style>
+</head>
+<body class="bg-slate-900 text-white overflow-x-hidden">
 
-  // AI Chat State
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState([
-    { role: 'model', text: 'أهلاً بك في متجر عمر! 👋 نحن نعمل حالياً على تجهيز المتجر. أنا هنا للإجابة على استفساراتك حول موعد الافتتاح وما سنقدمه قريباً.' }
-  ]);
-  const [userMessage, setUserMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const chatEndRef = useRef(null);
+    <!-- هنا سيتم عرض التطبيق -->
+    <div id="root"></div>
 
-  const apiKey = ""; // Provided by environment
+    <!-- كود React الخاص بالموقع -->
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
 
-  const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+        // تعريف الأيقونات يدوياً لأننا لا نستخدم import
+        const Icon = ({ name, size = 24, className = "" }) => {
+            useEffect(() => {
+                lucide.createIcons();
+            }, [name]);
+            return <i data-lucide={name} width={size} height={size} className={className}></i>;
+        };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [chatMessages, isChatOpen]);
+        function OmarStoreComingSoon() {
+            const [email, setEmail] = useState('');
+            const [showNotification, setShowNotification] = useState(false);
+            const [isChatOpen, setIsChatOpen] = useState(false);
+            const [chatMessages, setChatMessages] = useState([
+                { role: 'model', text: 'أهلاً بك في متجر عمر! 👋 نحن نعمل حالياً على تجهيز المتجر. أنا هنا للإجابة على استفساراتك حول موعد الافتتاح وما سنقدمه قريباً.' }
+            ]);
+            const [userMessage, setUserMessage] = useState('');
+            const [isLoading, setIsLoading] = useState(false);
+            const chatEndRef = useRef(null);
 
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    if (email) {
-      setShowNotification(true);
-      setEmail('');
-      setTimeout(() => setShowNotification(false), 3000);
-    }
-  };
+            // ⚠️ ضع مفتاح API الخاص بك هنا
+            const apiKey = ""; 
 
-  const handleSendMessage = async () => {
-    if (!userMessage.trim()) return;
+            const scrollToBottom = () => {
+                chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            };
 
-    const newUserMessage = { role: 'user', text: userMessage };
-    setChatMessages(prev => [...prev, newUserMessage]);
-    setUserMessage('');
-    setIsLoading(true);
+            useEffect(() => {
+                scrollToBottom();
+                lucide.createIcons(); // تحديث الأيقونات عند التحميل
+            }, [chatMessages, isChatOpen]);
 
-    try {
-      // System prompt tailored for "Coming Soon" status
-      const systemPrompt = `
-        أنت المساعد الذكي لـ "متجر عمر"، وهو متجر إلكتروني لخوادم FiveM (GTA V) قيد الإنشاء وسيتم افتتاحه قريباً.
-        
-        معلومات عن المتجر المستقبلي:
-        1. سنبيع: سكربتات حصرية، سيارات شرطة وسيارات معدلة، ملابس، ومابات (تصاميم مدن).
-        2. موعد الافتتاح المتوقع: خلال أسبوعين.
-        3. مميزاتنا: دعم فني 24/7، ملفات خالية من الأخطاء، تحديثات مستمرة.
-        
-        تعليمات لك:
-        - أجب باللغة العربية بلهجة ودودة وحماسية (Gamer Style).
-        - إذا سأل العميل عن المنتجات، أخبره بما سنقدمه (المذكور أعلاه) واطلب منه الانتظار.
-        - إذا سأل متى الافتتاح، قل "قريباً جداً خلال أيام!".
-        - هدفك هو تشويق الزائر للافتتاح.
-      `;
+            const handleSubscribe = (e) => {
+                e.preventDefault();
+                if (email) {
+                    setShowNotification(true);
+                    setEmail('');
+                    setTimeout(() => setShowNotification(false), 3000);
+                }
+            };
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: 'user',
-              parts: [{ text: systemPrompt + "\n\nسؤال الزائر: " + newUserMessage.text }]
-            }
-          ]
-        })
-      });
+            const handleSendMessage = async () => {
+                if (!userMessage.trim()) return;
 
-      const data = await response.json();
-      const botReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، لا يمكنني الرد حالياً. تابعنا لمعرفة المزيد!";
+                const newUserMessage = { role: 'user', text: userMessage };
+                setChatMessages(prev => [...prev, newUserMessage]);
+                setUserMessage('');
+                setIsLoading(true);
 
-      setChatMessages(prev => [...prev, { role: 'model', text: botReply }]);
+                try {
+                    const systemPrompt = `
+                        أنت المساعد الذكي لـ "متجر عمر"، وهو متجر إلكتروني لخوادم FiveM (GTA V) قيد الإنشاء وسيتم افتتاحه قريباً.
+                        معلومات عن المتجر المستقبلي:
+                        1. سنبيع: سكربتات حصرية، سيارات شرطة وسيارات معدلة، ملابس، ومابات.
+                        2. موعد الافتتاح المتوقع: خلال أسبوعين.
+                        3. مميزاتنا: دعم فني 24/7، ملفات خالية من الأخطاء.
+                        تعليمات: أجب باللغة العربية بلهجة ودودة وحماسية (Gamer Style).
+                    `;
 
-    } catch (error) {
-      console.error("Error calling Gemini:", error);
-      setChatMessages(prev => [...prev, { role: 'model', text: "حدث خطأ في الاتصال، يرجى المحاولة لاحقاً." }]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ role: 'user', parts: [{ text: systemPrompt + "\n\nسؤال الزائر: " + newUserMessage.text }] }]
+                        })
+                    });
 
-  return (
-    <div className="min-h-screen bg-slate-900 text-white font-sans overflow-x-hidden" dir="rtl">
-      
-      {/* Toast Notification */}
-      {showNotification && (
-        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 bg-purple-600 text-white px-6 py-3 rounded-lg shadow-xl flex items-center gap-2 animate-bounce">
-          <Bell size={20} fill="currentColor" />
-          تم تسجيل بريدك بنجاح! سنخبرك فور الافتتاح.
-        </div>
-      )}
+                    const data = await response.json();
+                    const botReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، لا يمكنني الرد حالياً.";
+                    setChatMessages(prev => [...prev, { role: 'model', text: botReply }]);
+                } catch (error) {
+                    console.error("Error:", error);
+                    setChatMessages(prev => [...prev, { role: 'model', text: "حدث خطأ في الاتصال." }]);
+                } finally {
+                    setIsLoading(false);
+                }
+            };
 
-      {/* Background Elements */}
-      <div className="fixed inset-0 pointer-events-none">
-         <div className="absolute top-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=1920')] bg-cover bg-center opacity-10 blur-sm"></div>
-         <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900 to-slate-900"></div>
-      </div>
+            return (
+                <div className="min-h-screen relative">
+                    {/* خلفية */}
+                    <div className="fixed inset-0 pointer-events-none">
+                        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900 to-slate-900 z-10"></div>
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=1920" className="w-full h-full object-cover opacity-10 blur-sm absolute top-0 left-0" />
+                    </div>
 
-      {/* Navigation */}
-      <nav className="fixed w-full z-40 border-b border-white/5 bg-slate-900/50 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <div className="flex-shrink-0 flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
-                <span className="font-bold text-xl">ع</span>
-              </div>
-              <span className="font-bold text-2xl tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
-                متجر عمر
-              </span>
-            </div>
+                    {/* التنبيه */}
+                    {showNotification && (
+                        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 bg-purple-600 text-white px-6 py-3 rounded-lg shadow-xl flex items-center gap-2 animate-bounce">
+                            <Icon name="bell" size={20} />
+                            تم تسجيل بريدك بنجاح!
+                        </div>
+                    )}
 
-            {/* Empty Cart Icon (Disabled Look) */}
-            <div className="flex items-center gap-4 opacity-50 cursor-not-allowed" title="المتجر مغلق حالياً">
-              <div className="relative p-2 text-gray-500 bg-slate-800 rounded-lg">
-                <ShoppingCart size={24} />
-                <span className="absolute -top-1 -right-1 bg-gray-600 text-gray-300 text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                  0
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+                    {/* القائمة العلوية */}
+                    <nav className="fixed w-full z-40 border-b border-white/5 bg-slate-900/50 backdrop-blur-md">
+                        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-20">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <span className="font-bold text-xl">ع</span>
+                                </div>
+                                <span className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">متجر عمر</span>
+                            </div>
+                            <div className="opacity-50">
+                                <div className="p-2 bg-slate-800 rounded-lg text-gray-400">
+                                    <Icon name="shopping-cart" size={24} />
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
 
-      {/* Main Content - Coming Soon Hero */}
-      <div className="relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-20">
-        
-        {/* Animated Status Badge */}
-        <div className="mb-8 animate-pulse">
-          <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20">
-            <Clock size={16} className="ml-2" />
-            قريباً الافتتاح
-          </span>
-        </div>
+                    {/* المحتوى الرئيسي */}
+                    <div className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-20 z-20">
+                        <div className="mb-8 animate-pulse">
+                            <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                                <Icon name="clock" size={16} className="ml-2" /> قريباً الافتتاح
+                            </span>
+                        </div>
 
-        <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight text-center mb-6">
-          <span className="block text-white mb-2">نجهز لكم</span>
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 animate-gradient">
-            شيء استثنائي
-          </span>
-        </h1>
+                        <h1 className="text-5xl sm:text-7xl font-extrabold text-center mb-6">
+                            <span className="block text-white mb-2">نجهز لكم</span>
+                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 animate-gradient">شيء استثنائي</span>
+                        </h1>
 
-        <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-400 text-center leading-relaxed">
-          متجر عمر قادم بقوة لتغيير مفهوم سيرفرات الفايف إم. 
-          <br className="hidden sm:block" />
-          سكربتات حصرية، سيارات نادرة، ودعم فني لا يتوقف.
-        </p>
+                        <p className="mt-4 max-w-2xl text-xl text-gray-400 text-center">
+                            متجر عمر قادم بقوة لتغيير مفهوم سيرفرات الفايف إم.
+                        </p>
 
-        {/* Features Grid Preview */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 w-full max-w-4xl opacity-70">
-            <div className="bg-slate-800/50 p-4 rounded-xl border border-white/5 flex flex-col items-center text-center">
-                <Terminal className="mb-2 text-purple-400" />
-                <span className="text-sm font-bold">سكربتات</span>
-            </div>
-            <div className="bg-slate-800/50 p-4 rounded-xl border border-white/5 flex flex-col items-center text-center">
-                <Car className="mb-2 text-blue-400" />
-                <span className="text-sm font-bold">سيارات</span>
-            </div>
-            <div className="bg-slate-800/50 p-4 rounded-xl border border-white/5 flex flex-col items-center text-center">
-                <Map className="mb-2 text-green-400" />
-                <span className="text-sm font-bold">مابات</span>
-            </div>
-            <div className="bg-slate-800/50 p-4 rounded-xl border border-white/5 flex flex-col items-center text-center">
-                <Shirt className="mb-2 text-pink-400" />
-                <span className="text-sm font-bold">ملابس</span>
-            </div>
-        </div>
+                        {/* أيقونات المميزات */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 w-full max-w-4xl opacity-70">
+                            <div className="bg-slate-800/50 p-4 rounded-xl border border-white/5 flex flex-col items-center gap-2">
+                                <Icon name="terminal" className="text-purple-400" /> <span className="font-bold text-sm">سكربتات</span>
+                            </div>
+                            <div className="bg-slate-800/50 p-4 rounded-xl border border-white/5 flex flex-col items-center gap-2">
+                                <Icon name="car" className="text-blue-400" /> <span className="font-bold text-sm">سيارات</span>
+                            </div>
+                            <div className="bg-slate-800/50 p-4 rounded-xl border border-white/5 flex flex-col items-center gap-2">
+                                <Icon name="map" className="text-green-400" /> <span className="font-bold text-sm">مابات</span>
+                            </div>
+                            <div className="bg-slate-800/50 p-4 rounded-xl border border-white/5 flex flex-col items-center gap-2">
+                                <Icon name="shirt" className="text-pink-400" /> <span className="font-bold text-sm">ملابس</span>
+                            </div>
+                        </div>
 
-        {/* Notify Form */}
-        <div className="mt-12 w-full max-w-md">
-          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-grow">
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-gray-500" />
-              </div>
-              <input
-                type="email"
-                required
-                className="block w-full pr-10 pl-4 py-3 bg-slate-800/80 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                placeholder="سجل بريدك ليصلك تنبيه الافتتاح"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <button
-              type="submit"
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-purple-500/25 whitespace-nowrap"
-            >
-              نبهني عند الافتتاح
-            </button>
-          </form>
-          <p className="text-xs text-center text-gray-500 mt-3">
-            لا تقلق، لن نرسل أي بريد مزعج. وعد! 🤞
-          </p>
-        </div>
+                        {/* نموذج التسجيل */}
+                        <div className="mt-12 w-full max-w-md">
+                            <form onSubmit={handleSubscribe} className="flex gap-2">
+                                <input type="email" required placeholder="سجل بريدك للتنبيه" 
+                                    className="block w-full px-4 py-3 bg-slate-800/80 border border-slate-600 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none"
+                                    value={email} onChange={(e) => setEmail(e.target.value)} />
+                                <button type="submit" className="px-6 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 font-bold whitespace-nowrap">نبهني</button>
+                            </form>
+                        </div>
+                    </div>
 
-        {/* Social Links */}
-        <div className="mt-16 flex gap-6">
-             <a href="#" className="text-gray-400 hover:text-purple-400 transition-colors transform hover:scale-110">
-                 <Instagram size={28} />
-             </a>
-             <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors transform hover:scale-110">
-                 <Twitter size={28} />
-             </a>
-             <a href="#" className="text-gray-400 hover:text-indigo-400 transition-colors transform hover:scale-110">
-                 <Gamepad2 size={28} />
-             </a>
-        </div>
-
-      </div>
-
-      {/* AI Chat Floating Button */}
-      <div className="fixed bottom-6 right-6 z-50">
-        {!isChatOpen ? (
-          <button
-            onClick={() => setIsChatOpen(true)}
-            className="group flex items-center gap-2 bg-slate-800 border border-slate-700 hover:border-purple-500 text-white p-4 rounded-full shadow-2xl hover:scale-105 transition-all"
-          >
-            <div className="relative">
-                <Bot size={28} className="text-purple-400" />
-                <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-purple-500"></span>
-                </span>
-            </div>
-            <span className="hidden group-hover:block font-bold whitespace-nowrap transition-all pr-2">اسألني عن الافتتاح!</span>
-          </button>
-        ) : (
-          <div className="bg-slate-800 border border-slate-700 w-80 sm:w-96 h-[450px] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 fade-in duration-300">
-            {/* Chat Header */}
-            <div className="bg-gradient-to-r from-purple-900 to-slate-900 p-4 border-b border-slate-700 flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-purple-600/20 flex items-center justify-center border border-purple-500/30">
-                   <Bot className="text-purple-400" size={20} />
+                    {/* الشات الذكي */}
+                    <div className="fixed bottom-6 right-6 z-50">
+                        {!isChatOpen ? (
+                            <button onClick={() => setIsChatOpen(true)} className="flex items-center gap-2 bg-slate-800 border border-slate-700 hover:border-purple-500 text-white p-4 rounded-full shadow-2xl hover:scale-105 transition-all">
+                                <Icon name="bot" className="text-purple-400" size={28} />
+                                <span className="hidden md:block font-bold pr-2">اسألني عن الافتتاح!</span>
+                            </button>
+                        ) : (
+                            <div className="bg-slate-800 border border-slate-700 w-80 h-[450px] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5">
+                                <div className="bg-slate-900 p-4 border-b border-slate-700 flex justify-between items-center">
+                                    <div className="flex items-center gap-2">
+                                        <Icon name="bot" className="text-purple-400" />
+                                        <span className="font-bold">مساعد الافتتاح</span>
+                                    </div>
+                                    <button onClick={() => setIsChatOpen(false)}><Icon name="x" size={20} /></button>
+                                </div>
+                                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-900/50">
+                                    {chatMessages.map((msg, idx) => (
+                                        <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-start' : 'justify-end'}`}>
+                                            <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${msg.role === 'user' ? 'bg-purple-600' : 'bg-slate-700'}`}>
+                                                {msg.text}
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {isLoading && <div className="text-center text-xs text-gray-400">جاري الكتابة...</div>}
+                                    <div ref={chatEndRef} />
+                                </div>
+                                <div className="p-3 bg-slate-800 border-t border-slate-700 flex gap-2">
+                                    <input type="text" value={userMessage} onChange={(e) => setUserMessage(e.target.value)} 
+                                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                                        placeholder="اكتب سؤالك..." className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm outline-none" />
+                                    <button onClick={handleSendMessage} disabled={isLoading} className="text-purple-400 p-2"><Icon name="send" /></button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-white flex items-center gap-1">
-                    مساعد الافتتاح
-                    <Sparkles size={12} className="text-yellow-400" />
-                  </h3>
-                  <p className="text-xs text-gray-400">متصل الآن • Gemini AI</p>
-                </div>
-              </div>
-              <button onClick={() => setIsChatOpen(false)} className="text-gray-400 hover:text-white transition-colors">
-                <X size={20} />
-              </button>
-            </div>
+            );
+        }
 
-            {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-900/50">
-              {chatMessages.map((msg, idx) => (
-                <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-start' : 'justify-end'}`}>
-                  <div className={`max-w-[85%] p-3 rounded-2xl text-sm leading-relaxed ${
-                    msg.role === 'user' 
-                      ? 'bg-purple-600 text-white rounded-br-none' 
-                      : 'bg-slate-700 text-gray-100 rounded-bl-none border border-slate-600'
-                  }`}>
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-              {isLoading && (
-                <div className="flex justify-end">
-                  <div className="bg-slate-700 p-3 rounded-2xl rounded-bl-none flex items-center gap-2">
-                    <Loader2 size={16} className="animate-spin text-purple-400" />
-                    <span className="text-xs text-gray-400">يكتب...</span>
-                  </div>
-                </div>
-              )}
-              <div ref={chatEndRef} />
-            </div>
-
-            {/* Chat Input */}
-            <div className="p-3 bg-slate-800 border-t border-slate-700">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={userMessage}
-                  onChange={(e) => setUserMessage(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                  placeholder="اسأل عن المتجر..."
-                  className="flex-1 bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-purple-500 transition-all"
-                />
-                <button 
-                  onClick={handleSendMessage}
-                  disabled={isLoading || !userMessage.trim()}
-                  className="bg-purple-600 text-white p-2 rounded-xl hover:bg-purple-700 disabled:opacity-50 transition-colors"
-                >
-                  <Send size={20} />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <footer className="absolute bottom-4 w-full text-center text-xs text-gray-600">
-         &copy; {new Date().getFullYear()} متجر عمر. جميع الحقوق محفوظة.
-      </footer>
-    </div>
-  );
-}
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<OmarStoreComingSoon />);
+    </script>
+</body>
+  </html>
