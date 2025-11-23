@@ -2,343 +2,472 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أكاديمية عمر | تعلم برمجة FiveM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>أكاديمية عمر | برمجة FiveM</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
-    <style>
-        body { font-family: 'Tajawal', sans-serif; background-color: #0f172a; color: #e2e8f0; }
-        
-        /* Syntax Highlighting Mockup */
-        .code-block {
-            background: #1e1e1e;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            font-family: 'Consolas', 'Monaco', monospace;
-            direction: ltr;
-            overflow-x: auto;
-            border: 1px solid #333;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            700: '#334155',
+                            600: '#475569',
+                        },
+                        brand: {
+                            blue: '#3b82f6',
+                            purple: '#8b5cf6',
+                            green: '#10b981',
+                        }
+                    },
+                    fontFamily: {
+                        tajawal: ['Tajawal', 'sans-serif'],
+                    }
+                }
+            }
         }
-        .kw { color: #569cd6; } /* Keyword */
-        .str { color: #ce9178; } /* String */
-        .fn { color: #dcdcaa; } /* Function */
-        .com { color: #6a9955; } /* Comment */
+    </script>
+
+    <style>
+        body { font-family: 'Tajawal', sans-serif; background-color: #0f172a; color: #f8fafc; overflow: hidden; }
+        
+        /* Code Block Styling */
+        pre {
+            background: #1e1e1e !important;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #334155;
+            direction: ltr;
+            text-align: left;
+            overflow-x: auto;
+            position: relative;
+            margin: 1rem 0;
+        }
+        code { font-family: 'Consolas', monospace; color: #a5f3fc; font-size: 0.9rem; }
+        
+        /* Copy Button */
+        .copy-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #334155;
+            color: white;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            border-radius: 4px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: 0.2s;
+        }
+        .copy-btn:hover { opacity: 1; background: #475569; }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 3px; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
+        
+        /* Chat Bubbles */
+        .chat-container { padding-bottom: 80px; } /* Space for input */
+        .bubble { max-width: 85%; padding: 12px; border-radius: 16px; margin-bottom: 12px; font-size: 0.95rem; line-height: 1.5; position: relative; animation: slideUp 0.3s ease-out; }
+        .bubble-user { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; align-self: flex-end; border-bottom-left-radius: 4px; }
+        .bubble-ai { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; align-self: flex-start; border-bottom-right-radius: 4px; }
+        
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Animations */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        /* Quiz Styles */
+        .quiz-option {
+            transition: all 0.2s;
+            border: 1px solid #334155;
+        }
+        .quiz-option:hover {
+            background-color: #334155;
+        }
+        .quiz-option.correct {
+            background-color: #065f46; /* Green-900 */
+            border-color: #10b981;
+        }
+        .quiz-option.wrong {
+            background-color: #7f1d1d; /* Red-900 */
+            border-color: #ef4444;
+        }
+
+        /* Mobile specific adjustments */
+        .mobile-view-hidden { display: none; }
+        .mobile-view-active { display: flex; flex-direction: column; height: 100%; }
         
-        .chat-bubble { max-width: 85%; padding: 10px 14px; border-radius: 12px; margin-bottom: 12px; font-size: 0.95rem; line-height: 1.6; word-wrap: break-word; }
-        .chat-user { background: #3b82f6; color: white; align-self: flex-end; border-bottom-left-radius: 2px; }
-        .chat-omar { background: #1e293b; color: #e2e8f0; border: 1px solid #334155; align-self: flex-start; border-bottom-right-radius: 2px; }
-        
-        /* Markdown Styles in Chat */
-        .chat-omar pre { background: #000000; padding: 10px; border-radius: 5px; overflow-x: auto; margin-top: 5px; direction: ltr; }
-        .chat-omar code { font-family: monospace; color: #a5f3fc; }
+        @media (min-width: 768px) {
+            .mobile-view-hidden { display: flex; } /* Reset for desktop */
+        }
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden">
+<body class="h-[100dvh] flex flex-col">
 
-    <!-- Header -->
-    <header class="bg-slate-900 border-b border-slate-700 h-16 flex items-center justify-between px-6 z-20 shadow-lg">
+    <!-- Header (Responsive) -->
+    <header class="bg-dark-800 border-b border-dark-700 h-16 flex items-center justify-between px-4 md:px-6 shrink-0 z-30 shadow-md">
         <div class="flex items-center gap-3">
-            <div class="bg-blue-600 p-2 rounded-lg"><i class="fas fa-graduation-cap text-white"></i></div>
-            <h1 class="text-xl font-bold text-white tracking-wide">أكاديمية عمر <span class="text-blue-500 text-sm font-normal">| لبرمجة FiveM</span></h1>
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                <i class="fas fa-code text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg md:text-xl leading-tight">أكاديمية عمر</h1>
+                <p class="text-[10px] text-gray-400">تعلم برمجة FiveM من الصفر</p>
+            </div>
         </div>
-        <div class="text-xs text-gray-400 flex items-center gap-2">
-            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            المعلم الذكي متصل
+        
+        <!-- Desktop: Status Indicator -->
+        <div class="hidden md:flex items-center gap-2 bg-dark-900 px-3 py-1 rounded-full border border-dark-700">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span class="text-xs text-gray-300">عمر متصل</span>
         </div>
     </header>
 
     <!-- Main Layout -->
-    <div class="flex-1 flex overflow-hidden">
+    <div class="flex-1 flex overflow-hidden relative">
         
-        <!-- Sidebar (Lessons) -->
-        <aside class="w-64 bg-slate-900 border-l border-slate-700 flex flex-col hidden md:flex">
-            <div class="p-4 border-b border-slate-800">
-                <h2 class="text-sm font-bold text-gray-400 uppercase">قائمة الدروس</h2>
-            </div>
-            <nav class="flex-1 overflow-y-auto p-2 space-y-1" id="lessonList">
-                <!-- Lessons injected by JS -->
+        <!-- 1. LESSONS LIST (Sidebar) - Desktop Only -->
+        <aside class="hidden md:flex w-64 bg-dark-900 border-l border-dark-700 flex-col shrink-0">
+            <div class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">المنهج الدراسي</div>
+            <nav id="desktopLessonList" class="flex-1 overflow-y-auto px-2 space-y-1">
+                <!-- Lessons injected via JS -->
             </nav>
-            <div class="p-4 border-t border-slate-800 text-center text-xs text-gray-500">
-                برمجة من الصفر حتى الاحتراف
+            
+            <!-- Idea Generator Button -->
+            <div class="p-4 border-t border-dark-700">
+                <button onclick="generateIdea()" class="w-full bg-dark-800 hover:bg-dark-700 text-brand-purple border border-dark-600 border-dashed rounded-lg p-3 text-sm font-bold flex items-center justify-center gap-2 transition group">
+                    <i class="fas fa-lightbulb group-hover:text-yellow-400 transition-colors"></i> اقترح فكرة مشروع
+                </button>
             </div>
         </aside>
 
-        <!-- Content Area -->
-        <main class="flex-1 bg-slate-800 overflow-y-auto relative custom-scroll" id="mainContent">
-            <!-- Dynamic Content Here -->
+        <!-- 2. MAIN CONTENT (Lesson View) -->
+        <main id="mainView" class="flex-1 bg-dark-900 overflow-y-auto relative w-full mobile-view-active">
+            <div id="lessonContent" class="max-w-4xl mx-auto p-4 md:p-8 pb-24 md:pb-8">
+                <!-- Content injected via JS -->
+            </div>
+            
+            <!-- Quiz Container (Hidden by default) -->
+            <div id="quizContainer" class="hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div class="bg-dark-800 w-full max-w-md rounded-2xl border border-dark-700 shadow-2xl overflow-hidden relative">
+                    <button onclick="closeQuiz()" class="absolute top-4 left-4 text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+                    <div class="p-6">
+                        <div class="w-12 h-12 rounded-full bg-brand-purple/20 flex items-center justify-center mb-4 mx-auto">
+                            <i class="fas fa-brain text-brand-purple text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-center mb-2">اختبر فهمك</h3>
+                        <p class="text-gray-400 text-xs text-center mb-6">سؤال سريع مولد بالذكاء الاصطناعي عن الدرس الحالي</p>
+                        
+                        <div id="quizContent" class="space-y-4">
+                            <!-- Loading State -->
+                            <div class="flex flex-col items-center py-8">
+                                <i class="fas fa-circle-notch fa-spin text-3xl text-brand-blue mb-3"></i>
+                                <span class="text-sm text-gray-400">عمر يكتب السؤال...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
 
-        <!-- Omar AI Chat (Fixed Right Panel) -->
-        <aside class="w-96 bg-slate-900 border-r border-slate-700 flex flex-col shadow-2xl z-10">
-            <!-- Chat Header -->
-            <div class="h-14 border-b border-slate-800 flex items-center px-4 gap-3 bg-slate-900">
-                <div class="relative">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Omar&backgroundColor=b6e3f4" class="w-10 h-10 rounded-full border-2 border-blue-500" alt="Omar">
-                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-slate-900"></div>
-                </div>
+        <!-- 3. OMAR CHAT (Sidebar on Desktop, Full View on Mobile) -->
+        <aside id="chatView" class="hidden md:flex md:w-96 bg-dark-800 border-r border-dark-700 flex-col absolute md:relative inset-0 z-20 md:z-auto">
+            
+            <!-- Chat Header (Mobile Only) -->
+            <div class="md:hidden h-16 border-b border-dark-700 flex items-center px-4 bg-dark-800 shrink-0">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Omar&backgroundColor=b6e3f4" class="w-10 h-10 rounded-full border-2 border-brand-blue mr-3">
                 <div>
-                    <h3 class="font-bold text-white text-sm">المعلم عمر</h3>
-                    <p class="text-[10px] text-blue-400">خبير برمجة & سكربتات</p>
+                    <h3 class="font-bold">المعلم عمر</h3>
+                    <p class="text-xs text-brand-blue">خبير برمجة Lua</p>
                 </div>
             </div>
 
-            <!-- Chat Messages -->
-            <div id="chatHistory" class="flex-1 overflow-y-auto p-4 flex flex-col space-y-4 bg-slate-900/50">
-                <div class="chat-bubble chat-omar fade-in">
-                    يا هلا والله! 👋 أنا عمر، مدربك الخاص في برمجة فايف ام.
-                    <br><br>
-                    أي شي يصعب عليك في الدروس، أو تبي كود معين، أو عندك خطأ (Error) في الكونسول.. بس ارسله لي هنا وأنا أضبطك! 💻🔧
+            <!-- Messages Area -->
+            <div id="chatHistory" class="flex-1 overflow-y-auto p-4 flex flex-col bg-dark-900/50 chat-container custom-scroll">
+                <div class="bubble bubble-ai">
+                    حياك الله يا بطل! 🫡 <br>
+                    أنا عمر، موجود هنا عشان أساعدك في أي سطر كود ما فهمته، أو إذا واجهك خطأ (Error) يرفع الضغط.<br><br>
+                    بس انسخ الكود وارسله لي، أو اسألني أي سؤال في بالك!
                 </div>
             </div>
 
-            <!-- Chat Input -->
-            <div class="p-4 bg-slate-900 border-t border-slate-800">
-                <div class="flex gap-2">
-                    <input type="text" id="userMsg" class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition dir-rtl" placeholder="اسأل عمر عن البرمجة..." onkeypress="handleEnter(event)">
-                    <button onclick="sendMessage()" class="bg-blue-600 hover:bg-blue-500 text-white p-2 rounded-lg transition">
-                        <i class="fas fa-paper-plane"></i>
+            <!-- Input Area -->
+            <div class="p-3 bg-dark-800 border-t border-dark-700 shrink-0">
+                <!-- Quick Suggestions -->
+                <div class="flex gap-2 overflow-x-auto pb-3 mb-1 custom-scroll no-scrollbar">
+                    <button onclick="setQuickMsg('كيف اسوي سيارة؟')" class="text-[10px] bg-dark-700 px-3 py-1.5 rounded-full text-gray-300 whitespace-nowrap border border-dark-600 hover:bg-dark-600 transition">🚗 كيف اسوي سيارة؟</button>
+                    <button onclick="setQuickMsg('اشرح لي الكود')" class="text-[10px] bg-dark-700 px-3 py-1.5 rounded-full text-gray-300 whitespace-nowrap border border-dark-600 hover:bg-dark-600 transition">🧐 اشرح لي الكود</button>
+                    <button onclick="generateIdea()" class="text-[10px] bg-dark-700 px-3 py-1.5 rounded-full text-brand-purple whitespace-nowrap border border-brand-purple/30 hover:bg-brand-purple/10 transition"><i class="fas fa-lightbulb"></i> فكرة مشروع</button>
+                </div>
+
+                <div class="flex gap-2 items-end">
+                    <textarea id="userMsg" rows="1" class="flex-1 bg-dark-900 border border-dark-600 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-blue transition resize-none max-h-32" placeholder="اكتب سؤالك هنا..." oninput="autoResize(this)" onkeypress="handleEnter(event)"></textarea>
+                    <button onclick="sendMessage()" class="bg-brand-blue hover:bg-blue-600 text-white w-10 h-10 rounded-xl flex items-center justify-center transition shadow-lg shadow-blue-500/20 shrink-0">
+                        <i class="fas fa-paper-plane text-sm"></i>
                     </button>
-                </div>
-                <div class="mt-2 flex gap-2 overflow-x-auto pb-1 custom-scroll">
-                    <button onclick="quickAsk('كيف اسوي سكربت يرحب باللاعب؟')" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded text-gray-300 whitespace-nowrap border border-slate-700">👋 سكربت ترحيب</button>
-                    <button onclick="quickAsk('وش يعني fxmanifest.lua؟')" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded text-gray-300 whitespace-nowrap border border-slate-700">📄 ملف التعريف</button>
-                    <button onclick="quickAsk('عطني كود يرسبن سيارة')" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded text-gray-300 whitespace-nowrap border border-slate-700">🚗 كود سيارة</button>
                 </div>
             </div>
         </aside>
 
     </div>
 
-    <!-- Mobile Menu Button (Floating) -->
-    <button onclick="document.querySelector('aside').classList.toggle('hidden')" class="md:hidden fixed bottom-4 left-4 bg-blue-600 text-white p-3 rounded-full shadow-lg z-50">
-        <i class="fas fa-list"></i>
+    <!-- 4. BOTTOM NAVIGATION (Mobile Only) -->
+    <nav class="md:hidden h-16 bg-dark-800 border-t border-dark-700 flex justify-around items-center shrink-0 z-40 pb-safe">
+        <button onclick="switchTab('lessons')" id="tabLessons" class="flex flex-col items-center gap-1 text-brand-blue w-full h-full justify-center transition active:scale-95">
+            <i class="fas fa-book-open text-xl mb-0.5"></i>
+            <span class="text-[10px] font-medium">الدروس</span>
+        </button>
+        
+        <div class="w-px h-8 bg-dark-700"></div>
+
+        <button onclick="switchTab('chat')" id="tabChat" class="flex flex-col items-center gap-1 text-gray-500 w-full h-full justify-center transition active:scale-95">
+            <i class="fas fa-comment-alt text-xl mb-0.5 relative">
+                <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-dark-800"></span>
+            </i>
+            <span class="text-[10px] font-medium">اسأل عمر</span>
+        </button>
+    </nav>
+    
+    <!-- Lesson Selector Modal (Mobile) -->
+    <div id="lessonModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end md:hidden">
+        <div class="bg-dark-800 w-full rounded-t-2xl max-h-[70vh] flex flex-col animate-[slideUp_0.3s_ease-out]">
+            <div class="p-4 border-b border-dark-700 flex justify-between items-center">
+                <h3 class="font-bold text-lg">اختر الدرس</h3>
+                <button onclick="toggleLessonModal()" class="w-8 h-8 rounded-full bg-dark-700 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="p-2 overflow-y-auto" id="mobileLessonList">
+                <!-- Mobile lessons injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Lesson Button (Mobile Lesson View Only) -->
+    <button id="floatingLessonBtn" onclick="toggleLessonModal()" class="md:hidden fixed bottom-20 left-4 bg-dark-800 border border-dark-600 text-white px-4 py-2 rounded-full shadow-xl z-30 flex items-center gap-2 text-sm font-bold backdrop-blur">
+        <i class="fas fa-list-ul text-brand-blue"></i> قائمة الدروس
     </button>
 
     <script>
-        // --- Curriculum Data ---
+        // --- Data ---
         const lessons = [
             {
                 id: 1,
                 title: "1. المقدمة: وش هي فايف ام؟",
-                icon: "fa-info-circle",
                 content: `
-                    <div class="max-w-3xl mx-auto p-8 fade-in">
-                        <h1 class="text-3xl font-bold text-blue-400 mb-6">مقدمة في عالم برمجة FiveM</h1>
-                        
-                        <p class="text-gray-300 mb-4 text-lg">
-                            حياك الله يا وحش! قبل ما نكتب أي كود، لازم تفهم إحنا وين بنشتغل.
-                            <br>
-                            <strong>FiveM</strong> هو عبارة عن "معدل" (Modification) للعبة GTA V يسمح لك تسوي سيرفرات خاصة، وتتحكم في كل شي فيها.
-                        </p>
-
-                        <div class="bg-slate-700/50 p-4 rounded-lg border-r-4 border-blue-500 mb-6">
-                            <h3 class="font-bold text-white mb-2">اللغة المستخدمة: Lua 🌙</h3>
-                            <p class="text-sm text-gray-300">
-                                أغلب برمجة فايف ام تعتمد على لغة اسمها <strong>Lua</strong>. هي لغة سهلة جداً وسريعة.
-                                لا تخاف إذا ما تعرفها، بتتعلمها معي هنا خطوة بخطوة!
-                            </p>
-                        </div>
-
-                        <h3 class="text-xl font-bold text-white mt-8 mb-4">الأدوات اللي تحتاجها (العدة 🛠️):</h3>
-                        <ul class="list-disc list-inside text-gray-300 space-y-2">
-                            <li><span class="text-blue-400">VS Code:</span> أفضل برنامج تكتب فيه الأكواد.</li>
-                            <li><span class="text-blue-400">FiveM Server:</span> ملفات السيرفر عشان تجرب شغلك (Localhost).</li>
-                            <li><span class="text-blue-400">XAMPP:</span> لقواعد البيانات (إذا بتسوي سيرفر رول بلاي كبير مستقبلاً).</li>
-                        </ul>
+                    <h1 class="text-3xl font-bold text-blue-400 mb-4">بداية الطريق 🚀</h1>
+                    <p class="text-gray-300 mb-4 leading-relaxed">
+                        حياك الله يا وحش! تبي تصير مبرمج في فايف ام؟ وصلت للمكان الصح.
+                        <br>
+                        <strong>FiveM</strong> باختصار هو منصة تسمح لك تعدل على GTA V وتضيف سيارات، ملابس، وأنظمة لعب كاملة (Roleplay).
+                    </p>
+                    <div class="bg-dark-800 p-4 rounded-xl border border-dark-700 mb-6">
+                        <h3 class="font-bold text-white mb-2 flex items-center gap-2"><i class="fas fa-info-circle text-blue-500"></i> معلومة عالطاير</h3>
+                        <p class="text-sm text-gray-400">لغة البرمجة اللي بنستخدمها هي <strong>Lua</strong>. لغة خفيفة وسهلة جداً، يعني لا تشيل هم التعقيد.</p>
                     </div>
                 `
             },
             {
                 id: 2,
-                title: "2. هيكلة الملفات (الأساس)",
-                icon: "fa-folder-open",
+                title: "2. شرح ملف fxmanifest.lua",
                 content: `
-                    <div class="max-w-3xl mx-auto p-8 fade-in">
-                        <h1 class="text-3xl font-bold text-blue-400 mb-6">كيف ترتب ملفات السكربت؟</h1>
-                        
-                        <p class="text-gray-300 mb-4">
-                            أي سكربت (Resource) في فايف ام لازم يكون داخل مجلد خاص فيه، ولازم يحتوي على ملف "الهوية" اللي اسمه <code class="bg-black px-1 rounded text-green-400">fxmanifest.lua</code>.
-                        </p>
+                    <h1 class="text-2xl font-bold text-blue-400 mb-4">هوية السكربت 🆔</h1>
+                    <p class="text-gray-300 mb-4">
+                        أي سكربت تسويه لازم يكون له "بطاقة تعريف" عشان السيرفر يتعرف عليه. هذا الملف اسمه <code>fxmanifest.lua</code>.
+                    </p>
+                    <p class="text-sm text-gray-400 mb-2">انسخ الكود هذا وحطه في ملفك الجديد:</p>
+                    <div class="relative">
+                        <pre><code>fx_version 'cerulean'
+game 'gta5'
 
-                        <h3 class="text-xl font-bold text-white mt-6">ترتيب المجلد يكون كذا:</h3>
-                        <div class="code-block text-sm">
-myscript/          <-- اسم مجلد السكربت
-├── fxmanifest.lua <-- ملف التعريف (إجباري)
-├── client.lua     <-- الكود اللي يشتغل عند اللاعب
-└── server.lua     <-- الكود اللي يشتغل عند السيرفر
-                        </div>
+description 'My First Script'
+version '1.0.0'
 
-                        <h3 class="text-xl font-bold text-white mt-6">محتوى fxmanifest.lua:</h3>
-                        <p class="text-gray-400 text-sm mb-2">انسخ هذا الكود وحطه في ملف المانيسفت حقك:</p>
-                        <div class="code-block">
-<span class="kw">fx_version</span> <span class="str">'cerulean'</span>
-<span class="kw">game</span> <span class="str">'gta5'</span>
-
-<span class="com">-- وصف السكربت</span>
-<span class="kw">description</span> <span class="str">'My First Script with Omar'</span>
-<span class="kw">version</span> <span class="str">'1.0.0'</span>
-
-<span class="com">-- تحديد الملفات</span>
-<span class="kw">client_script</span> <span class="str">'client.lua'</span>
-<span class="kw">server_script</span> <span class="str">'server.lua'</span>
-                        </div>
+client_script 'client.lua'
+server_script 'server.lua'</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre>
                     </div>
                 `
             },
             {
                 id: 3,
-                title: "3. أول كود لك (Hello World)",
-                icon: "fa-code",
+                title: "3. كيف تطبع رسالة (Print)",
                 content: `
-                    <div class="max-w-3xl mx-auto p-8 fade-in">
-                        <h1 class="text-3xl font-bold text-blue-400 mb-6">كتابة أول كود (Client Side)</h1>
-                        
-                        <p class="text-gray-300 mb-4">
-                            خلنا نخلي اللعبة تطبع كلام في الكونسول (F8).
-                            افتح ملف <code class="bg-black px-1 rounded text-yellow-400">client.lua</code> واكتب التالي:
-                        </p>
+                    <h1 class="text-2xl font-bold text-blue-400 mb-4">أول كود لك 💻</h1>
+                    <p class="text-gray-300 mb-4">
+                        عشان نتأكد أن السكربت شغال، نستخدم دالة الطباعة. هذي تطبع كلام في كونسول F8 داخل اللعبة.
+                    </p>
+                    <div class="relative">
+                        <pre><code>print('يا هلا والله! السكربت اشتغل بنجاح 🎉')
 
-                        <div class="code-block">
-<span class="com">-- هذا الكود يطبع رسالة في كونسول اللاعب (F8)</span>
-<span class="fn">print</span>(<span class="str">"يا هلا! السكربت اشتغل بنجاح 🎉"</span>)
-
-<span class="com">-- أمر كتابي: /hello</span>
-<span class="fn">RegisterCommand</span>(<span class="str">'hello'</span>, <span class="kw">function</span>()
-    <span class="fn">print</span>(<span class="str">'مرحباً بك في سيرفرنا!'</span>)
-<span class="kw">end</span>, <span class="kw">false</span>)
-                        </div>
-
-                        <div class="mt-6 bg-slate-700 p-4 rounded-lg">
-                            <h4 class="font-bold text-white mb-2">وش سوينا هنا؟ 🤔</h4>
-                            <ul class="list-disc list-inside text-sm text-gray-300 space-y-2">
-                                <li><strong>print:</strong> دالة تطبع نص في الشاشة السوداء (F8) للتأكد ان الكود شغال.</li>
-                                <li><strong>RegisterCommand:</strong> دالة من فايف ام تسمح لك تسوي أمر (Command) يكتبه اللاعب في الشات أو F8.</li>
-                            </ul>
-                        </div>
+-- أمر ترحيبي
+RegisterCommand('hi', function()
+    print('مرحباً بك في السيرفر!')
+end, false)</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre>
                     </div>
+                    <p class="text-sm text-gray-400 mt-4">جرب تدخل اللعبة وتضغط F8 وتكتب <code>hi</code> وشف وش يطلع لك!</p>
                 `
             },
             {
                 id: 4,
-                title: "4. النيتفز (Natives) - التحكم باللعبة",
-                icon: "fa-magic",
+                title: "4. صناعة سيارة (Native)",
                 content: `
-                    <div class="max-w-3xl mx-auto p-8 fade-in">
-                        <h1 class="text-3xl font-bold text-blue-400 mb-6">النيتفز (Natives): سحر GTA V</h1>
-                        
-                        <p class="text-gray-300 mb-4">
-                            النيتفز هي دوال جاهزة من روكستار وفايف ام تتحكم باللعبة. تبي تعطي سلاح؟ تبي ترسبن سيارة؟ تبي تغير الطقس؟ كلها <strong>Natives</strong>.
-                        </p>
-
-                        <h3 class="text-xl font-bold text-white mt-6">مثال: إعطاء سلاح وسيارة</h3>
-                        <div class="code-block">
-<span class="fn">RegisterCommand</span>(<span class="str">'car'</span>, <span class="kw">function</span>(<span class="arg">source</span>, <span class="arg">args</span>)
-    <span class="kw">local</span> ped = <span class="fn">PlayerPedId</span>() <span class="com">-- جيب شخصية اللاعب</span>
-    <span class="kw">local</span> vehicleName = args[1] <span class="kw">or</span> <span class="str">'adder'</span> <span class="com">-- اسم السيارة</span>
-
-    <span class="com">-- التأكد من تحميل موديل السيارة (مهم جداً)</span>
-    <span class="fn">RequestModel</span>(vehicleName)
-    <span class="kw">while</span> <span class="kw">not</span> <span class="fn">HasModelLoaded</span>(vehicleName) <span class="kw">do</span>
-        <span class="fn">Wait</span>(10)
-    <span class="kw">end</span>
-
-    <span class="com">-- إنشاء السيارة</span>
-    <span class="kw">local</span> veh = <span class="fn">CreateVehicle</span>(vehicleName, <span class="fn">GetEntityCoords</span>(ped), <span class="fn">GetEntityHeading</span>(ped), <span class="kw">true</span>, <span class="kw">false</span>)
+                    <h1 class="text-2xl font-bold text-blue-400 mb-4">كيف ترسبن سيارة؟ 🚗</h1>
+                    <p class="text-gray-300 mb-4">
+                        نستخدم شي اسمه <strong>Natives</strong> (أوامر جاهزة من اللعبة).
+                    </p>
+                    <div class="relative">
+                        <pre><code>RegisterCommand('car', function(source, args)
+    local vehicleName = args[1] or 'adder'
     
-    <span class="com">-- ركب اللاعب في السيارة</span>
-    <span class="fn">SetPedIntoVehicle</span>(ped, veh, -1)
+    -- طلب موديل السيارة
+    RequestModel(vehicleName)
+    while not HasModelLoaded(vehicleName) do
+        Wait(10)
+    end
+
+    -- إنشاء السيارة
+    local ped = PlayerPedId()
+    local pos = GetEntityCoords(ped)
+    local veh = CreateVehicle(vehicleName, pos.x, pos.y, pos.z, GetEntityHeading(ped), true, false)
     
-    <span class="com">-- رسالة تنبيه</span>
-    <span class="fn">print</span>(<span class="str">'مبروك الموتر! 🚗'</span>)
-<span class="kw">end</span>, <span class="kw">false</span>)
-                        </div>
-                        
-                        <p class="text-sm text-gray-400 mt-2">
-                            *جرب تكتب في اللعبة <code>/car zentorno</code> وشف وش يصير!
-                        </p>
-                    </div>
-                `
-            },
-             {
-                id: 5,
-                title: "5. الأحداث (Events) - الاتصال",
-                icon: "fa-network-wired",
-                content: `
-                    <div class="max-w-3xl mx-auto p-8 fade-in">
-                        <h1 class="text-3xl font-bold text-blue-400 mb-6">الأحداث (Events): التخاطب بين الملفات</h1>
-                        
-                        <p class="text-gray-300 mb-4">
-                            كيف تخلي ملف Client يكلم Server؟ عن طريق الـ Events.
-                            <br>
-                            مثلاً: اللاعب (Client) اشترى شيء، يرسل Event للسيرفر (Server) عشان يخصم الفلوس من الداتابيس.
-                        </p>
-
-                        <h3 class="text-xl font-bold text-white mt-6">Client Side (المرسل):</h3>
-                        <div class="code-block">
-<span class="com">-- نرسل تريفر للسيرفر باسم 'payMoney'</span>
-<span class="fn">TriggerServerEvent</span>(<span class="str">'omar:payMoney'</span>, 500)
-                        </div>
-
-                        <h3 class="text-xl font-bold text-white mt-6">Server Side (المستقبل):</h3>
-                        <div class="code-block">
-<span class="fn">RegisterNetEvent</span>(<span class="str">'omar:payMoney'</span>)
-<span class="fn">AddEventHandler</span>(<span class="str">'omar:payMoney'</span>, <span class="kw">function</span>(<span class="arg">amount</span>)
-    <span class="kw">local</span> src = source <span class="com">-- ايدي اللاعب اللي أرسل</span>
-    <span class="fn">print</span>(<span class="str">'اللاعب رقم '</span> .. src .. <span class="str">' دفع مبلغ: '</span> .. amount)
-    <span class="com">-- هنا نحط كود خصم الفلوس الفعلي</span>
-<span class="kw">end</span>)
-                        </div>
+    -- ركوب السيارة
+    SetPedIntoVehicle(ped, veh, -1)
+    
+    print('مبروك الموتر الجديد! 😎')
+end, false)</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre>
                     </div>
                 `
             }
         ];
 
-        // --- Init Logic ---
-        function renderLessons() {
-            const list = document.getElementById('lessonList');
+        // --- Logic ---
+        let currentLessonId = 1;
+        const apiKey = "AIzaSyDIZ-c5Br5QSoT3W8LGGy2d5-oISvjyD2w";
+
+        function init() {
+            renderLessonList();
+            loadLesson(1);
+        }
+
+        // Render Lessons for both Desktop Sidebar and Mobile Modal
+        function renderLessonList() {
+            const desktopList = document.getElementById('desktopLessonList');
+            const mobileList = document.getElementById('mobileLessonList');
+            
             lessons.forEach(lesson => {
-                const btn = document.createElement('div');
-                btn.className = 'flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-slate-800 transition text-gray-300 hover:text-white lesson-item';
-                btn.innerHTML = `<i class="fas ${lesson.icon} text-blue-500 w-5"></i> <span class="text-sm font-medium">${lesson.title}</span>`;
-                btn.onclick = () => loadLesson(lesson.id);
-                list.appendChild(btn);
+                // Desktop Item
+                const dBtn = document.createElement('button');
+                dBtn.className = `w-full text-right px-3 py-3 rounded-lg text-sm mb-1 transition flex items-center gap-3 hover:bg-dark-800 ${lesson.id === 1 ? 'bg-dark-800 text-brand-blue font-bold' : 'text-gray-400'}`;
+                dBtn.id = `d-lesson-${lesson.id}`;
+                dBtn.innerHTML = `<i class="fas ${getIcon(lesson.id)} w-5 text-center"></i> ${lesson.title}`;
+                dBtn.onclick = () => loadLesson(lesson.id);
+                desktopList.appendChild(dBtn);
+
+                // Mobile Item
+                const mBtn = document.createElement('button');
+                mBtn.className = "w-full text-right p-4 border-b border-dark-700 text-gray-200 active:bg-dark-700 flex items-center gap-3";
+                mBtn.innerHTML = `<i class="fas ${getIcon(lesson.id)} text-brand-blue"></i> ${lesson.title}`;
+                mBtn.onclick = () => { loadLesson(lesson.id); toggleLessonModal(); };
+                mobileList.appendChild(mBtn);
             });
         }
 
-        function loadLesson(id) {
-            const lesson = lessons.find(l => l.id === id);
-            const main = document.getElementById('mainContent');
-            main.innerHTML = lesson.content;
-            
-            // Highlight active lesson in sidebar
-            document.querySelectorAll('.lesson-item').forEach(el => el.classList.remove('bg-blue-900/30', 'border-r-4', 'border-blue-500'));
-            // Note: Simple highlighting logic, ideally matched by index or id
+        function getIcon(id) {
+            const icons = ['fa-flag', 'fa-file-code', 'fa-terminal', 'fa-car'];
+            return icons[id-1] || 'fa-book';
         }
 
-        // --- AI "Omar" Logic ---
-        const apiKey = "AIzaSyDIZ-c5Br5QSoT3W8LGGy2d5-oISvjyD2w";
+        function loadLesson(id) {
+            currentLessonId = id;
+            const lesson = lessons.find(l => l.id === id);
+            
+            // Render Content
+            const container = document.getElementById('lessonContent');
+            
+            // Append Quiz Button
+            const quizBtnHTML = `
+                <div class="mt-8 pt-8 border-t border-dark-700">
+                    <button onclick="startQuiz('${lesson.title}')" class="w-full bg-gradient-to-r from-brand-purple to-brand-blue p-4 rounded-xl shadow-lg flex items-center justify-center gap-2 hover:opacity-90 transition font-bold text-white">
+                        <i class="fas fa-brain"></i> اختبر فهمك لهذا الدرس
+                    </button>
+                </div>
+            `;
+            
+            container.innerHTML = `<div class="animate-[slideUp_0.4s_ease-out]">${lesson.content}${quizBtnHTML}</div>`;
+
+            // Highlight Desktop Sidebar
+            document.querySelectorAll('#desktopLessonList button').forEach(b => {
+                b.className = 'w-full text-right px-3 py-3 rounded-lg text-sm mb-1 transition flex items-center gap-3 hover:bg-dark-800 text-gray-400';
+            });
+            const activeBtn = document.getElementById(`d-lesson-${id}`);
+            if(activeBtn) activeBtn.className = 'w-full text-right px-3 py-3 rounded-lg text-sm mb-1 transition flex items-center gap-3 bg-dark-800 text-brand-blue font-bold shadow-sm';
+
+            // Scroll to top
+            document.getElementById('mainView').scrollTop = 0;
+        }
+
+        // --- Mobile Tabs Logic ---
+        function switchTab(tab) {
+            const mainView = document.getElementById('mainView');
+            const chatView = document.getElementById('chatView');
+            const tabLessons = document.getElementById('tabLessons');
+            const tabChat = document.getElementById('tabChat');
+            const floatBtn = document.getElementById('floatingLessonBtn');
+
+            if (tab === 'lessons') {
+                mainView.classList.remove('hidden');
+                chatView.classList.add('hidden');
+                
+                // Styling
+                tabLessons.classList.add('text-brand-blue');
+                tabLessons.classList.remove('text-gray-500');
+                tabChat.classList.add('text-gray-500');
+                tabChat.classList.remove('text-brand-blue');
+                
+                // Show Floating Button
+                floatBtn.classList.remove('hidden');
+            } else {
+                mainView.classList.add('hidden');
+                chatView.classList.remove('hidden');
+                chatView.classList.add('flex'); // Ensure flex is added back
+
+                // Styling
+                tabChat.classList.add('text-brand-blue');
+                tabChat.classList.remove('text-gray-500');
+                tabLessons.classList.add('text-gray-500');
+                tabLessons.classList.remove('text-brand-blue');
+
+                // Hide Floating Button
+                floatBtn.classList.add('hidden');
+            }
+        }
+
+        function toggleLessonModal() {
+            const modal = document.getElementById('lessonModal');
+            modal.classList.toggle('hidden');
+        }
+
+        // --- Chat Logic ---
         let isTyping = false;
 
-        function quickAsk(msg) {
+        function setQuickMsg(msg) {
             document.getElementById('userMsg').value = msg;
+            autoResize(document.getElementById('userMsg'));
             sendMessage();
         }
 
+        function autoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = el.scrollHeight + 'px';
+        }
+
         function handleEnter(e) {
-            if(e.key === 'Enter') sendMessage();
+            if(e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
         }
 
         async function sendMessage() {
@@ -347,74 +476,179 @@ myscript/          <-- اسم مجلد السكربت
             const text = input.value.trim();
             if(!text) return;
 
-            addMessage(text, 'user');
+            // Add User Message
+            addBubble(text, 'user');
             input.value = '';
-            
+            input.style.height = 'auto'; // Reset height
+
+            // AI Logic
             isTyping = true;
             const typingId = addTypingIndicator();
 
             try {
                 const response = await callGemini(text);
-                removeMessage(typingId);
-                addMessage(response, 'omar');
+                removeBubble(typingId);
+                addBubble(response, 'ai');
             } catch (error) {
-                removeMessage(typingId);
-                addMessage("معليش يا وحش، صار خطأ في الاتصال. جرب مرة ثانية! 🔌", 'omar');
-                console.error(error);
+                removeBubble(typingId);
+                addBubble("معليش يا غالي، صار عندي مشكلة في الاتصال 🔌. جرب مرة ثانية.", 'ai');
             } finally {
                 isTyping = false;
             }
         }
 
-        function addMessage(text, sender) {
+        function addBubble(text, type) {
             const div = document.createElement('div');
-            div.className = `chat-bubble ${sender === 'user' ? 'chat-user' : 'chat-omar'} fade-in`;
+            div.className = `bubble bubble-${type}`;
             
-            if(sender === 'omar') {
-                // Parse Markdown for code blocks
+            if(type === 'ai') {
+                // Parse markdown
                 div.innerHTML = marked.parse(text);
+                // Re-apply copy buttons to new code blocks
+                setTimeout(() => {
+                    div.querySelectorAll('pre code').forEach(block => {
+                        const pre = block.parentElement;
+                        if (!pre.querySelector('.copy-btn')) {
+                            const btn = document.createElement('button');
+                            btn.className = 'copy-btn';
+                            btn.innerText = 'نسخ';
+                            btn.onclick = function() { copyCode(this); };
+                            pre.appendChild(btn);
+                        }
+                    });
+                }, 100);
             } else {
                 div.innerText = text;
             }
-            
-            const chatBox = document.getElementById('chatHistory');
-            chatBox.appendChild(div);
-            chatBox.scrollTop = chatBox.scrollHeight;
+
+            document.getElementById('chatHistory').appendChild(div);
+            scrollToBottom();
             return div;
         }
 
         function addTypingIndicator() {
+            const id = 'typing-' + Date.now();
             const div = document.createElement('div');
-            div.className = 'chat-bubble chat-omar text-xs text-gray-400 animate-pulse';
-            div.innerText = 'عمر يكتب الكود...';
-            div.id = 'typingIndicator';
+            div.id = id;
+            div.className = 'bubble bubble-ai text-gray-500 text-xs italic';
+            div.innerText = 'عمر قاعد يكتب الكود...';
             document.getElementById('chatHistory').appendChild(div);
-            document.getElementById('chatHistory').scrollTop = document.getElementById('chatHistory').scrollHeight;
-            return 'typingIndicator';
+            scrollToBottom();
+            return id;
         }
 
-        function removeMessage(id) {
+        function removeBubble(id) {
             const el = document.getElementById(id);
             if(el) el.remove();
         }
 
-        async function callGemini(prompt) {
-            const systemPrompt = `
+        function scrollToBottom() {
+            const chatHistory = document.getElementById('chatHistory');
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function copyCode(btn) {
+            const code = btn.previousElementSibling.innerText;
+            navigator.clipboard.writeText(code);
+            const originalText = btn.innerText;
+            btn.innerText = "تم النسخ!";
+            setTimeout(() => btn.innerText = originalText, 2000);
+        }
+
+        // --- NEW FEATURES: Quiz & Ideas ---
+
+        function generateIdea() {
+            switchTab('chat');
+            setQuickMsg('اقترح لي فكرة مشروع سكربت بسيط للمبتدئين مع شرح المنطق حقه.');
+        }
+
+        async function startQuiz(lessonTitle) {
+            const container = document.getElementById('quizContainer');
+            const content = document.getElementById('quizContent');
+            container.classList.remove('hidden');
+            
+            content.innerHTML = `
+                <div class="flex flex-col items-center py-8">
+                    <i class="fas fa-circle-notch fa-spin text-3xl text-brand-blue mb-3"></i>
+                    <span class="text-sm text-gray-400">عمر يكتب السؤال عن "${lessonTitle}"...</span>
+                </div>
+            `;
+
+            try {
+                // Prompt Gemini for JSON
+                const prompt = `
+                    Generate a multiple-choice question in Arabic about the FiveM coding topic: "${lessonTitle}".
+                    Format: JSON object with keys: "question" (string), "options" (array of 4 strings), "correctIndex" (0-3 number).
+                    Ensure the output is valid JSON only.
+                `;
+                
+                const responseText = await callGemini(prompt, true); // true = raw text requested, we handle parsing
+                
+                // Extract JSON from response (remove markdown fences if any)
+                const jsonStr = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+                const quizData = JSON.parse(jsonStr);
+
+                renderQuiz(quizData);
+
+            } catch (e) {
+                console.error(e);
+                content.innerHTML = `<div class="text-red-400 text-center">صار خطأ في توليد السؤال. جرب مرة ثانية.</div>`;
+            }
+        }
+
+        function renderQuiz(data) {
+            const content = document.getElementById('quizContent');
+            let optionsHTML = '';
+            
+            data.options.forEach((opt, idx) => {
+                optionsHTML += `
+                    <button onclick="checkAnswer(this, ${idx}, ${data.correctIndex})" class="quiz-option w-full text-right p-3 rounded-lg bg-dark-700 text-sm mb-2">
+                        ${opt}
+                    </button>
+                `;
+            });
+
+            content.innerHTML = `
+                <div class="text-white font-bold mb-4 text-lg leading-relaxed">${data.question}</div>
+                <div class="space-y-2">${optionsHTML}</div>
+                <div id="quizResult" class="mt-4 text-center font-bold h-6"></div>
+            `;
+        }
+
+        function checkAnswer(btn, selectedIdx, correctIdx) {
+            const resultDiv = document.getElementById('quizResult');
+            const allBtns = document.querySelectorAll('.quiz-option');
+            
+            // Disable all buttons
+            allBtns.forEach(b => b.disabled = true);
+
+            if (selectedIdx === correctIdx) {
+                btn.classList.add('correct');
+                resultDiv.innerHTML = '<span class="text-green-400">كفو! إجابة صحيحة 🎉</span>';
+            } else {
+                btn.classList.add('wrong');
+                allBtns[correctIdx].classList.add('correct'); // Show correct one
+                resultDiv.innerHTML = '<span class="text-red-400">للأسف خطأ، الجواب الصحيح هو المحدد بالأخضر 😅</span>';
+            }
+        }
+
+        function closeQuiz() {
+            document.getElementById('quizContainer').classList.add('hidden');
+        }
+
+        // --- GEMINI CORE ---
+
+        async function callGemini(prompt, isJsonMode = false) {
+            const systemPrompt = isJsonMode ? 
+                `You are a JSON generator. Respond ONLY with valid JSON. No markdown.` :
+                `
                 أنت "عمر"، مبرمج خبير في FiveM ومعلم للمبتدئين.
                 لغتك: عربية (لهجة سعودية/خليجية ودية).
                 مهمتك: تعليم المستخدم برمجة Lua لـ FiveM.
-                
                 قواعد الرد:
-                1. اشرح المفاهيم ببساطة كأنك تشرح لصديقك.
-                2. إذا طلب كود، اكتبه داخل Markdown Code Block مع تعليقات تشرح الكود بالعربي.
-                3. ركز على Natives المشهورة وكيفية استخدام Events.
-                4. إذا سألك عن خطأ (Error)، اشرح سببه وكيف يحله.
-                5. لا تخرج عن موضوع البرمجة وفايف ام.
-                
-                أمثلة للرد:
-                - "أبشر بعزك! هذا الكود عشان ترسبن سيارة.."
-                - "يا غالي، نسيت تحط 'end' في آخر الفانكشن."
-                - "شوف، الـ Client ما يقدر يكلم الداتابيس مباشرة، لازم يكلم السيرفر أول."
+                1. اشرح المفاهيم ببساطة.
+                2. عند كتابة كود، ضعه دائماً داخل Markdown Code Block.
+                3. كن مشجعاً ومرحاً.
             `;
 
             const response = await fetch(
@@ -424,7 +658,8 @@ myscript/          <-- اسم مجلد السكربت
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [{ parts: [{ text: prompt }] }],
-                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                        systemInstruction: { parts: [{ text: systemPrompt }] },
+                        generationConfig: isJsonMode ? { responseMimeType: "application/json" } : {}
                     })
                 }
             );
@@ -434,9 +669,8 @@ myscript/          <-- اسم مجلد السكربت
             return data.candidates[0].content.parts[0].text;
         }
 
-        // Load first lesson
-        renderLessons();
-        loadLesson(1);
+        // Init
+        init();
 
     </script>
 </body>
