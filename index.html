@@ -24,6 +24,10 @@
                             blue: '#3b82f6',
                             purple: '#8b5cf6',
                             green: '#10b981',
+                            red: '#ef4444',
+                            yellow: '#f59e0b',
+                            pink: '#ec4899',
+                            cyan: '#06b6d4'
                         }
                     },
                     fontFamily: {
@@ -51,7 +55,6 @@
         }
         code { font-family: 'Consolas', monospace; color: #a5f3fc; font-size: 0.9rem; }
         
-        /* Copy Button */
         .copy-btn {
             position: absolute;
             top: 5px;
@@ -73,42 +76,60 @@
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
         
         /* Chat Bubbles */
-        .chat-container { padding-bottom: 80px; } /* Space for input */
+        .chat-container { padding-bottom: 80px; }
         .bubble { max-width: 85%; padding: 12px; border-radius: 16px; margin-bottom: 12px; font-size: 0.95rem; line-height: 1.5; position: relative; animation: slideUp 0.3s ease-out; }
         .bubble-user { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; align-self: flex-end; border-bottom-left-radius: 4px; }
         .bubble-ai { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; align-self: flex-start; border-bottom-right-radius: 4px; }
         
+        /* Special Cards */
+        .native-card { border-left: 4px solid #f59e0b; background: #2a2f3e; padding: 10px; border-radius: 8px; margin-top: 5px; }
+        .native-title { font-family: 'Consolas', monospace; color: #fcd34d; font-weight: bold; font-size: 1.1em; }
+        
+        .doctor-card { border-top: 4px solid #ef4444; background: #2a2f3e; padding: 15px; border-radius: 8px; }
+        .score-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-weight: bold; font-size: 0.8em; }
+        .score-high { background: #065f46; color: #6ee7b7; }
+        .score-med { background: #78350f; color: #fcd34d; }
+        .score-low { background: #7f1d1d; color: #fca5a5; }
+
+        .scenario-card { border-right: 4px solid #ec4899; background: #2a2f3e; padding: 15px; border-radius: 8px; }
+        .step-item { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+        .step-num { background: #ec4899; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7em; flex-shrink: 0; margin-top: 3px; }
+
+        /* NUI Preview Styles - UPDATED */
+        .nui-card { border-bottom: 4px solid #06b6d4; background: #2a2f3e; padding: 15px; border-radius: 8px; width: 100%; }
+        .nui-container {
+            width: 100%;
+            height: 350px;
+            background-color: #333;
+            background-image: 
+                linear-gradient(45deg, #444 25%, transparent 25%), 
+                linear-gradient(-45deg, #444 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #444 75%), 
+                linear-gradient(-45deg, transparent 75%, #444 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 10px;
+            border: 1px solid #555;
+        }
+
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Quiz Styles */
-        .quiz-option {
-            transition: all 0.2s;
-            border: 1px solid #334155;
-        }
-        .quiz-option:hover {
-            background-color: #334155;
-        }
-        .quiz-option.correct {
-            background-color: #065f46; /* Green-900 */
-            border-color: #10b981;
-        }
-        .quiz-option.wrong {
-            background-color: #7f1d1d; /* Red-900 */
-            border-color: #ef4444;
-        }
+        .quiz-option { transition: all 0.2s; border: 1px solid #334155; }
+        .quiz-option:hover { background-color: #334155; }
+        .quiz-option.correct { background-color: #065f46; border-color: #10b981; }
+        .quiz-option.wrong { background-color: #7f1d1d; border-color: #ef4444; }
 
-        /* Mobile specific adjustments */
         .mobile-view-hidden { display: none; }
         .mobile-view-active { display: flex; flex-direction: column; height: 100%; }
-        
-        @media (min-width: 768px) {
-            .mobile-view-hidden { display: flex; } /* Reset for desktop */
-        }
+        @media (min-width: 768px) { .mobile-view-hidden { display: flex; } }
     </style>
 </head>
 <body class="h-[100dvh] flex flex-col">
 
-    <!-- Header (Responsive) -->
+    <!-- Header -->
     <header class="bg-dark-800 border-b border-dark-700 h-16 flex items-center justify-between px-4 md:px-6 shrink-0 z-30 shadow-md">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
@@ -119,8 +140,6 @@
                 <p class="text-[10px] text-gray-400">تعلم برمجة FiveM من الصفر</p>
             </div>
         </div>
-        
-        <!-- Desktop: Status Indicator -->
         <div class="hidden md:flex items-center gap-2 bg-dark-900 px-3 py-1 rounded-full border border-dark-700">
             <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <span class="text-xs text-gray-300">عمر متصل</span>
@@ -130,28 +149,38 @@
     <!-- Main Layout -->
     <div class="flex-1 flex overflow-hidden relative">
         
-        <!-- 1. LESSONS LIST (Sidebar) - Desktop Only -->
+        <!-- Sidebar -->
         <aside class="hidden md:flex w-64 bg-dark-900 border-l border-dark-700 flex-col shrink-0">
             <div class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">المنهج الدراسي</div>
             <nav id="desktopLessonList" class="flex-1 overflow-y-auto px-2 space-y-1">
                 <!-- Lessons injected via JS -->
             </nav>
             
-            <!-- Idea Generator Button -->
-            <div class="p-4 border-t border-dark-700">
-                <button onclick="generateIdea()" class="w-full bg-dark-800 hover:bg-dark-700 text-brand-purple border border-dark-600 border-dashed rounded-lg p-3 text-sm font-bold flex items-center justify-center gap-2 transition group">
-                    <i class="fas fa-lightbulb group-hover:text-yellow-400 transition-colors"></i> اقترح فكرة مشروع
+            <!-- Tools Section -->
+            <div class="p-4 border-t border-dark-700 space-y-2 overflow-y-auto max-h-64 custom-scroll">
+                <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">أدوات ذكية</div>
+                <button onclick="activateTool('native')" class="w-full bg-dark-800 hover:bg-dark-700 text-brand-yellow border border-dark-600 border-dashed rounded-lg p-2 text-xs font-bold flex items-center gap-2 transition">
+                    <i class="fas fa-search"></i> باحث النيتفز
+                </button>
+                <button onclick="activateTool('doctor')" class="w-full bg-dark-800 hover:bg-dark-700 text-brand-red border border-dark-600 border-dashed rounded-lg p-2 text-xs font-bold flex items-center gap-2 transition">
+                    <i class="fas fa-user-md"></i> طبيب الكود
+                </button>
+                <button onclick="activateTool('scenario')" class="w-full bg-dark-800 hover:bg-dark-700 text-brand-pink border border-dark-600 border-dashed rounded-lg p-2 text-xs font-bold flex items-center gap-2 transition">
+                    <i class="fas fa-project-diagram"></i> مهندس السيناريو
+                </button>
+                <button onclick="activateTool('nui')" class="w-full bg-dark-800 hover:bg-dark-700 text-brand-cyan border border-dark-600 border-dashed rounded-lg p-2 text-xs font-bold flex items-center gap-2 transition">
+                    <i class="fas fa-palette"></i> مصمم الواجهات (NUI)
                 </button>
             </div>
         </aside>
 
-        <!-- 2. MAIN CONTENT (Lesson View) -->
+        <!-- Main Content -->
         <main id="mainView" class="flex-1 bg-dark-900 overflow-y-auto relative w-full mobile-view-active">
             <div id="lessonContent" class="max-w-4xl mx-auto p-4 md:p-8 pb-24 md:pb-8">
                 <!-- Content injected via JS -->
             </div>
             
-            <!-- Quiz Container (Hidden by default) -->
+            <!-- Quiz Modal -->
             <div id="quizContainer" class="hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                 <div class="bg-dark-800 w-full max-w-md rounded-2xl border border-dark-700 shadow-2xl overflow-hidden relative">
                     <button onclick="closeQuiz()" class="absolute top-4 left-4 text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
@@ -160,21 +189,14 @@
                             <i class="fas fa-brain text-brand-purple text-xl"></i>
                         </div>
                         <h3 class="text-xl font-bold text-center mb-2">اختبر فهمك</h3>
-                        <p class="text-gray-400 text-xs text-center mb-6">سؤال سريع مولد بالذكاء الاصطناعي عن الدرس الحالي</p>
-                        
-                        <div id="quizContent" class="space-y-4">
-                            <!-- Loading State -->
-                            <div class="flex flex-col items-center py-8">
-                                <i class="fas fa-circle-notch fa-spin text-3xl text-brand-blue mb-3"></i>
-                                <span class="text-sm text-gray-400">عمر يكتب السؤال...</span>
-                            </div>
-                        </div>
+                        <p class="text-gray-400 text-xs text-center mb-6">سؤال سريع مولد بالذكاء الاصطناعي</p>
+                        <div id="quizContent" class="space-y-4"></div>
                     </div>
                 </div>
             </div>
         </main>
 
-        <!-- 3. OMAR CHAT (Sidebar on Desktop, Full View on Mobile) -->
+        <!-- Chat Sidebar -->
         <aside id="chatView" class="hidden md:flex md:w-96 bg-dark-800 border-r border-dark-700 flex-col absolute md:relative inset-0 z-20 md:z-auto">
             
             <!-- Chat Header (Mobile Only) -->
@@ -186,12 +208,17 @@
                 </div>
             </div>
 
+            <!-- Active Tool Indicator -->
+            <div id="activeToolBanner" class="hidden bg-dark-900 border-b p-2 flex items-center justify-between">
+                <span id="toolName" class="text-xs font-bold flex items-center gap-2"></span>
+                <button onclick="cancelTool()" class="text-xs text-gray-400 hover:text-white"><i class="fas fa-times"></i> إلغاء</button>
+            </div>
+
             <!-- Messages Area -->
             <div id="chatHistory" class="flex-1 overflow-y-auto p-4 flex flex-col bg-dark-900/50 chat-container custom-scroll">
                 <div class="bubble bubble-ai">
                     حياك الله يا بطل! 🫡 <br>
-                    أنا عمر، موجود هنا عشان أساعدك في أي سطر كود ما فهمته، أو إذا واجهك خطأ (Error) يرفع الضغط.<br><br>
-                    بس انسخ الكود وارسله لي، أو اسألني أي سؤال في بالك!
+                    أنا عمر، موجود هنا عشان أساعدك. اختر أداة من القائمة أو اسألني مباشرة.
                 </div>
             </div>
 
@@ -199,9 +226,9 @@
             <div class="p-3 bg-dark-800 border-t border-dark-700 shrink-0">
                 <!-- Quick Suggestions -->
                 <div class="flex gap-2 overflow-x-auto pb-3 mb-1 custom-scroll no-scrollbar">
-                    <button onclick="setQuickMsg('كيف اسوي سيارة؟')" class="text-[10px] bg-dark-700 px-3 py-1.5 rounded-full text-gray-300 whitespace-nowrap border border-dark-600 hover:bg-dark-600 transition">🚗 كيف اسوي سيارة؟</button>
-                    <button onclick="setQuickMsg('اشرح لي الكود')" class="text-[10px] bg-dark-700 px-3 py-1.5 rounded-full text-gray-300 whitespace-nowrap border border-dark-600 hover:bg-dark-600 transition">🧐 اشرح لي الكود</button>
-                    <button onclick="generateIdea()" class="text-[10px] bg-dark-700 px-3 py-1.5 rounded-full text-brand-purple whitespace-nowrap border border-brand-purple/30 hover:bg-brand-purple/10 transition"><i class="fas fa-lightbulb"></i> فكرة مشروع</button>
+                    <button onclick="activateTool('native')" class="text-[10px] bg-dark-700 px-3 py-1.5 rounded-full text-brand-yellow whitespace-nowrap border border-brand-yellow/30 hover:bg-brand-yellow/10 transition"><i class="fas fa-search"></i> باحث النيتفز</button>
+                    <button onclick="activateTool('scenario')" class="text-[10px] bg-dark-700 px-3 py-1.5 rounded-full text-brand-pink whitespace-nowrap border border-brand-pink/30 hover:bg-brand-pink/10 transition"><i class="fas fa-project-diagram"></i> مهندس السيناريو</button>
+                    <button onclick="activateTool('nui')" class="text-[10px] bg-dark-700 px-3 py-1.5 rounded-full text-brand-cyan whitespace-nowrap border border-brand-cyan/30 hover:bg-brand-cyan/10 transition"><i class="fas fa-palette"></i> مصمم NUI</button>
                 </div>
 
                 <div class="flex gap-2 items-end">
@@ -215,15 +242,13 @@
 
     </div>
 
-    <!-- 4. BOTTOM NAVIGATION (Mobile Only) -->
+    <!-- Mobile Nav -->
     <nav class="md:hidden h-16 bg-dark-800 border-t border-dark-700 flex justify-around items-center shrink-0 z-40 pb-safe">
         <button onclick="switchTab('lessons')" id="tabLessons" class="flex flex-col items-center gap-1 text-brand-blue w-full h-full justify-center transition active:scale-95">
             <i class="fas fa-book-open text-xl mb-0.5"></i>
             <span class="text-[10px] font-medium">الدروس</span>
         </button>
-        
         <div class="w-px h-8 bg-dark-700"></div>
-
         <button onclick="switchTab('chat')" id="tabChat" class="flex flex-col items-center gap-1 text-gray-500 w-full h-full justify-center transition active:scale-95">
             <i class="fas fa-comment-alt text-xl mb-0.5 relative">
                 <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-dark-800"></span>
@@ -232,183 +257,88 @@
         </button>
     </nav>
     
-    <!-- Lesson Selector Modal (Mobile) -->
+    <!-- Mobile Lesson Modal -->
     <div id="lessonModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end md:hidden">
         <div class="bg-dark-800 w-full rounded-t-2xl max-h-[70vh] flex flex-col animate-[slideUp_0.3s_ease-out]">
             <div class="p-4 border-b border-dark-700 flex justify-between items-center">
                 <h3 class="font-bold text-lg">اختر الدرس</h3>
                 <button onclick="toggleLessonModal()" class="w-8 h-8 rounded-full bg-dark-700 flex items-center justify-center"><i class="fas fa-times"></i></button>
             </div>
-            <div class="p-2 overflow-y-auto" id="mobileLessonList">
-                <!-- Mobile lessons injected here -->
-            </div>
+            <div class="p-2 overflow-y-auto" id="mobileLessonList"></div>
         </div>
     </div>
 
-    <!-- Floating Lesson Button (Mobile Lesson View Only) -->
+    <!-- API Key Modal (Emergency Only) -->
+    <div id="keyModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-dark-800 w-full max-w-sm p-6 rounded-xl border border-red-500/50 shadow-2xl">
+            <h3 class="text-xl font-bold mb-2 text-red-400"><i class="fas fa-exclamation-triangle"></i> مشكلة في المفتاح</h3>
+            <p class="text-sm text-gray-300 mb-4">مفتاح الذكاء الاصطناعي منتهي أو غير صالح. يرجى إدخال مفتاح جديد للمتابعة.</p>
+            <input type="password" id="emergencyKeyInput" class="w-full bg-dark-900 border border-dark-600 rounded p-2 text-white mb-4 focus:border-brand-blue outline-none" placeholder="ألصق مفتاح Gemini API هنا">
+            <button onclick="saveEmergencyKey()" class="w-full bg-brand-blue hover:bg-blue-600 p-2 rounded font-bold">حفظ ومتابعة</button>
+        </div>
+    </div>
+
+    <!-- Floating Btn -->
     <button id="floatingLessonBtn" onclick="toggleLessonModal()" class="md:hidden fixed bottom-20 left-4 bg-dark-800 border border-dark-600 text-white px-4 py-2 rounded-full shadow-xl z-30 flex items-center gap-2 text-sm font-bold backdrop-blur">
         <i class="fas fa-list-ul text-brand-blue"></i> قائمة الدروس
     </button>
 
     <script>
+        // --- Configuration ---
+        const defaultKey = ""; // Empty as per system instructions
+        // We check for a stored user key, otherwise fallback to the one user provided in previous turn if not stored.
+        // For robustness in this demo environment, I'll use a variable that checks localStorage first.
+        let activeTool = null; 
+
+        function getApiKey() {
+            return localStorage.getItem('gemini_api_key') || "AIzaSyDIZ-c5Br5QSoT3W8LGGy2d5-oISvjyD2w";
+        }
+
         // --- Data ---
         const lessons = [
-            {
-                id: 1,
-                title: "1. المقدمة: وش هي فايف ام؟",
-                content: `
-                    <h1 class="text-3xl font-bold text-blue-400 mb-4">بداية الطريق 🚀</h1>
-                    <p class="text-gray-300 mb-4 leading-relaxed">
-                        حياك الله يا وحش! تبي تصير مبرمج في فايف ام؟ وصلت للمكان الصح.
-                        <br>
-                        <strong>FiveM</strong> باختصار هو منصة تسمح لك تعدل على GTA V وتضيف سيارات، ملابس، وأنظمة لعب كاملة (Roleplay).
-                    </p>
-                    <div class="bg-dark-800 p-4 rounded-xl border border-dark-700 mb-6">
-                        <h3 class="font-bold text-white mb-2 flex items-center gap-2"><i class="fas fa-info-circle text-blue-500"></i> معلومة عالطاير</h3>
-                        <p class="text-sm text-gray-400">لغة البرمجة اللي بنستخدمها هي <strong>Lua</strong>. لغة خفيفة وسهلة جداً، يعني لا تشيل هم التعقيد.</p>
-                    </div>
-                `
-            },
-            {
-                id: 2,
-                title: "2. شرح ملف fxmanifest.lua",
-                content: `
-                    <h1 class="text-2xl font-bold text-blue-400 mb-4">هوية السكربت 🆔</h1>
-                    <p class="text-gray-300 mb-4">
-                        أي سكربت تسويه لازم يكون له "بطاقة تعريف" عشان السيرفر يتعرف عليه. هذا الملف اسمه <code>fxmanifest.lua</code>.
-                    </p>
-                    <p class="text-sm text-gray-400 mb-2">انسخ الكود هذا وحطه في ملفك الجديد:</p>
-                    <div class="relative">
-                        <pre><code>fx_version 'cerulean'
-game 'gta5'
-
-description 'My First Script'
-version '1.0.0'
-
-client_script 'client.lua'
-server_script 'server.lua'</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre>
-                    </div>
-                `
-            },
-            {
-                id: 3,
-                title: "3. كيف تطبع رسالة (Print)",
-                content: `
-                    <h1 class="text-2xl font-bold text-blue-400 mb-4">أول كود لك 💻</h1>
-                    <p class="text-gray-300 mb-4">
-                        عشان نتأكد أن السكربت شغال، نستخدم دالة الطباعة. هذي تطبع كلام في كونسول F8 داخل اللعبة.
-                    </p>
-                    <div class="relative">
-                        <pre><code>print('يا هلا والله! السكربت اشتغل بنجاح 🎉')
-
--- أمر ترحيبي
-RegisterCommand('hi', function()
-    print('مرحباً بك في السيرفر!')
-end, false)</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre>
-                    </div>
-                    <p class="text-sm text-gray-400 mt-4">جرب تدخل اللعبة وتضغط F8 وتكتب <code>hi</code> وشف وش يطلع لك!</p>
-                `
-            },
-            {
-                id: 4,
-                title: "4. صناعة سيارة (Native)",
-                content: `
-                    <h1 class="text-2xl font-bold text-blue-400 mb-4">كيف ترسبن سيارة؟ 🚗</h1>
-                    <p class="text-gray-300 mb-4">
-                        نستخدم شي اسمه <strong>Natives</strong> (أوامر جاهزة من اللعبة).
-                    </p>
-                    <div class="relative">
-                        <pre><code>RegisterCommand('car', function(source, args)
-    local vehicleName = args[1] or 'adder'
-    
-    -- طلب موديل السيارة
-    RequestModel(vehicleName)
-    while not HasModelLoaded(vehicleName) do
-        Wait(10)
-    end
-
-    -- إنشاء السيارة
-    local ped = PlayerPedId()
-    local pos = GetEntityCoords(ped)
-    local veh = CreateVehicle(vehicleName, pos.x, pos.y, pos.z, GetEntityHeading(ped), true, false)
-    
-    -- ركوب السيارة
-    SetPedIntoVehicle(ped, veh, -1)
-    
-    print('مبروك الموتر الجديد! 😎')
-end, false)</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre>
-                    </div>
-                `
-            }
+            { id: 1, title: "1. المقدمة: وش هي فايف ام؟", content: `<h1 class="text-3xl font-bold text-blue-400 mb-4">بداية الطريق 🚀</h1><p class="text-gray-300 mb-4 leading-relaxed">حياك الله يا وحش! تبي تصير مبرمج في فايف ام؟ وصلت للمكان الصح.<br><strong>FiveM</strong> باختصار هو منصة تسمح لك تعدل على GTA V وتضيف سيارات، ملابس، وأنظمة لعب كاملة (Roleplay).</p><div class="bg-dark-800 p-4 rounded-xl border border-dark-700 mb-6"><h3 class="font-bold text-white mb-2 flex items-center gap-2"><i class="fas fa-info-circle text-blue-500"></i> معلومة عالطاير</h3><p class="text-sm text-gray-400">لغة البرمجة اللي بنستخدمها هي <strong>Lua</strong>. لغة خفيفة وسهلة جداً، يعني لا تشيل هم التعقيد.</p></div>` },
+            { id: 2, title: "2. شرح ملف fxmanifest.lua", content: `<h1 class="text-2xl font-bold text-blue-400 mb-4">هوية السكربت 🆔</h1><p class="text-gray-300 mb-4">أي سكربت تسويه لازم يكون له "بطاقة تعريف" عشان السيرفر يتعرف عليه. هذا الملف اسمه <code>fxmanifest.lua</code>.</p><p class="text-sm text-gray-400 mb-2">انسخ الكود هذا وحطه في ملفك الجديد:</p><div class="relative"><pre><code>fx_version 'cerulean'\ngame 'gta5'\n\ndescription 'My First Script'\nversion '1.0.0'\n\nclient_script 'client.lua'\nserver_script 'server.lua'</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre></div>` },
+            { id: 3, title: "3. كيف تطبع رسالة (Print)", content: `<h1 class="text-2xl font-bold text-blue-400 mb-4">أول كود لك 💻</h1><p class="text-gray-300 mb-4">عشان نتأكد أن السكربت شغال، نستخدم دالة الطباعة. هذي تطبع كلام في كونسول F8 داخل اللعبة.</p><div class="relative"><pre><code>print('يا هلا والله! السكربت اشتغل بنجاح 🎉')\n\n-- أمر ترحيبي\nRegisterCommand('hi', function()\n    print('مرحباً بك في السيرفر!')\nend, false)</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre></div>` },
+            { id: 4, title: "4. صناعة سيارة (Native)", content: `<h1 class="text-2xl font-bold text-blue-400 mb-4">كيف ترسبن سيارة؟ 🚗</h1><p class="text-gray-300 mb-4">نستخدم شي اسمه <strong>Natives</strong> (أوامر جاهزة من اللعبة).</p><div class="relative"><pre><code>RegisterCommand('car', function(source, args)\n    local vehicleName = args[1] or 'adder'\n    \n    RequestModel(vehicleName)\n    while not HasModelLoaded(vehicleName) do\n        Wait(10)\n    end\n\n    local ped = PlayerPedId()\n    local pos = GetEntityCoords(ped)\n    local veh = CreateVehicle(vehicleName, pos.x, pos.y, pos.z, GetEntityHeading(ped), true, false)\n    \n    SetPedIntoVehicle(ped, veh, -1)\n    print('مبروك الموتر الجديد! 😎')\nend, false)</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre></div>` }
         ];
 
-        // --- Logic ---
-        let currentLessonId = 1;
-        const apiKey = "AIzaSyDIZ-c5Br5QSoT3W8LGGy2d5-oISvjyD2w";
-
+        // --- UI & Init ---
         function init() {
             renderLessonList();
             loadLesson(1);
         }
 
-        // Render Lessons for both Desktop Sidebar and Mobile Modal
         function renderLessonList() {
             const desktopList = document.getElementById('desktopLessonList');
             const mobileList = document.getElementById('mobileLessonList');
-            
             lessons.forEach(lesson => {
-                // Desktop Item
                 const dBtn = document.createElement('button');
                 dBtn.className = `w-full text-right px-3 py-3 rounded-lg text-sm mb-1 transition flex items-center gap-3 hover:bg-dark-800 ${lesson.id === 1 ? 'bg-dark-800 text-brand-blue font-bold' : 'text-gray-400'}`;
                 dBtn.id = `d-lesson-${lesson.id}`;
-                dBtn.innerHTML = `<i class="fas ${getIcon(lesson.id)} w-5 text-center"></i> ${lesson.title}`;
+                dBtn.innerHTML = `<i class="fas fa-book w-5 text-center"></i> ${lesson.title}`;
                 dBtn.onclick = () => loadLesson(lesson.id);
                 desktopList.appendChild(dBtn);
 
-                // Mobile Item
                 const mBtn = document.createElement('button');
                 mBtn.className = "w-full text-right p-4 border-b border-dark-700 text-gray-200 active:bg-dark-700 flex items-center gap-3";
-                mBtn.innerHTML = `<i class="fas ${getIcon(lesson.id)} text-brand-blue"></i> ${lesson.title}`;
+                mBtn.innerHTML = `<i class="fas fa-book text-brand-blue"></i> ${lesson.title}`;
                 mBtn.onclick = () => { loadLesson(lesson.id); toggleLessonModal(); };
                 mobileList.appendChild(mBtn);
             });
         }
 
-        function getIcon(id) {
-            const icons = ['fa-flag', 'fa-file-code', 'fa-terminal', 'fa-car'];
-            return icons[id-1] || 'fa-book';
-        }
-
         function loadLesson(id) {
-            currentLessonId = id;
             const lesson = lessons.find(l => l.id === id);
-            
-            // Render Content
             const container = document.getElementById('lessonContent');
-            
-            // Append Quiz Button
-            const quizBtnHTML = `
-                <div class="mt-8 pt-8 border-t border-dark-700">
-                    <button onclick="startQuiz('${lesson.title}')" class="w-full bg-gradient-to-r from-brand-purple to-brand-blue p-4 rounded-xl shadow-lg flex items-center justify-center gap-2 hover:opacity-90 transition font-bold text-white">
-                        <i class="fas fa-brain"></i> اختبر فهمك لهذا الدرس
-                    </button>
-                </div>
-            `;
-            
+            const quizBtnHTML = `<div class="mt-8 pt-8 border-t border-dark-700"><button onclick="startQuiz('${lesson.title}')" class="w-full bg-gradient-to-r from-brand-purple to-brand-blue p-4 rounded-xl shadow-lg flex items-center justify-center gap-2 hover:opacity-90 transition font-bold text-white"><i class="fas fa-brain"></i> اختبر فهمك لهذا الدرس</button></div>`;
             container.innerHTML = `<div class="animate-[slideUp_0.4s_ease-out]">${lesson.content}${quizBtnHTML}</div>`;
-
-            // Highlight Desktop Sidebar
-            document.querySelectorAll('#desktopLessonList button').forEach(b => {
-                b.className = 'w-full text-right px-3 py-3 rounded-lg text-sm mb-1 transition flex items-center gap-3 hover:bg-dark-800 text-gray-400';
-            });
+            
+            document.querySelectorAll('#desktopLessonList button').forEach(b => b.className = b.className.replace('bg-dark-800 text-brand-blue font-bold shadow-sm', '').replace('text-gray-400', 'text-gray-400'));
             const activeBtn = document.getElementById(`d-lesson-${id}`);
-            if(activeBtn) activeBtn.className = 'w-full text-right px-3 py-3 rounded-lg text-sm mb-1 transition flex items-center gap-3 bg-dark-800 text-brand-blue font-bold shadow-sm';
-
-            // Scroll to top
+            if(activeBtn) activeBtn.className = activeBtn.className.replace('text-gray-400', 'bg-dark-800 text-brand-blue font-bold shadow-sm');
             document.getElementById('mainView').scrollTop = 0;
         }
 
-        // --- Mobile Tabs Logic ---
         function switchTab(tab) {
             const mainView = document.getElementById('mainView');
             const chatView = document.getElementById('chatView');
@@ -417,58 +347,59 @@ end, false)</code><button class="copy-btn" onclick="copyCode(this)">نسخ</butt
             const floatBtn = document.getElementById('floatingLessonBtn');
 
             if (tab === 'lessons') {
-                mainView.classList.remove('hidden');
-                chatView.classList.add('hidden');
-                
-                // Styling
-                tabLessons.classList.add('text-brand-blue');
-                tabLessons.classList.remove('text-gray-500');
-                tabChat.classList.add('text-gray-500');
-                tabChat.classList.remove('text-brand-blue');
-                
-                // Show Floating Button
+                mainView.classList.remove('hidden'); chatView.classList.add('hidden');
+                tabLessons.classList.add('text-brand-blue'); tabChat.classList.remove('text-brand-blue');
                 floatBtn.classList.remove('hidden');
             } else {
-                mainView.classList.add('hidden');
-                chatView.classList.remove('hidden');
-                chatView.classList.add('flex'); // Ensure flex is added back
-
-                // Styling
-                tabChat.classList.add('text-brand-blue');
-                tabChat.classList.remove('text-gray-500');
-                tabLessons.classList.add('text-gray-500');
-                tabLessons.classList.remove('text-brand-blue');
-
-                // Hide Floating Button
+                mainView.classList.add('hidden'); chatView.classList.remove('hidden'); chatView.classList.add('flex');
+                tabChat.classList.add('text-brand-blue'); tabLessons.classList.remove('text-brand-blue');
                 floatBtn.classList.add('hidden');
             }
         }
+        function toggleLessonModal() { document.getElementById('lessonModal').classList.toggle('hidden'); }
 
-        function toggleLessonModal() {
-            const modal = document.getElementById('lessonModal');
-            modal.classList.toggle('hidden');
-        }
+        // --- Tools Logic ---
+        function activateTool(tool) {
+            activeTool = tool;
+            switchTab('chat');
+            const banner = document.getElementById('activeToolBanner');
+            const bannerText = document.getElementById('toolName');
+            banner.classList.remove('hidden');
+            
+            let colorClass = 'brand-yellow'; let icon = 'fa-search'; let title = ''; let msg = '';
 
-        // --- Chat Logic ---
-        let isTyping = false;
-
-        function setQuickMsg(msg) {
-            document.getElementById('userMsg').value = msg;
-            autoResize(document.getElementById('userMsg'));
-            sendMessage();
-        }
-
-        function autoResize(el) {
-            el.style.height = 'auto';
-            el.style.height = el.scrollHeight + 'px';
-        }
-
-        function handleEnter(e) {
-            if(e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
+            if (tool === 'native') {
+                colorClass = 'brand-yellow'; icon = 'fa-search'; title = 'باحث النيتفز';
+                msg = 'أدخل وصف الأمر الذي تبحث عنه (مثلاً: "إصلاح السيارة" أو "إخفاء اللاعب").';
+            } else if (tool === 'doctor') {
+                colorClass = 'brand-red'; icon = 'fa-user-md'; title = 'طبيب الكود';
+                msg = 'أرسل لي الكود الذي يحتوي على مشاكل وسأقوم بفحصه لك.';
+            } else if (tool === 'scenario') {
+                colorClass = 'brand-pink'; icon = 'fa-project-diagram'; title = 'مهندس السيناريو';
+                msg = 'اشرح لي فكرة السكربت أو السيناريو وسأقوم بتخطيطه لك.';
+            } else if (tool === 'nui') {
+                colorClass = 'brand-cyan'; icon = 'fa-palette'; title = 'مصمم الواجهات';
+                msg = 'صف لي شكل الواجهة التي تريدها وسأقوم بتصميمها لك.';
             }
+
+            banner.className = `bg-dark-900 border-b border-${colorClass} p-2 flex items-center justify-between`;
+            bannerText.innerHTML = `<i class="fas ${icon}"></i> ${title} مفعل`;
+            bannerText.className = `text-xs font-bold text-${colorClass} flex items-center gap-2`;
+            addBubble(msg, 'ai');
         }
+
+        function cancelTool() {
+            activeTool = null;
+            document.getElementById('activeToolBanner').classList.add('hidden');
+            addBubble('تم إلغاء الأداة. عدنا للدردشة العادية.', 'ai');
+        }
+
+        // --- Chat & AI ---
+        let isTyping = false;
+        function setQuickMsg(msg) { document.getElementById('userMsg').value = msg; autoResize(document.getElementById('userMsg')); sendMessage(); }
+        function autoResize(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+        function handleEnter(e) { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+        function copyCode(btn) { navigator.clipboard.writeText(btn.previousElementSibling.innerText); btn.innerText = "تم النسخ!"; setTimeout(() => btn.innerText = "نسخ", 2000); }
 
         async function sendMessage() {
             if(isTyping) return;
@@ -476,202 +407,198 @@ end, false)</code><button class="copy-btn" onclick="copyCode(this)">نسخ</butt
             const text = input.value.trim();
             if(!text) return;
 
-            // Add User Message
             addBubble(text, 'user');
-            input.value = '';
-            input.style.height = 'auto'; // Reset height
-
-            // AI Logic
+            input.value = ''; input.style.height = 'auto';
             isTyping = true;
             const typingId = addTypingIndicator();
 
             try {
-                const response = await callGemini(text);
+                let systemPrompt = ""; let jsonMode = false; let userPrompt = text;
+
+                if (activeTool === 'native') {
+                    jsonMode = true;
+                    systemPrompt = `You are a FiveM Native Search Engine. User asks for functionality. Return JSON: "nativeName" (string), "description" (Arabic string), "exampleCode" (Lua string code block). Return ONLY JSON.`;
+                } else if (activeTool === 'doctor') {
+                    jsonMode = true;
+                    systemPrompt = `You are a Code Doctor for FiveM Lua. User provides code. Return JSON: "rating" (number 1-10), "summary" (Arabic string), "fixedCode" (Lua string), "issues" (array of Arabic strings). Return ONLY JSON.`;
+                } else if (activeTool === 'scenario') {
+                    jsonMode = true;
+                    systemPrompt = `You are a FiveM Scenario Architect. User describes a gameplay scenario. Return JSON: "title" (Arabic string), "steps" (array of objects with "step" (Arabic string) and "tech" (technical details like Event Name or Native)). Return ONLY JSON.`;
+                } else if (activeTool === 'nui') {
+                    jsonMode = true;
+                    systemPrompt = `You are a FiveM NUI Designer. User describes a UI. Return JSON: "html" (string with just the component HTML), "css" (string with CSS styles). Ensure CSS makes it visible, centered. Return ONLY JSON.`;
+                } else {
+                    systemPrompt = `أنت "عمر"، مبرمج خبير في FiveM ومعلم للمبتدئين. لغتك: عربية ودية. اشرح المفاهيم ببساطة. عند كتابة كود، ضعه في Markdown Code Block.`;
+                }
+
+                const response = await callGemini(userPrompt, systemPrompt, jsonMode);
                 removeBubble(typingId);
-                addBubble(response, 'ai');
+
+                if (jsonMode) {
+                    const cleanJson = response.replace(/```json/g, '').replace(/```/g, '').trim();
+                    const data = JSON.parse(cleanJson);
+                    
+                    if (activeTool === 'native') {
+                        const html = `<div class="native-card"><div class="native-title">${data.nativeName}</div><div class="text-sm text-gray-300 mb-2">${data.description}</div><pre><code>${data.exampleCode}</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre></div>`;
+                        addBubbleHtml(html, 'ai');
+                    } else if (activeTool === 'doctor') {
+                        let badgeClass = data.rating >= 8 ? 'score-high' : (data.rating >= 5 ? 'score-med' : 'score-low');
+                        const html = `<div class="doctor-card"><div class="flex justify-between items-center mb-2"><h4 class="font-bold text-white">التقرير الطبي</h4><span class="score-badge ${badgeClass}">التقييم: ${data.rating}/10</span></div><p class="text-sm text-gray-300 mb-3">${data.summary}</p><div class="mb-2 text-xs font-bold text-gray-400">الأخطاء:</div><ul class="list-disc list-inside text-xs text-red-300 mb-3">${data.issues.map(i => `<li>${i}</li>`).join('')}</ul><div class="text-xs font-bold text-gray-400 mb-1">الكود المصحح:</div><pre><code>${data.fixedCode}</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre></div>`;
+                        addBubbleHtml(html, 'ai');
+                    } else if (activeTool === 'scenario') {
+                        const stepsHtml = data.steps.map((s, i) => `<div class="step-item"><div class="step-num">${i+1}</div><div><div class="text-sm font-bold text-gray-200">${s.step}</div><div class="text-xs text-pink-400 font-mono">${s.tech}</div></div></div>`).join('');
+                        const html = `<div class="scenario-card"><h4 class="font-bold text-pink-400 mb-3 border-b border-pink-500/30 pb-2"><i class="fas fa-project-diagram"></i> ${data.title}</h4><div class="space-y-2">${stepsHtml}</div></div>`;
+                        addBubbleHtml(html, 'ai');
+                    } else if (activeTool === 'nui') {
+                        const iframeId = 'nui-preview-' + Date.now();
+                        const html = `<div class="nui-card"><h4 class="font-bold text-cyan-400 mb-2"><i class="fas fa-palette"></i> معاينة التصميم</h4><div class="nui-container"><iframe id="${iframeId}" style="width:100%; height:100%; border:none;"></iframe></div><div class="text-xs font-bold text-gray-400 mt-2 mb-1">HTML:</div><pre><code>${data.html.replace(/</g, '&lt;')}</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre><div class="text-xs font-bold text-gray-400 mt-2 mb-1">CSS:</div><pre><code>${data.css}</code><button class="copy-btn" onclick="copyCode(this)">نسخ</button></pre></div>`;
+                        addBubbleHtml(html, 'ai');
+                        setTimeout(() => {
+                            const iframe = document.getElementById(iframeId);
+                            if(iframe) {
+                                const doc = iframe.contentWindow.document;
+                                doc.open();
+                                doc.write(`<html><head><style>body { margin: 0; padding: 20px; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; } ${data.css}</style></head><body>${data.html}</body></html>`);
+                                doc.close();
+                            }
+                        }, 100);
+                    }
+                } else {
+                    addBubble(response, 'ai');
+                }
+
             } catch (error) {
                 removeBubble(typingId);
-                addBubble("معليش يا غالي، صار عندي مشكلة في الاتصال 🔌. جرب مرة ثانية.", 'ai');
+                if (error.message.includes('403') || error.message.includes('400')) {
+                    document.getElementById('keyModal').classList.remove('hidden');
+                } else if (error.message.includes('429')) {
+                    addBubble("السيرفر مشغول جداً 🤯، جرب بعد دقيقة.", 'ai');
+                } else {
+                    addBubble("حدث خطأ غير متوقع. حاول مرة أخرى.", 'ai');
+                }
             } finally {
                 isTyping = false;
             }
         }
 
+        async function callGemini(prompt, sysPrompt, jsonMode) {
+            const key = getApiKey();
+            const retries = 5;
+            let delay = 1000;
+
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(
+                        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`,
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                contents: [{ parts: [{ text: prompt }] }],
+                                systemInstruction: { parts: [{ text: sysPrompt }] },
+                                generationConfig: jsonMode ? { responseMimeType: "application/json" } : {}
+                            })
+                        }
+                    );
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        if (response.status === 429) {
+                            if (i === retries - 1) throw new Error("429");
+                            await new Promise(r => setTimeout(r, delay));
+                            delay *= 2;
+                            continue;
+                        }
+                        throw new Error(`${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    return data.candidates[0].content.parts[0].text;
+                } catch (e) {
+                    if (i === retries - 1) throw e;
+                }
+            }
+        }
+
+        // --- API Key Handling ---
+        function saveEmergencyKey() {
+            const input = document.getElementById('emergencyKeyInput').value.trim();
+            if(input) {
+                localStorage.setItem('gemini_api_key', input);
+                document.getElementById('keyModal').classList.add('hidden');
+                alert('تم حفظ المفتاح. حاول استخدام الأدوات الآن.');
+            }
+        }
+
+        // --- Chat UI Helpers ---
         function addBubble(text, type) {
             const div = document.createElement('div');
             div.className = `bubble bubble-${type}`;
-            
             if(type === 'ai') {
-                // Parse markdown
                 div.innerHTML = marked.parse(text);
-                // Re-apply copy buttons to new code blocks
-                setTimeout(() => {
-                    div.querySelectorAll('pre code').forEach(block => {
-                        const pre = block.parentElement;
-                        if (!pre.querySelector('.copy-btn')) {
-                            const btn = document.createElement('button');
-                            btn.className = 'copy-btn';
-                            btn.innerText = 'نسخ';
-                            btn.onclick = function() { copyCode(this); };
-                            pre.appendChild(btn);
-                        }
-                    });
-                }, 100);
-            } else {
-                div.innerText = text;
-            }
-
+                addCopyButtons(div);
+            } else { div.innerText = text; }
             document.getElementById('chatHistory').appendChild(div);
             scrollToBottom();
-            return div;
+        }
+
+        function addBubbleHtml(html, type) {
+            const div = document.createElement('div');
+            div.className = `bubble bubble-${type}`;
+            div.innerHTML = html;
+            document.getElementById('chatHistory').appendChild(div);
+            scrollToBottom();
         }
 
         function addTypingIndicator() {
             const id = 'typing-' + Date.now();
             const div = document.createElement('div');
-            div.id = id;
-            div.className = 'bubble bubble-ai text-gray-500 text-xs italic';
-            div.innerText = 'عمر قاعد يكتب الكود...';
-            document.getElementById('chatHistory').appendChild(div);
-            scrollToBottom();
-            return id;
+            div.id = id; div.className = 'bubble bubble-ai text-gray-500 text-xs italic'; div.innerText = 'عمر يكتب...';
+            document.getElementById('chatHistory').appendChild(div); scrollToBottom(); return id;
+        }
+        function removeBubble(id) { const el = document.getElementById(id); if(el) el.remove(); }
+        function scrollToBottom() { const c = document.getElementById('chatHistory'); c.scrollTop = c.scrollHeight; }
+        function addCopyButtons(parent) {
+            setTimeout(() => {
+                parent.querySelectorAll('pre code').forEach(block => {
+                    const pre = block.parentElement;
+                    if (!pre.querySelector('.copy-btn')) {
+                        const btn = document.createElement('button');
+                        btn.className = 'copy-btn'; btn.innerText = 'نسخ'; btn.onclick = function() { copyCode(this); };
+                        pre.appendChild(btn);
+                    }
+                });
+            }, 100);
         }
 
-        function removeBubble(id) {
-            const el = document.getElementById(id);
-            if(el) el.remove();
-        }
-
-        function scrollToBottom() {
-            const chatHistory = document.getElementById('chatHistory');
-            chatHistory.scrollTop = chatHistory.scrollHeight;
-        }
-
-        function copyCode(btn) {
-            const code = btn.previousElementSibling.innerText;
-            navigator.clipboard.writeText(code);
-            const originalText = btn.innerText;
-            btn.innerText = "تم النسخ!";
-            setTimeout(() => btn.innerText = originalText, 2000);
-        }
-
-        // --- NEW FEATURES: Quiz & Ideas ---
-
-        function generateIdea() {
-            switchTab('chat');
-            setQuickMsg('اقترح لي فكرة مشروع سكربت بسيط للمبتدئين مع شرح المنطق حقه.');
-        }
-
+        // --- Quiz Logic ---
         async function startQuiz(lessonTitle) {
-            const container = document.getElementById('quizContainer');
-            const content = document.getElementById('quizContent');
-            container.classList.remove('hidden');
-            
-            content.innerHTML = `
-                <div class="flex flex-col items-center py-8">
-                    <i class="fas fa-circle-notch fa-spin text-3xl text-brand-blue mb-3"></i>
-                    <span class="text-sm text-gray-400">عمر يكتب السؤال عن "${lessonTitle}"...</span>
-                </div>
-            `;
-
+            document.getElementById('quizContainer').classList.remove('hidden');
+            document.getElementById('quizContent').innerHTML = `<div class="flex flex-col items-center py-8"><i class="fas fa-circle-notch fa-spin text-3xl text-brand-blue mb-3"></i><span class="text-sm text-gray-400">عمر يكتب السؤال...</span></div>`;
             try {
-                // Prompt Gemini for JSON
-                const prompt = `
-                    Generate a multiple-choice question in Arabic about the FiveM coding topic: "${lessonTitle}".
-                    Format: JSON object with keys: "question" (string), "options" (array of 4 strings), "correctIndex" (0-3 number).
-                    Ensure the output is valid JSON only.
-                `;
+                const prompt = `Generate a multiple-choice question in Arabic about: "${lessonTitle}". Format: JSON { "question": string, "options": string[], "correctIndex": number }.`;
+                const jsonStr = await callGemini(prompt, "You are a JSON generator. Respond ONLY with valid JSON.", true);
+                const data = JSON.parse(jsonStr.replace(/```json/g, '').replace(/```/g, '').trim());
                 
-                const responseText = await callGemini(prompt, true); // true = raw text requested, we handle parsing
-                
-                // Extract JSON from response (remove markdown fences if any)
-                const jsonStr = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
-                const quizData = JSON.parse(jsonStr);
-
-                renderQuiz(quizData);
-
-            } catch (e) {
-                console.error(e);
-                content.innerHTML = `<div class="text-red-400 text-center">صار خطأ في توليد السؤال. جرب مرة ثانية.</div>`;
+                let optionsHTML = '';
+                data.options.forEach((opt, idx) => {
+                    optionsHTML += `<button onclick="checkAnswer(this, ${idx}, ${data.correctIndex})" class="quiz-option w-full text-right p-3 rounded-lg bg-dark-700 text-sm mb-2">${opt}</button>`;
+                });
+                document.getElementById('quizContent').innerHTML = `<div class="text-white font-bold mb-4 text-lg leading-relaxed">${data.question}</div><div class="space-y-2">${optionsHTML}</div><div id="quizResult" class="mt-4 text-center font-bold h-6"></div>`;
+            } catch (e) { 
+                if(e.message.includes('403')) { document.getElementById('keyModal').classList.remove('hidden'); document.getElementById('quizContainer').classList.add('hidden'); }
+                else document.getElementById('quizContent').innerHTML = `<div class="text-red-400 text-center">خطأ في توليد السؤال.</div>`; 
             }
         }
-
-        function renderQuiz(data) {
-            const content = document.getElementById('quizContent');
-            let optionsHTML = '';
-            
-            data.options.forEach((opt, idx) => {
-                optionsHTML += `
-                    <button onclick="checkAnswer(this, ${idx}, ${data.correctIndex})" class="quiz-option w-full text-right p-3 rounded-lg bg-dark-700 text-sm mb-2">
-                        ${opt}
-                    </button>
-                `;
-            });
-
-            content.innerHTML = `
-                <div class="text-white font-bold mb-4 text-lg leading-relaxed">${data.question}</div>
-                <div class="space-y-2">${optionsHTML}</div>
-                <div id="quizResult" class="mt-4 text-center font-bold h-6"></div>
-            `;
-        }
-
-        function checkAnswer(btn, selectedIdx, correctIdx) {
-            const resultDiv = document.getElementById('quizResult');
+        function checkAnswer(btn, selected, correct) {
             const allBtns = document.querySelectorAll('.quiz-option');
-            
-            // Disable all buttons
             allBtns.forEach(b => b.disabled = true);
-
-            if (selectedIdx === correctIdx) {
-                btn.classList.add('correct');
-                resultDiv.innerHTML = '<span class="text-green-400">كفو! إجابة صحيحة 🎉</span>';
-            } else {
-                btn.classList.add('wrong');
-                allBtns[correctIdx].classList.add('correct'); // Show correct one
-                resultDiv.innerHTML = '<span class="text-red-400">للأسف خطأ، الجواب الصحيح هو المحدد بالأخضر 😅</span>';
-            }
+            if (selected === correct) { btn.classList.add('correct'); document.getElementById('quizResult').innerHTML = '<span class="text-green-400">إجابة صحيحة 🎉</span>'; } 
+            else { btn.classList.add('wrong'); allBtns[correct].classList.add('correct'); document.getElementById('quizResult').innerHTML = '<span class="text-red-400">إجابة خاطئة 😅</span>'; }
         }
+        function closeQuiz() { document.getElementById('quizContainer').classList.add('hidden'); }
 
-        function closeQuiz() {
-            document.getElementById('quizContainer').classList.add('hidden');
-        }
-
-        // --- GEMINI CORE ---
-
-        async function callGemini(prompt, isJsonMode = false) {
-            const systemPrompt = isJsonMode ? 
-                `You are a JSON generator. Respond ONLY with valid JSON. No markdown.` :
-                `
-                أنت "عمر"، مبرمج خبير في FiveM ومعلم للمبتدئين.
-                لغتك: عربية (لهجة سعودية/خليجية ودية).
-                مهمتك: تعليم المستخدم برمجة Lua لـ FiveM.
-                قواعد الرد:
-                1. اشرح المفاهيم ببساطة.
-                2. عند كتابة كود، ضعه دائماً داخل Markdown Code Block.
-                3. كن مشجعاً ومرحاً.
-            `;
-
-            const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }],
-                        systemInstruction: { parts: [{ text: systemPrompt }] },
-                        generationConfig: isJsonMode ? { responseMimeType: "application/json" } : {}
-                    })
-                }
-            );
-
-            if(!response.ok) throw new Error("API Error");
-            const data = await response.json();
-            return data.candidates[0].content.parts[0].text;
-        }
-
-        // Init
         init();
-
     </script>
 </body>
-    </html>
+            </html>
