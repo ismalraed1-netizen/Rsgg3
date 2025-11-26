@@ -3,470 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحدي عمر FEUD</title>
+    <title>فن العيش | رحلة في فهم الذات</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Cairo', sans-serif;
-            background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%);
-            color: white;
-            overflow-x: hidden;
-            user-select: none;
+            font-family: 'Tajawal', sans-serif;
+            background-color: #fcfbf9; /* لون كريمي هادئ */
+            color: #2c2c2c;
         }
-
-        .feud-card {
-            background: linear-gradient(180deg, #2563eb 0%, #1e40af 100%);
-            border: 2px solid #60a5fa;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-            transform-style: preserve-3d;
+        h1, h2, h3, .book-font {
+            font-family: 'Amiri', serif;
+        }
+        
+        /* تأثير تقليب البطاقة */
+        .perspective {
             perspective: 1000px;
         }
-
         .card-inner {
             position: relative;
             width: 100%;
             height: 100%;
-            text-align: center;
             transition: transform 0.6s;
             transform-style: preserve-3d;
+            cursor: pointer;
         }
-
-        .feud-card.revealed .card-inner {
-            transform: rotateX(180deg);
+        .card-inner.flipped {
+            transform: rotateY(180deg);
         }
-
-        .card-front, .card-back {
+        .card-face {
             position: absolute;
             width: 100%;
             height: 100%;
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            border-radius: 0.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            text-align: center;
         }
-
         .card-front {
-            background: linear-gradient(180deg, #1e3a8a 0%, #172554 100%);
-            border: 2px solid #3b82f6;
-            color: #fff;
-            font-weight: 900;
-            font-size: 2rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+            border: 2px solid #e5e7eb;
         }
-
-        /* The Oval Number Background */
-        .number-oval {
-            background: #1e40af;
-            border: 2px solid #60a5fa;
-            border-radius: 50%;
-            width: 60px;
-            height: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-        }
-
         .card-back {
-            background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 100%); /* Yellow gradient for reveal */
-            color: #000;
-            transform: rotateX(180deg);
-            display: flex;
-            justify-content: space-between;
-            padding: 0 20px;
-            font-weight: bold;
-            font-size: 1.25rem;
-            border: 2px solid #fff;
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            color: white;
+            transform: rotateY(180deg);
         }
-
-        .strike-modal {
+        
+        /* إخفاء شريط التمرير */
+        .hide-scrollbar::-webkit-scrollbar {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 50;
-            align-items: center;
-            justify-content: center;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
-        .big-x {
-            font-size: 15rem;
-            color: #ef4444;
-            text-shadow: 0 0 20px red, 4px 4px 0px #7f1d1d;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0); opacity: 0; }
-            80% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .team-score-box {
-            background: linear-gradient(180deg, #1e40af 0%, #172554 100%);
-            border: 4px solid #f59e0b;
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
-        }
-
-        .lcd-text {
-            font-family: 'Courier New', Courier, monospace;
-            letter-spacing: 2px;
-            background: #000;
-            color: #ef4444;
-            padding: 5px 15px;
-            border: 2px solid #333;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.8);
-        }
-
-        /* Control Panel Button Style */
-        .ctrl-btn {
-            transition: all 0.1s;
-        }
-        .ctrl-btn:active {
-            transform: translateY(2px);
+        .active-tab {
+            border-bottom: 2px solid #b45309;
+            color: #b45309;
+            font-weight: bold;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center">
+<body class="min-h-screen flex flex-col">
 
     <!-- Header -->
-    <header class="w-full p-4 flex justify-between items-center bg-blue-900/50 backdrop-blur-sm border-b border-blue-700 shadow-lg">
-        <div class="text-3xl font-black text-yellow-400 drop-shadow-lg tracking-wider">
-            <i class="fas fa-trophy mr-2"></i> تحدي عمر FEUD
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                <h1 class="text-xl font-bold text-gray-800 book-font">فن العيش</h1>
+            </div>
+            <nav class="flex gap-6">
+                <button onclick="switchTab('book')" id="btn-book" class="py-5 px-1 active-tab transition-colors duration-200">الكتاب</button>
+                <button onclick="switchTab('flashcards')" id="btn-flashcards" class="py-5 px-1 text-gray-500 hover:text-gray-800 transition-colors duration-200">بطاقات الذاكرة</button>
+            </nav>
         </div>
-        <div class="text-white/80 text-sm hidden md:block">لوحة التحكم للمضيف</div>
     </header>
 
-    <!-- Main Game Area -->
-    <main class="flex-grow w-full max-w-6xl p-4 flex flex-col items-center">
-        
-        <!-- Scoreboard Section -->
-        <div class="w-full grid grid-cols-2 md:grid-cols-3 gap-6 mb-8 mt-4">
-            <!-- Team 1 -->
-            <div class="team-score-box rounded-xl p-4 flex flex-col items-center justify-center transform hover:scale-105 transition duration-300">
-                <h2 class="text-xl md:text-2xl font-bold text-white mb-2">الفريق الأول</h2>
-                <div class="flex items-center gap-4">
-                    <button onclick="adjustScore(1, -10)" class="text-red-400 hover:text-red-300"><i class="fas fa-minus-circle fa-lg"></i></button>
-                    <div id="score1" class="lcd-text text-3xl md:text-5xl font-bold rounded">0</div>
-                    <button onclick="adjustScore(1, 10)" class="text-green-400 hover:text-green-300"><i class="fas fa-plus-circle fa-lg"></i></button>
-                </div>
-                <div class="mt-2 text-sm text-blue-300">مجموع النقاط</div>
-            </div>
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-3xl mx-auto w-full px-4 py-8">
 
-            <!-- Current Pot (Center) -->
-            <div class="hidden md:flex flex-col items-center justify-center">
-                <div class="text-yellow-400 text-lg font-bold mb-1">السؤال الحالي</div>
-                <div id="question-text" class="text-white text-xl text-center font-bold bg-blue-800/80 p-4 rounded-lg border border-blue-500 w-full min-h-[100px] flex items-center justify-center shadow-inner">
-                    جاهز للبدء؟ اضغط "السؤال التالي"
+        <!-- VIEW 1: THE BOOK -->
+        <div id="book-view" class="space-y-8 animate-fade-in">
+            <!-- Cover -->
+            <div class="text-center py-10 border-b border-gray-200">
+                <p class="text-amber-700 font-medium mb-2">إصدار خاص</p>
+                <h1 class="text-5xl md:text-6xl font-bold mb-4 book-font text-gray-900">فن العيش</h1>
+                <p class="text-xl text-gray-600 book-font italic">رحلة في فهم الذات والحياة</p>
+                <div class="mt-8 flex justify-center">
+                    <span class="w-16 h-1 bg-amber-700 rounded-full"></span>
                 </div>
             </div>
 
-            <!-- Team 2 -->
-            <div class="team-score-box rounded-xl p-4 flex flex-col items-center justify-center transform hover:scale-105 transition duration-300">
-                <h2 class="text-xl md:text-2xl font-bold text-white mb-2">الفريق الثاني</h2>
-                <div class="flex items-center gap-4">
-                    <button onclick="adjustScore(2, -10)" class="text-red-400 hover:text-red-300"><i class="fas fa-minus-circle fa-lg"></i></button>
-                    <div id="score2" class="lcd-text text-3xl md:text-5xl font-bold rounded">0</div>
-                    <button onclick="adjustScore(2, 10)" class="text-green-400 hover:text-green-300"><i class="fas fa-plus-circle fa-lg"></i></button>
+            <!-- Content -->
+            <article class="prose prose-lg prose-stone mx-auto">
+                <div class="bg-white p-8 md:p-12 rounded-lg shadow-sm border border-gray-100">
+                    <h2 class="text-3xl font-bold text-amber-800 mb-6 book-font">المقدمة: اللغز الأزلي</h2>
+                    <p class="leading-loose text-gray-700 mb-4">
+                        الحياة ليست مجرد أيام تُحسب، ولا هي أنفاس تتردد في الصدور. الحياة، في جوهرها، هي تلك المسافة الغامضة بين الصرخة الأولى والزفير الأخير. نحن نأتي إلى هذا العالم دون دليل إرشادات.
+                    </p>
+                    <p class="leading-loose text-gray-700">
+                        هذا الكتاب ليس وصفة سحرية للسعادة، ولا خريطة طريق للثراء. إنه محاولة هادئة للتوقف قليلاً وسط ضجيج العالم، والتفكير في: ماذا يعني أن نكون أحياء حقاً؟
+                    </p>
                 </div>
-                <div class="mt-2 text-sm text-blue-300">مجموع النقاط</div>
-            </div>
+
+                <div class="bg-white p-8 md:p-12 rounded-lg shadow-sm border border-gray-100 mt-8">
+                    <h2 class="text-3xl font-bold text-amber-800 mb-6 book-font">الفصل الأول: لوحة البدايات البيضاء</h2>
+                    <p class="leading-loose text-gray-700 mb-6">
+                        كل منا يولد كصفحة بيضاء، أو هكذا نحب أن نعتقد. لكن الحقيقة هي أننا نولد ونحن نحمل إرثاً جينياً وتاريخاً لم نعشه. ومع ذلك، تبقى الطفولة هي المرحلة التي نملك فيها أقصى درجات الشجاعة: شجاعة السؤال، وشجاعة الحلم.
+                    </p>
+                    <div class="bg-amber-50 p-6 rounded-r-4xl border-r-4 border-amber-600">
+                        <strong class="block text-amber-900 mb-2 book-font text-xl">الدرس المستفاد:</strong>
+                        <p class="text-amber-900">مشكلة "النضج" هي أننا نبدأ في الخوف. فن العيش يبدأ عندما نستعيد "دهشة الطفل" بداخلنا. أن تنظر للشجرة وكأنك تراها لأول مرة.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 md:p-12 rounded-lg shadow-sm border border-gray-100 mt-8">
+                    <h2 class="text-3xl font-bold text-amber-800 mb-6 book-font">الفصل الثاني: مدرسة الألم</h2>
+                    <p class="leading-loose text-gray-700 mb-6">
+                        لا يوجد كتاب عن الحياة يكتمل دون الحديث عن الألم. الألم هو النحات الذي يشذب أرواحنا. تخيل حياة خالية تماماً من العقبات؛ ستكون حياة مملة ومسطحة.
+                    </p>
+                    <blockquote class="text-2xl book-font text-center text-gray-500 my-8">
+                        "الشقوق في الجدار هي الممرات التي يدخل منها الضوء."
+                        <span class="block text-sm mt-2 font-sans not-italic text-gray-400">- جلال الدين الرومي</span>
+                    </blockquote>
+                </div>
+                
+                 <div class="text-center py-8 text-gray-400">
+                    <p>... يتبع في النسخة الكاملة ...</p>
+                </div>
+            </article>
         </div>
 
-        <!-- Mobile Question Display -->
-        <div class="md:hidden w-full mb-6">
-            <div id="question-text-mobile" class="text-white text-lg text-center font-bold bg-blue-800/80 p-3 rounded-lg border border-blue-500 min-h-[80px] flex items-center justify-center">
-                 جاهز للبدء؟
-            </div>
-        </div>
-
-        <!-- The Board -->
-        <div class="w-full max-w-4xl bg-gray-900 p-2 md:p-6 rounded-3xl border-4 border-gray-700 shadow-2xl relative">
-            <!-- Screen Glare Effect -->
-            <div class="absolute top-0 left-0 w-full h-full rounded-2xl pointer-events-none bg-gradient-to-tr from-white/5 to-transparent z-10"></div>
+        <!-- VIEW 2: FLASHCARDS -->
+        <div id="flashcard-view" class="hidden h-[calc(100vh-140px)] flex flex-col justify-center items-center">
             
-            <div id="board-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 relative z-20">
-                <!-- Cards will be injected here by JS -->
+            <div class="w-full max-w-md mx-auto perspective h-80 mb-8">
+                <div class="card-inner h-full w-full relative" onclick="flipCard()" id="flashcard">
+                    <!-- Front -->
+                    <div class="card-face card-front">
+                        <span class="text-sm uppercase tracking-widest text-gray-400 mb-4 font-bold">السؤال / المفهوم</span>
+                        <h3 class="text-3xl font-bold text-gray-800 book-font leading-snug" id="card-front-text">
+                            جوهر الحياة
+                        </h3>
+                        <p class="mt-8 text-xs text-gray-400">اضغط لقلب البطاقة</p>
+                    </div>
+                    <!-- Back -->
+                    <div class="card-face card-back">
+                        <span class="text-sm uppercase tracking-widest text-gray-400 mb-4 font-bold">الإجابة / المعنى</span>
+                        <p class="text-xl leading-relaxed font-light" id="card-back-text">
+                            المسافة الغامضة بين الصرخة الأولى والزفير الأخير، وليست مجرد أيام تُحسب.
+                        </p>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Strike Controls -->
-        <div class="mt-8 flex gap-4 justify-center flex-wrap">
-            <button onclick="showStrike(1)" class="ctrl-btn bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg border-b-4 border-red-800 flex items-center gap-2">
-                <i class="fas fa-times"></i> خطأ 1
-            </button>
-            <button onclick="showStrike(2)" class="ctrl-btn bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg border-b-4 border-red-800 flex items-center gap-2">
-                <i class="fas fa-times"></i> خطأ 2
-            </button>
-            <button onclick="showStrike(3)" class="ctrl-btn bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg border-b-4 border-red-800 flex items-center gap-2">
-                <i class="fas fa-times"></i> خطأ 3
-            </button>
-        </div>
+            <!-- Controls -->
+            <div class="flex items-center gap-6">
+                <button onclick="prevCard()" class="p-4 rounded-full bg-white shadow-md hover:bg-gray-50 text-gray-600 transition-all hover:scale-105 active:scale-95 border border-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+                
+                <div class="text-center">
+                    <span id="card-counter" class="block font-bold text-xl text-gray-800">1 / 15</span>
+                    <span class="text-xs text-gray-400">بطاقة</span>
+                </div>
 
-        <!-- Game Controls -->
-        <div class="mt-6 flex gap-4 justify-center flex-wrap border-t border-white/10 pt-6 w-full">
-            <button onclick="nextQuestion()" class="ctrl-btn bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-full shadow-lg flex items-center gap-2">
-                <i class="fas fa-forward"></i> السؤال التالي
-            </button>
-            <button onclick="resetScores()" class="ctrl-btn bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-full shadow-lg flex items-center gap-2">
-                <i class="fas fa-rotate-left"></i> تصفير النقاط
-            </button>
-             <button onclick="toggleMusic()" id="musicBtn" class="ctrl-btn bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-full shadow-lg flex items-center gap-2">
-                <i class="fas fa-music"></i> موسيقى الخلفية
-            </button>
+                <button onclick="nextCard()" class="p-4 rounded-full bg-amber-600 shadow-lg shadow-amber-200 hover:bg-amber-700 text-white transition-all hover:scale-105 active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+            </div>
+            
+            <p class="mt-8 text-sm text-gray-400 text-center max-w-xs">
+                استخدم البطاقات لمراجعة أهم الدروس المستفادة من الكتاب.
+            </p>
+
         </div>
 
     </main>
 
-    <!-- Strike Modal (Overlay) -->
-    <div id="strike-modal" class="strike-modal" onclick="hideStrike()">
-        <div id="strike-container" class="flex gap-4">
-            <!-- X's will appear here -->
-        </div>
-    </div>
-
     <script>
-        // --- Game Data (Questions) ---
-        // You can edit these questions directly here!
-        const gameData = [
-            {
-                question: "شيء تفعله أول ما تصحى من النوم؟",
-                answers: [
-                    { text: "تغسل وجهك / تتوضأ", points: 35 },
-                    { text: "تشيك على الجوال", points: 28 },
-                    { text: "تشرب ماء", points: 15 },
-                    { text: "تفرش أسنانك", points: 12 },
-                    { text: "تطفي المنبه", points: 7 },
-                    { text: "ترجع تنام", points: 3 }
-                ]
-            },
-            {
-                question: "أكلة سعودية مشهورة؟",
-                answers: [
-                    { text: "كبسة", points: 40 },
-                    { text: "جريش", points: 20 },
-                    { text: "قرصان", points: 15 },
-                    { text: "سليق", points: 10 },
-                    { text: "مندي", points: 8 },
-                    { text: "حنيني", points: 7 }
-                ]
-            },
-            {
-                question: "شيء ممكن تنساه في البيت قبل ما تطلع؟",
-                answers: [
-                    { text: "المفتاح", points: 32 },
-                    { text: "الجوال", points: 25 },
-                    { text: "المحفظة", points: 20 },
-                    { text: "الكمامة", points: 10 },
-                    { text: "النظارة", points: 8 },
-                    { text: "الشاحن", points: 5 }
-                ]
-            },
-            {
-                question: "هدية يشتريها الزوج لزوجته؟",
-                answers: [
-                    { text: "ذهب / مجوهرات", points: 38 },
-                    { text: "ورد", points: 22 },
-                    { text: "عطر", points: 18 },
-                    { text: "شنطة", points: 10 },
-                    { text: "فلوس", points: 8 },
-                    { text: "شوكولاتة", points: 4 }
-                ]
-            },
-            {
-                question: "مكان تروح له في الويكند؟",
-                answers: [
-                    { text: "المول / السوق", points: 30 },
-                    { text: "المطعم / كوفي", points: 25 },
-                    { text: "بيت الأهل", points: 20 },
-                    { text: "البر / استراحة", points: 15 },
-                    { text: "البحر", points: 6 },
-                    { text: "البيت (ما أطلع)", points: 4 }
-                ]
-            }
+        // Data from the previous context
+        const flashcardsData = [
+            { front: "جوهر الحياة", back: "المسافة الغامضة بين الصرخة الأولى والزفير الأخير، وليست مجرد أيام تُحسب." },
+            { front: "سمات مرحلة الطفولة", back: "امتلاك أقصى درجات الشجاعة: شجاعة السؤال، وشجاعة الحلم، وشجاعة الخطأ دون خجل." },
+            { front: "المشكلة الحقيقية في النضج", back: "الخوف من حكم الآخرين والخوف من الفشل، وفقدان دهشة الطفل." },
+            { front: "تعريف العودة للبراءة", back: "ليست سذاجة، بل قمة الحكمة، وتعني استعادة دهشة الطفل والنظر للأشياء كأنها جديدة." },
+            { front: "دور الألم في الحياة", back: "النحات الذي يشذب الأرواح، ورسول يخبرنا بضرورة التغيير أو مراجعة مسارنا." },
+            { front: "مقولة جلال الدين الرومي عن الألم", back: "الشقوق في الجدار هي الممرات التي يدخل منها الضوء." },
+            { front: "النظرة الصحيحة للندوب", back: "أوسمة معارك خضناها بصمت وانتصرنا فيها بمجرد بقائنا." },
+            { front: "وهم السيطرة", back: "محاولة الإنسان التحكم في المستقبل ومجريات الأمور، بينما الحياة بطبيعتها متقلبة." },
+            { front: "مفهوم الاستسلام الإيجابي", back: "ليس الانهزام، بل التسليم والتماهي مع تيار الحياة بدلاً من مصارعته." },
+            { front: "سر البقاء والمرونة", back: "أن تكون كالأعشاب التي تنحني للعاصفة وتعود للوقوف، لا كالأشجار الصلبة التي تنكسر." },
+            { front: "الهدف الحقيقي للعلاقات", back: "مشاركة الامتلاء وليس ملء الفراغ الداخلي." },
+            { front: "فن المسافة في العلاقات", back: "ألا تقترب حد الاحتراق، ولا تبتعد حد التجمد." },
+            { front: "مصدر المعنى في الحياة", back: "شيء يخلقه الإنسان بنفسه ويعطيه للأشياء، وليس شيئاً يوجَد جاهزاً." },
+            { front: "الشيء الوحيد الحقيقي الذي نملكه", back: "اللحظة الحالية (الأنفاس التي تدخل وتخرج الآن)." },
+            { front: "الخلاصة النهائية للكتاب", back: "عش حياتك كنص نهائي يُكتب الآن، لا تؤجل الفرح، وعش، أحب، تعلم، وارحل بسلام." }
         ];
 
-        // --- State ---
-        let currentQuestionIndex = -1;
-        let scores = { 1: 0, 2: 0 };
-        let audioCtx = null;
-        let isMusicPlaying = false; // Placeholder for logic
-        
-        // --- Audio Context Setup (Browser Synth) ---
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        }
+        let currentIndex = 0;
+        const cardElement = document.getElementById('flashcard');
+        const frontText = document.getElementById('card-front-text');
+        const backText = document.getElementById('card-back-text');
+        const counter = document.getElementById('card-counter');
 
-        function playTone(freq, type, duration) {
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
+        // Render Initial Card
+        function renderCard() {
+            // Reset flip state if needed
+            cardElement.classList.remove('flipped');
             
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-            
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
-        }
-
-        function playCorrectSound() {
-            // Ding sound (High sine waves)
-            playTone(880, 'sine', 0.1);
-            setTimeout(() => playTone(1760, 'sine', 0.4), 100);
-        }
-
-        function playWrongSound() {
-            // Buzz sound (Low saw waves)
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(150, audioCtx.currentTime); // Low freq
-            // Add some dissonance
-            const osc2 = audioCtx.createOscillator();
-            osc2.type = 'sawtooth';
-            osc2.frequency.setValueAtTime(145, audioCtx.currentTime);
-
-            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-
-            osc.connect(gainNode);
-            osc2.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            osc.start();
-            osc2.start();
-            osc.stop(audioCtx.currentTime + 0.5);
-            osc2.stop(audioCtx.currentTime + 0.5);
-        }
-
-        // --- Game Logic ---
-
-        function updateBoard() {
-            const grid = document.getElementById('board-grid');
-            grid.innerHTML = ''; // Clear board
-            
-            const q = gameData[currentQuestionIndex];
-            document.getElementById('question-text').innerText = q.question;
-            document.getElementById('question-text-mobile').innerText = q.question;
-
-            // Always create 8 slots for visual consistency, even if fewer answers
-            for (let i = 0; i < 8; i++) {
-                const answer = q.answers[i];
-                
-                const cardDiv = document.createElement('div');
-                cardDiv.className = `feud-card h-20 md:h-24 w-full cursor-pointer rounded-lg relative ${!answer ? 'opacity-50 pointer-events-none' : ''}`;
-                
-                if (answer) {
-                    cardDiv.onclick = () => toggleCard(cardDiv, answer.points);
-                    cardDiv.innerHTML = `
-                        <div class="card-inner">
-                            <div class="card-front">
-                                <div class="number-oval text-xl md:text-2xl">${i + 1}</div>
-                            </div>
-                            <div class="card-back">
-                                <span class="text-right truncate ml-2">${answer.text}</span>
-                                <span class="text-2xl font-black border-r-2 border-black pr-3 pl-1">${answer.points}</span>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    // Empty decorative card
-                    cardDiv.innerHTML = `
-                        <div class="card-inner">
-                            <div class="card-front bg-blue-900 border-blue-800">
-                                <!-- Empty -->
-                            </div>
-                        </div>
-                    `;
-                }
-                grid.appendChild(cardDiv);
-            }
-        }
-
-        function toggleCard(element, points) {
-            if (!element.classList.contains('revealed')) {
-                element.classList.add('revealed');
-                playCorrectSound();
-                // Optional: Auto add to a temporary pot? For now manual score is more flexible for "Challenge" mode
-            }
-        }
-
-        function showStrike(count) {
-            playWrongSound();
-            const modal = document.getElementById('strike-modal');
-            const container = document.getElementById('strike-container');
-            container.innerHTML = '';
-            
-            for(let i=0; i<count; i++) {
-                const x = document.createElement('div');
-                x.className = 'big-x';
-                x.innerText = 'X';
-                container.appendChild(x);
-            }
-
-            modal.style.display = 'flex';
-            
-            // Auto hide after 1.5 seconds
+            // Short timeout to allow flip back before changing content (optional smooth feel)
             setTimeout(() => {
-                modal.style.display = 'none';
-            }, 1500);
+                frontText.textContent = flashcardsData[currentIndex].front;
+                backText.textContent = flashcardsData[currentIndex].back;
+                counter.textContent = `${currentIndex + 1} / ${flashcardsData.length}`;
+            }, 150);
         }
 
-        function hideStrike() {
-            document.getElementById('strike-modal').style.display = 'none';
+        function flipCard() {
+            cardElement.classList.toggle('flipped');
         }
 
-        function adjustScore(team, amount) {
-            scores[team] += amount;
-            if(scores[team] < 0) scores[team] = 0;
-            document.getElementById(`score${team}`).innerText = scores[team];
-        }
-
-        function resetScores() {
-            if(confirm("هل أنت متأكد من تصفير النقاط؟")) {
-                scores = { 1: 0, 2: 0 };
-                document.getElementById('score1').innerText = 0;
-                document.getElementById('score2').innerText = 0;
+        function nextCard() {
+            if (currentIndex < flashcardsData.length - 1) {
+                currentIndex++;
+                renderCard();
+            } else {
+                // Loop back to start
+                currentIndex = 0;
+                renderCard();
             }
         }
 
-        function nextQuestion() {
-            currentQuestionIndex++;
-            if (currentQuestionIndex >= gameData.length) {
-                currentQuestionIndex = 0; // Loop back
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderCard();
             }
-            // Reset revealed cards
-            updateBoard();
-            initAudio(); // Ensure audio context is ready on user interaction
-        }
-        
-        function toggleMusic() {
-           alert("الموسيقى غير متوفرة حالياً لعدم وجود ملفات صوتية خارجية، لكن المؤثرات الصوتية تعمل!");
         }
 
-        // Init
-        nextQuestion();
+        // Tab Switching Logic
+        function switchTab(tabName) {
+            const bookView = document.getElementById('book-view');
+            const flashcardView = document.getElementById('flashcard-view');
+            const btnBook = document.getElementById('btn-book');
+            const btnFlashcards = document.getElementById('btn-flashcards');
 
+            if (tabName === 'book') {
+                bookView.classList.remove('hidden');
+                flashcardView.classList.add('hidden');
+                
+                btnBook.classList.add('active-tab', 'text-amber-700');
+                btnBook.classList.remove('text-gray-500');
+                
+                btnFlashcards.classList.remove('active-tab');
+                btnFlashcards.classList.add('text-gray-500');
+            } else {
+                bookView.classList.add('hidden');
+                flashcardView.classList.remove('hidden');
+                // Re-enable flex for centering
+                flashcardView.classList.add('flex');
+                
+                btnFlashcards.classList.add('active-tab', 'text-amber-700');
+                btnFlashcards.classList.remove('text-gray-500');
+                
+                btnBook.classList.remove('active-tab');
+                btnBook.classList.add('text-gray-500');
+            }
+        }
+
+        // Initialize
+        renderCard();
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('flashcard-view').classList.contains('hidden')) return;
+            
+            if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'ArrowDown') {
+                e.preventDefault(); // prevent scroll
+                flipCard();
+            } else if (e.code === 'ArrowLeft') {
+                nextCard(); // RTL: Left is next
+            } else if (e.code === 'ArrowRight') {
+                prevCard(); // RTL: Right is prev
+            }
+        });
     </script>
 </body>
-    </html>
+</html>
