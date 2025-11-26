@@ -369,7 +369,7 @@
     </main>
 
     <script>
-        const apiKey = ""; // System provides this at runtime
+        const apiKey = "AIzaSyBb38OZM1Ji7oJK3Xx7TiC5Ubzurgw5D1M"; // API Key Inserted
 
         // --- Data & State ---
         let flashcardsData = [
@@ -542,7 +542,7 @@
         }
 
 
-        // --- Journal Logic (Soul Mirror) ---
+        // --- Journal Logic (Soul Mirror) - FIXED ---
         async function analyzeJournal() {
             const input = document.getElementById('journal-input').value.trim();
             if (!input) return alert("الرجاء كتابة شيء ما أولاً.");
@@ -568,7 +568,10 @@
 
             if (jsonResponseString) {
                 try {
-                    const data = JSON.parse(jsonResponseString);
+                    // Added cleanup logic here to prevent markdown issues
+                    const cleanJson = jsonResponseString.replace(/```json/g, '').replace(/```/g, '').trim();
+                    const data = JSON.parse(cleanJson);
+                    
                     document.getElementById('result-essence').textContent = data.essence;
                     document.getElementById('result-wisdom').innerHTML = marked.parse(data.wisdom);
                     document.getElementById('result-action').textContent = data.action;
