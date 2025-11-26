@@ -94,6 +94,16 @@
             margin-left: auto;
             border-bottom-left-radius: 0;
         }
+        
+        /* Journal Styles */
+        .journal-entry {
+            transition: all 0.3s ease;
+        }
+        .journal-entry:focus-within {
+            box-shadow: 0 4px 6px -1px rgba(180, 83, 9, 0.1), 0 2px 4px -1px rgba(180, 83, 9, 0.06);
+            border-color: #d97706;
+        }
+
         .typing-dot {
             animation: typing 1.4s infinite ease-in-out both;
         }
@@ -116,6 +126,17 @@
             background-size: 200% 200%;
             animation: sparkle 3s ease infinite;
         }
+        
+        /* Audio Player Styles */
+        .audio-playing {
+            color: #b45309;
+            animation: pulse-audio 1.5s infinite;
+        }
+        @keyframes pulse-audio {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -131,10 +152,13 @@
             </div>
             <nav class="flex gap-4 md:gap-6 flex-shrink-0">
                 <button onclick="switchTab('book')" id="btn-book" class="py-5 px-1 active-tab transition-colors duration-200 whitespace-nowrap">الكتاب</button>
-                <button onclick="switchTab('flashcards')" id="btn-flashcards" class="py-5 px-1 text-gray-500 hover:text-gray-800 transition-colors duration-200 whitespace-nowrap">بطاقات الذاكرة</button>
+                <button onclick="switchTab('journal')" id="btn-journal" class="py-5 px-1 text-gray-500 hover:text-gray-800 transition-colors duration-200 flex items-center gap-1 whitespace-nowrap">
+                   <span>مرآة الروح</span>
+                   <span class="text-amber-500 text-xs">✨</span>
+                </button>
+                <button onclick="switchTab('flashcards')" id="btn-flashcards" class="py-5 px-1 text-gray-500 hover:text-gray-800 transition-colors duration-200 whitespace-nowrap">البطاقات</button>
                 <button onclick="switchTab('sage')" id="btn-sage" class="py-5 px-1 text-gray-500 hover:text-gray-800 transition-colors duration-200 flex items-center gap-1 whitespace-nowrap">
-                    <span>المستشار الحكيم</span>
-                    <span class="text-amber-500 text-xs">✨</span>
+                    <span>المستشار</span>
                 </button>
             </nav>
         </div>
@@ -158,35 +182,42 @@
             <!-- Content -->
             <article class="prose prose-lg prose-stone mx-auto">
                 <div class="bg-white p-8 md:p-12 rounded-lg shadow-sm border border-gray-100">
-                    <h2 class="text-3xl font-bold text-amber-800 mb-6 book-font">المقدمة: اللغز الأزلي</h2>
-                    <p class="leading-loose text-gray-700 mb-4">
-                        الحياة ليست مجرد أيام تُحسب، ولا هي أنفاس تتردد في الصدور. الحياة، في جوهرها، هي تلك المسافة الغامضة بين الصرخة الأولى والزفير الأخير. نحن نأتي إلى هذا العالم دون دليل إرشادات.
-                    </p>
-                    <p class="leading-loose text-gray-700">
-                        هذا الكتاب ليس وصفة سحرية للسعادة، ولا خريطة طريق للثراء. إنه محاولة هادئة للتوقف قليلاً وسط ضجيج العالم، والتفكير في: ماذا يعني أن نكون أحياء حقاً؟
-                    </p>
-                </div>
-
-                <div class="bg-white p-8 md:p-12 rounded-lg shadow-sm border border-gray-100 mt-8">
-                    <h2 class="text-3xl font-bold text-amber-800 mb-6 book-font">الفصل الأول: لوحة البدايات البيضاء</h2>
-                    <p class="leading-loose text-gray-700 mb-6">
-                        كل منا يولد كصفحة بيضاء، أو هكذا نحب أن نعتقد. لكن الحقيقة هي أننا نولد ونحن نحمل إرثاً جينياً وتاريخاً لم نعشه. ومع ذلك، تبقى الطفولة هي المرحلة التي نملك فيها أقصى درجات الشجاعة: شجاعة السؤال، وشجاعة الحلم.
-                    </p>
-                    <div class="bg-amber-50 p-6 rounded-r-4xl border-r-4 border-amber-600">
-                        <strong class="block text-amber-900 mb-2 book-font text-xl">الدرس المستفاد:</strong>
-                        <p class="text-amber-900">مشكلة "النضج" هي أننا نبدأ في الخوف. فن العيش يبدأ عندما نستعيد "دهشة الطفل" بداخلنا. أن تنظر للشجرة وكأنك تراها لأول مرة.</p>
+                    <div class="flex justify-between items-start mb-6">
+                        <h2 class="text-3xl font-bold text-amber-800 book-font">المقدمة: اللغز الأزلي</h2>
+                        <button onclick="playAudio(this, 'intro-text')" class="text-gray-400 hover:text-amber-600 transition-colors" title="استمع للنص">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="intro-text">
+                        <p class="leading-loose text-gray-700 mb-4">
+                            الحياة ليست مجرد أيام تُحسب، ولا هي أنفاس تتردد في الصدور. الحياة، في جوهرها، هي تلك المسافة الغامضة بين الصرخة الأولى والزفير الأخير. نحن نأتي إلى هذا العالم دون دليل إرشادات.
+                        </p>
+                        <p class="leading-loose text-gray-700">
+                            هذا الكتاب ليس وصفة سحرية للسعادة، ولا خريطة طريق للثراء. إنه محاولة هادئة للتوقف قليلاً وسط ضجيج العالم، والتفكير في: ماذا يعني أن نكون أحياء حقاً؟
+                        </p>
                     </div>
                 </div>
 
                 <div class="bg-white p-8 md:p-12 rounded-lg shadow-sm border border-gray-100 mt-8">
-                    <h2 class="text-3xl font-bold text-amber-800 mb-6 book-font">الفصل الثاني: مدرسة الألم</h2>
-                    <p class="leading-loose text-gray-700 mb-6">
-                        لا يوجد كتاب عن الحياة يكتمل دون الحديث عن الألم. الألم هو النحات الذي يشذب أرواحنا. تخيل حياة خالية تماماً من العقبات؛ ستكون حياة مملة ومسطحة.
-                    </p>
-                    <blockquote class="text-2xl book-font text-center text-gray-500 my-8">
-                        "الشقوق في الجدار هي الممرات التي يدخل منها الضوء."
-                        <span class="block text-sm mt-2 font-sans not-italic text-gray-400">- جلال الدين الرومي</span>
-                    </blockquote>
+                     <div class="flex justify-between items-start mb-6">
+                        <h2 class="text-3xl font-bold text-amber-800 book-font">الفصل الأول: لوحة البدايات</h2>
+                         <button onclick="playAudio(this, 'ch1-text')" class="text-gray-400 hover:text-amber-600 transition-colors" title="استمع للنص">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="ch1-text">
+                        <p class="leading-loose text-gray-700 mb-6">
+                            كل منا يولد كصفحة بيضاء، أو هكذا نحب أن نعتقد. لكن الحقيقة هي أننا نولد ونحن نحمل إرثاً جينياً وتاريخاً لم نعشه. ومع ذلك، تبقى الطفولة هي المرحلة التي نملك فيها أقصى درجات الشجاعة: شجاعة السؤال، وشجاعة الحلم.
+                        </p>
+                        <div class="bg-amber-50 p-6 rounded-r-4xl border-r-4 border-amber-600">
+                            <strong class="block text-amber-900 mb-2 book-font text-xl">الدرس المستفاد:</strong>
+                            <p class="text-amber-900">مشكلة "النضج" هي أننا نبدأ في الخوف. فن العيش يبدأ عندما نستعيد "دهشة الطفل" بداخلنا. أن تنظر للشجرة وكأنك تراها لأول مرة.</p>
+                        </div>
+                    </div>
                 </div>
                 
                  <div class="text-center py-8 text-gray-400">
@@ -195,23 +226,70 @@
             </article>
         </div>
 
-        <!-- VIEW 2: FLASHCARDS (ID Updated to flashcards-view) -->
+        <!-- VIEW 2: JOURNAL (SOUL MIRROR) -->
+        <div id="journal-view" class="hidden h-full flex flex-col animate-fade-in">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-amber-800 book-font mb-2">مرآة الروح</h2>
+                <p class="text-gray-600">اكتب ما يثقل قلبك، ودع الحكمة القديمة تعيد تشكيل رؤيتك.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6 journal-entry">
+                <textarea id="journal-input" rows="5" class="w-full p-4 border-none focus:ring-0 text-gray-700 leading-relaxed resize-none text-lg book-font" placeholder="كيف تشعر اليوم؟ ما الذي يشغل بالك؟..."></textarea>
+                <div class="flex justify-between items-center mt-4 border-t border-gray-100 pt-4">
+                    <span class="text-xs text-gray-400">خصوصية تامة. لا يتم حفظ البيانات.</span>
+                    <button onclick="analyzeJournal()" id="analyze-btn" class="ai-btn-gradient text-white px-6 py-2 rounded-lg font-bold shadow-md hover:shadow-lg transition-transform hover:scale-105 flex items-center gap-2">
+                        <span>تأمل</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div id="journal-result" class="hidden space-y-4">
+                <!-- Essence Card -->
+                <div class="bg-amber-50 p-6 rounded-lg border border-amber-100">
+                    <h3 class="text-amber-800 font-bold book-font text-lg mb-2">🌀 جوهر حالتك</h3>
+                    <p id="result-essence" class="text-amber-900 leading-relaxed"></p>
+                </div>
+                
+                <!-- Wisdom Card -->
+                <div class="bg-white p-6 rounded-lg border-l-4 border-amber-600 shadow-sm">
+                    <h3 class="text-gray-800 font-bold book-font text-lg mb-2">💡 منظور كوني</h3>
+                    <div id="result-wisdom" class="text-gray-700 leading-relaxed prose prose-amber"></div>
+                </div>
+
+                <!-- Action Card -->
+                <div class="bg-stone-800 text-stone-100 p-6 rounded-lg shadow-md">
+                    <h3 class="font-bold book-font text-lg mb-2 text-stone-300">🌱 تمرين مقترح</h3>
+                    <p id="result-action" class="leading-relaxed font-light"></p>
+                </div>
+            </div>
+            
+            <div id="journal-loading" class="hidden text-center py-12">
+                <div class="typing-dot w-3 h-3 bg-amber-600 rounded-full inline-block mx-1"></div>
+                <div class="typing-dot w-3 h-3 bg-amber-600 rounded-full inline-block mx-1"></div>
+                <div class="typing-dot w-3 h-3 bg-amber-600 rounded-full inline-block mx-1"></div>
+                <p class="text-sm text-gray-500 mt-4">جاري استشارة النجوم...</p>
+            </div>
+        </div>
+
+        <!-- VIEW 3: FLASHCARDS -->
         <div id="flashcards-view" class="hidden h-full flex flex-col items-center">
             
             <!-- AI Generator Section -->
             <div class="w-full max-w-md mb-8 bg-white p-4 rounded-xl shadow-sm border border-amber-100">
                 <label class="block text-sm font-medium text-amber-900 mb-2 book-font">✨ مولد البطاقات الذكي</label>
                 <div class="flex gap-2">
-                    <input type="text" id="topic-input" placeholder="اكتب موضوعاً (مثلاً: الصبر، الأمل، الحكمة)" 
+                    <input type="text" id="topic-input" placeholder="اكتب موضوعاً (مثلاً: الصبر، الأمل)" 
                         class="flex-grow p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none text-sm">
                     <button onclick="generateFlashcards()" id="generate-btn" class="ai-btn-gradient text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-1">
                         <span>توليد</span>
-                        <svg id="sparkle-icon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd" />
                         </svg>
                     </button>
                 </div>
-                <p id="generation-status" class="text-xs text-amber-600 mt-2 hidden">جاري استحضار الحكمة...</p>
             </div>
 
             <div class="w-full max-w-md mx-auto perspective h-80 mb-8 mt-4">
@@ -253,14 +331,9 @@
                     </svg>
                 </button>
             </div>
-            
-            <p class="mt-8 text-sm text-gray-400 text-center max-w-xs">
-                استخدم البطاقات لمراجعة أهم الدروس، أو اطلب من الذكاء الاصطناعي إنشاء المزيد.
-            </p>
-
         </div>
 
-        <!-- VIEW 3: AI SAGE (CHAT) -->
+        <!-- VIEW 4: AI SAGE (CHAT) -->
         <div id="sage-view" class="hidden h-[calc(100vh-140px)] flex flex-col bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <!-- Chat Header -->
             <div class="bg-amber-50 p-4 border-b border-amber-100 flex items-center gap-3">
@@ -296,7 +369,7 @@
     </main>
 
     <script>
-        const apiKey = "AIzaSyBb38OZM1Ji7oJK3Xx7TiC5Ubzurgw5D1M"; // API Key Inserted
+        const apiKey = ""; // System provides this at runtime
 
         // --- Data & State ---
         let flashcardsData = [
@@ -305,8 +378,6 @@
             { front: "المشكلة الحقيقية في النضج", back: "الخوف من حكم الآخرين والخوف من الفشل، وفقدان دهشة الطفل." },
             { front: "تعريف العودة للبراءة", back: "ليست سذاجة، بل قمة الحكمة، وتعني استعادة دهشة الطفل والنظر للأشياء كأنها جديدة." },
             { front: "دور الألم في الحياة", back: "النحات الذي يشذب الأرواح، ورسول يخبرنا بضرورة التغيير أو مراجعة مسارنا." },
-            { front: "مقولة جلال الدين الرومي عن الألم", back: "الشقوق في الجدار هي الممرات التي يدخل منها الضوء." },
-            { front: "النظرة الصحيحة للندوب", back: "أوسمة معارك خضناها بصمت وانتصرنا فيها بمجرد بقائنا." },
             { front: "وهم السيطرة", back: "محاولة الإنسان التحكم في المستقبل ومجريات الأمور، بينما الحياة بطبيعتها متقلبة." },
             { front: "مفهوم الاستسلام الإيجابي", back: "ليس الانهزام، بل التسليم والتماهي مع تيار الحياة بدلاً من مصارعته." },
             { front: "سر البقاء والمرونة", back: "أن تكون كالأعشاب التي تنحني للعاصفة وتعود للوقوف، لا كالأشجار الصلبة التي تنكسر." },
@@ -318,12 +389,19 @@
         ];
 
         let currentIndex = 0;
+        let currentAudio = null;
         
-        // --- API Helper ---
-        async function callGemini(promptText) {
+        // --- API Helpers ---
+        async function callGemini(promptText, jsonMode = false) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            const generationConfig = jsonMode ? 
+                { responseMimeType: "application/json", responseSchema: { type: "OBJECT", properties: { essence: {type: "STRING"}, wisdom: {type: "STRING"}, action: {type: "STRING"} } } } 
+                : {};
+
             const payload = {
-                contents: [{ parts: [{ text: promptText }] }]
+                contents: [{ parts: [{ text: promptText }] }],
+                generationConfig: generationConfig
             };
 
             try {
@@ -336,10 +414,171 @@
                 if (!response.ok) throw new Error(`API Error: ${response.status}`);
                 
                 const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، لم أستطع التفكير بوضوح الآن.";
+                return data.candidates?.[0]?.content?.parts?.[0]?.text;
             } catch (error) {
                 console.error("Gemini API Error:", error);
                 return null;
+            }
+        }
+
+        async function callGeminiTTS(text) {
+             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+             const payload = {
+                contents: [{ parts: [{ text: text }] }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: {
+                                voiceName: "Aoede" // Good narrative voice
+                            }
+                        }
+                    }
+                }
+             };
+
+             try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error(`TTS API Error: ${response.status}`);
+                
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data; // Base64 PCM
+             } catch (error) {
+                 console.error("TTS Error:", error);
+                 return null;
+             }
+        }
+
+        // --- TTS Logic (Audio Handling) ---
+        // Helper to convert Base64 PCM to WAV Blob URL
+        function pcmToWav(base64Pcm, sampleRate = 24000) {
+            const binaryString = window.atob(base64Pcm);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            
+            // PCM data (16-bit little endian)
+            const wavHeader = new ArrayBuffer(44);
+            const view = new DataView(wavHeader);
+            
+            // RIFF chunk descriptor
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + len, true);
+            writeString(view, 8, 'WAVE');
+            
+            // fmt sub-chunk
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true); // PCM
+            view.setUint16(22, 1, true); // Mono
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            
+            // data sub-chunk
+            writeString(view, 36, 'data');
+            view.setUint32(40, len, true);
+            
+            const blob = new Blob([view, bytes], { type: 'audio/wav' });
+            return URL.createObjectURL(blob);
+        }
+
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+        async function playAudio(btn, elementId) {
+            const text = document.getElementById(elementId).innerText.substring(0, 400); // Limit length for demo
+            
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+                document.querySelectorAll('.audio-playing').forEach(el => el.classList.remove('audio-playing'));
+                // If clicking same button, just stop
+                if (btn.classList.contains('active-audio-btn')) {
+                    btn.classList.remove('active-audio-btn');
+                    return;
+                }
+            }
+
+            // UI Loading state
+            const originalIcon = btn.innerHTML;
+            btn.innerHTML = `<div class="typing-dot w-2 h-2 bg-amber-600 rounded-full inline-block"></div>`;
+            btn.disabled = true;
+
+            const base64Audio = await callGeminiTTS(text);
+
+            if (base64Audio) {
+                const wavUrl = pcmToWav(base64Audio);
+                const audio = new Audio(wavUrl);
+                
+                audio.onended = () => {
+                    btn.classList.remove('audio-playing');
+                    btn.classList.remove('active-audio-btn');
+                    currentAudio = null;
+                };
+
+                audio.play();
+                currentAudio = audio;
+                
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" /></svg>`; // Stop icon
+                btn.classList.add('audio-playing');
+                btn.classList.add('active-audio-btn');
+            } else {
+                alert("عذراً، خدمة الصوت غير متاحة حالياً.");
+                btn.innerHTML = originalIcon;
+            }
+            btn.disabled = false;
+        }
+
+
+        // --- Journal Logic (Soul Mirror) ---
+        async function analyzeJournal() {
+            const input = document.getElementById('journal-input').value.trim();
+            if (!input) return alert("الرجاء كتابة شيء ما أولاً.");
+
+            // UI updates
+            document.getElementById('journal-result').classList.add('hidden');
+            document.getElementById('journal-loading').classList.remove('hidden');
+            document.getElementById('analyze-btn').disabled = true;
+
+            const prompt = `
+                Analyze this journal entry: "${input}".
+                Act as a wise philosopher.
+                Return a JSON object with these 3 keys (Arabic text):
+                1. "essence": A short, poetic summary of the user's emotional state (e.g. "عاصفة من الشك تبحث عن اليقين").
+                2. "wisdom": A deep philosophical paragraph reframing their problem using metaphors (nature/universe).
+                3. "action": A simple, concrete meditative action they can do right now (e.g. "أغمض عينيك وتنفس 5 مرات").
+            `;
+
+            const jsonResponseString = await callGemini(prompt, true); // true for JSON mode
+
+            document.getElementById('journal-loading').classList.add('hidden');
+            document.getElementById('analyze-btn').disabled = false;
+
+            if (jsonResponseString) {
+                try {
+                    const data = JSON.parse(jsonResponseString);
+                    document.getElementById('result-essence').textContent = data.essence;
+                    document.getElementById('result-wisdom').innerHTML = marked.parse(data.wisdom);
+                    document.getElementById('result-action').textContent = data.action;
+                    document.getElementById('journal-result').classList.remove('hidden');
+                } catch (e) {
+                    console.error("JSON Error", e);
+                    alert("حدث خطأ في استيعاب مشاعرك. حاول مرة أخرى.");
+                }
+            } else {
+                alert("تعذر الاتصال بالمرآة. تحقق من الإنترنت.");
             }
         }
 
@@ -348,8 +587,6 @@
         const frontText = document.getElementById('card-front-text');
         const backText = document.getElementById('card-back-text');
         const counter = document.getElementById('card-counter');
-        const generationStatus = document.getElementById('generation-status');
-        const generateBtn = document.getElementById('generate-btn');
 
         function renderCard() {
             cardElement.classList.remove('flipped');
@@ -377,47 +614,38 @@
         async function generateFlashcards() {
             const topic = document.getElementById('topic-input').value.trim();
             if (!topic) return alert("الرجاء كتابة موضوع أولاً");
-
-            // UI Loading State
-            generationStatus.classList.remove('hidden');
-            generateBtn.disabled = true;
-            generateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            const btn = document.getElementById('generate-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '✨...';
+            btn.disabled = true;
 
             const prompt = `
                 Generate 3 flashcards in Arabic about the philosophical concept of "${topic}".
-                Focus on deep wisdom and self-development suitable for the book 'Art of Living'.
-                Return ONLY a raw JSON array. strictly in this format: [{"front": "Question/Concept", "back": "Answer/Definition"}].
-                Do not include markdown formatting like \`\`\`json.
+                Return ONLY a raw JSON array: [{"front": "Question", "back": "Answer"}].
+                No markdown formatting.
             `;
 
             const result = await callGemini(prompt);
+            
+            btn.innerHTML = originalText;
+            btn.disabled = false;
 
             if (result) {
                 try {
-                    // Cleanup basic markdown if present
                     const cleanJson = result.replace(/```json/g, '').replace(/```/g, '').trim();
                     const newCards = JSON.parse(cleanJson);
-                    
                     if (Array.isArray(newCards)) {
                         flashcardsData = [...flashcardsData, ...newCards];
-                        alert(`تمت إضافة ${newCards.length} بطاقة جديدة عن ${topic}!`);
-                        // Go to the first new card
+                        alert(`تمت إضافة ${newCards.length} بطاقة!`);
                         currentIndex = flashcardsData.length - newCards.length;
                         renderCard();
                         document.getElementById('topic-input').value = '';
                     }
                 } catch (e) {
-                    console.error("JSON Parse Error", e);
-                    alert("عذراً، حدث خطأ أثناء صياغة البطاقات. حاول مرة أخرى.");
+                    console.error("Parse Error", e);
                 }
-            } else {
-                alert("تعذر الاتصال بالمستشار الذكي. تحقق من الإنترنت.");
             }
-
-            // Reset UI
-            generationStatus.classList.add('hidden');
-            generateBtn.disabled = false;
-            generateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         }
 
         // --- Chat Logic ---
@@ -431,113 +659,72 @@
         function addMessage(text, isUser) {
             const div = document.createElement('div');
             div.className = `message-bubble ${isUser ? 'user-message' : 'ai-message'} shadow-sm book-font`;
-            
-            if (!isUser) {
-                // Parse markdown for AI responses
-                div.innerHTML = marked.parse(text);
-            } else {
-                div.textContent = text;
-            }
-            
+            if (!isUser) div.innerHTML = marked.parse(text);
+            else div.textContent = text;
             chatMessages.appendChild(div);
             chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function showTypingIndicator() {
-            const div = document.createElement('div');
-            div.id = 'typing-indicator';
-            div.className = 'message-bubble ai-message shadow-sm flex gap-1 w-16 justify-center';
-            div.innerHTML = `
-                <div class="typing-dot w-2 h-2 bg-amber-600 rounded-full"></div>
-                <div class="typing-dot w-2 h-2 bg-amber-600 rounded-full"></div>
-                <div class="typing-dot w-2 h-2 bg-amber-600 rounded-full"></div>
-            `;
-            chatMessages.appendChild(div);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function removeTypingIndicator() {
-            const el = document.getElementById('typing-indicator');
-            if (el) el.remove();
         }
 
         async function sendMessage() {
             const text = chatInput.value.trim();
             if (!text) return;
-
             addMessage(text, true);
             chatInput.value = '';
-            showTypingIndicator();
-
-            const prompt = `
-                You are a wise, calm philosopher and the author of the book "The Art of Living". 
-                The user asks: "${text}".
-                Answer in Arabic. 
-                Keep the tone soothing, profound, and encouraging. 
-                Use metaphors from nature (river, trees, wind). 
-                Keep the answer concise (under 80 words).
-            `;
-
-            const response = await callGemini(prompt);
-            removeTypingIndicator();
             
-            if (response) {
-                addMessage(response, false);
-            } else {
-                addMessage("يبدو أن غيوم التفكير تحجب الرؤية الآن. هل يمكنك إعادة السؤال؟", false);
-            }
+            // Loading indicator
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'chat-loading';
+            loadingDiv.className = 'message-bubble ai-message';
+            loadingDiv.innerHTML = '<div class="typing-dot w-2 h-2 bg-amber-600 rounded-full inline-block mx-1"></div><div class="typing-dot w-2 h-2 bg-amber-600 rounded-full inline-block mx-1"></div>';
+            chatMessages.appendChild(loadingDiv);
+
+            const prompt = `You are a wise philosopher. User says: "${text}". Answer in Arabic. Short, profound.`;
+            const response = await callGemini(prompt);
+            
+            loadingDiv.remove();
+            if (response) addMessage(response, false);
         }
 
         // --- Tab Logic ---
         function switchTab(tabName) {
-            const tabs = ['book', 'flashcards', 'sage'];
-            
-            tabs.forEach(t => {
-                const view = document.getElementById(`${t}-view`); // Looks for book-view, flashcards-view, sage-view
+            ['book', 'flashcards', 'sage', 'journal'].forEach(t => {
+                const view = document.getElementById(`${t}-view`);
                 const btn = document.getElementById(`btn-${t}`);
-                
+                if (!view || !btn) return;
+
                 if (t === tabName) {
-                    if (view) { // Safety check
-                        view.classList.remove('hidden');
-                        if(t === 'flashcards') view.classList.add('flex');
-                        if(t === 'sage') view.classList.add('flex');
-                    }
-
-                    if (btn) {
-                        btn.classList.add('active-tab', 'text-amber-700');
-                        btn.classList.remove('text-gray-500');
-                    }
+                    view.classList.remove('hidden');
+                    if (t === 'flashcards' || t === 'sage' || t === 'journal') view.classList.add('flex');
+                    btn.classList.add('active-tab', 'text-amber-700');
+                    btn.classList.remove('text-gray-500');
                 } else {
-                    if (view) {
-                        view.classList.add('hidden');
-                        view.classList.remove('flex');
-                    }
-
-                    if (btn) {
-                        btn.classList.remove('active-tab', 'text-amber-700');
-                        btn.classList.add('text-gray-500');
-                    }
+                    view.classList.add('hidden');
+                    view.classList.remove('flex');
+                    btn.classList.remove('active-tab', 'text-amber-700');
+                    btn.classList.add('text-gray-500');
                 }
             });
+            // Stop audio if switching tabs
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+                document.querySelectorAll('.audio-playing').forEach(el => el.classList.remove('audio-playing'));
+            }
         }
 
         // Initialize
         renderCard();
-
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            // Updated to check the correct ID
-            if (document.getElementById('flashcards-view').classList.contains('hidden')) return;
-            
-            if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'ArrowDown') {
-                if(document.activeElement !== document.getElementById('topic-input')) {
-                    e.preventDefault();
-                    flipCard();
+        
+        // Navigation keys
+         document.addEventListener('keydown', (e) => {
+            if (!document.getElementById('flashcards-view').classList.contains('hidden')) {
+                if (e.code === 'Space' || e.code === 'ArrowUp') {
+                     if(document.activeElement !== document.getElementById('topic-input')) {
+                        e.preventDefault(); flipCard();
+                     }
                 }
-            } else if (e.code === 'ArrowLeft') {
-                nextCard();
-            } else if (e.code === 'ArrowRight') {
-                prevCard();
+                else if (e.code === 'ArrowLeft') nextCard();
+                else if (e.code === 'ArrowRight') prevCard();
             }
         });
     </script>
