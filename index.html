@@ -369,7 +369,7 @@
     </main>
 
     <script>
-        const apiKey = "AIzaSyBb38OZM1Ji7oJK3Xx7TiC5Ubzurgw5D1M"; // API Key Inserted
+        const apiKey = ""; // System provides this at runtime
 
         // --- Data & State ---
         let flashcardsData = [
@@ -393,8 +393,8 @@
         
         // --- API Helpers ---
         async function callGemini(promptText, jsonMode = false) {
-            // Updated to use the stable public model 'gemini-1.5-flash'
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            // Updated to use the supported model 'gemini-2.5-flash-preview-09-2025'
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             
             const generationConfig = jsonMode ? 
                 { responseMimeType: "application/json", responseSchema: { type: "OBJECT", properties: { essence: {type: "STRING"}, wisdom: {type: "STRING"}, action: {type: "STRING"} } } } 
