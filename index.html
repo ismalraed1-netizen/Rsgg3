@@ -369,7 +369,7 @@
     </main>
 
     <script>
-        const apiKey = ""; // System provides this at runtime
+        const apiKey = "AIzaSyBb38OZM1Ji7oJK3Xx7TiC5Ubzurgw5D1M"; // API Key Inserted!
 
         // --- Data & State ---
         let flashcardsData = [
@@ -393,7 +393,7 @@
         
         // --- API Helpers ---
         async function callGemini(promptText, jsonMode = false) {
-            // Updated to use the supported model 'gemini-2.5-flash-preview-09-2025'
+            // Updated to use the standard, stable model 'gemini-2.5-flash-preview-09-2025'
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             
             const generationConfig = jsonMode ? 
@@ -427,7 +427,6 @@
         }
 
         async function callGeminiTTS(text) {
-             // Keep TTS preview model as it has specific endpoint, usually stable enough or no alternative
              const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
              const payload = {
                 contents: [{ parts: [{ text: text }] }],
@@ -436,7 +435,7 @@
                     speechConfig: {
                         voiceConfig: {
                             prebuiltVoiceConfig: {
-                                voiceName: "Aoede" // Good narrative voice
+                                voiceName: "Aoede"
                             }
                         }
                     }
@@ -462,7 +461,6 @@
         }
 
         // --- TTS Logic (Audio Handling) ---
-        // Helper to convert Base64 PCM to WAV Blob URL
         function pcmToWav(base64Pcm, sampleRate = 24000) {
             const binaryString = window.atob(base64Pcm);
             const len = binaryString.length;
@@ -471,26 +469,20 @@
                 bytes[i] = binaryString.charCodeAt(i);
             }
             
-            // PCM data (16-bit little endian)
             const wavHeader = new ArrayBuffer(44);
             const view = new DataView(wavHeader);
             
-            // RIFF chunk descriptor
             writeString(view, 0, 'RIFF');
             view.setUint32(4, 36 + len, true);
             writeString(view, 8, 'WAVE');
-            
-            // fmt sub-chunk
             writeString(view, 12, 'fmt ');
             view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true); // PCM
-            view.setUint16(22, 1, true); // Mono
+            view.setUint16(20, 1, true); 
+            view.setUint16(22, 1, true); 
             view.setUint32(24, sampleRate, true);
             view.setUint32(28, sampleRate * 2, true);
             view.setUint16(32, 2, true);
             view.setUint16(34, 16, true);
-            
-            // data sub-chunk
             writeString(view, 36, 'data');
             view.setUint32(40, len, true);
             
@@ -505,20 +497,18 @@
         }
 
         async function playAudio(btn, elementId) {
-            const text = document.getElementById(elementId).innerText.substring(0, 400); // Limit length for demo
+            const text = document.getElementById(elementId).innerText.substring(0, 400); 
             
             if (currentAudio) {
                 currentAudio.pause();
                 currentAudio = null;
                 document.querySelectorAll('.audio-playing').forEach(el => el.classList.remove('audio-playing'));
-                // If clicking same button, just stop
                 if (btn.classList.contains('active-audio-btn')) {
                     btn.classList.remove('active-audio-btn');
                     return;
                 }
             }
 
-            // UI Loading state
             const originalIcon = btn.innerHTML;
             btn.innerHTML = `<div class="typing-dot w-2 h-2 bg-amber-600 rounded-full inline-block"></div>`;
             btn.disabled = true;
@@ -554,7 +544,6 @@
             const input = document.getElementById('journal-input').value.trim();
             if (!input) return alert("الرجاء كتابة شيء ما أولاً.");
 
-            // UI updates
             document.getElementById('journal-result').classList.add('hidden');
             document.getElementById('journal-loading').classList.remove('hidden');
             document.getElementById('analyze-btn').disabled = true;
@@ -568,14 +557,13 @@
                 3. "action": A simple, concrete meditative action they can do right now (e.g. "أغمض عينيك وتنفس 5 مرات").
             `;
 
-            const jsonResponseString = await callGemini(prompt, true); // true for JSON mode
+            const jsonResponseString = await callGemini(prompt, true); 
 
             document.getElementById('journal-loading').classList.add('hidden');
             document.getElementById('analyze-btn').disabled = false;
 
             if (jsonResponseString) {
                 try {
-                    // Added cleanup logic here to prevent markdown issues
                     const cleanJson = jsonResponseString.replace(/```json/g, '').replace(/```/g, '').trim();
                     const data = JSON.parse(cleanJson);
                     
@@ -679,7 +667,6 @@
             addMessage(text, true);
             chatInput.value = '';
             
-            // Loading indicator
             const loadingDiv = document.createElement('div');
             loadingDiv.id = 'chat-loading';
             loadingDiv.className = 'message-bubble ai-message';
@@ -712,7 +699,6 @@
                     btn.classList.add('text-gray-500');
                 }
             });
-            // Stop audio if switching tabs
             if (currentAudio) {
                 currentAudio.pause();
                 currentAudio = null;
@@ -720,10 +706,8 @@
             }
         }
 
-        // Initialize
         renderCard();
         
-        // Navigation keys
          document.addEventListener('keydown', (e) => {
             if (!document.getElementById('flashcards-view').classList.contains('hidden')) {
                 if (e.code === 'Space' || e.code === 'ArrowUp') {
