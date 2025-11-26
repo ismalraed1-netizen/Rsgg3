@@ -6,6 +6,8 @@
     <title>فن العيش | رحلة في فهم الذات</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Markdown Parser for AI responses -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         body {
             font-family: 'Tajawal', sans-serif;
@@ -70,28 +72,76 @@
             color: #b45309;
             font-weight: bold;
         }
+
+        /* AI Chat Styles */
+        .message-bubble {
+            max-width: 80%;
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .user-message {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            margin-right: auto;
+            border-bottom-right-radius: 0;
+        }
+        .ai-message {
+            background-color: #fffbeb; /* Amber 50 */
+            border: 1px solid #fcd34d; /* Amber 300 */
+            color: #78350f; /* Amber 900 */
+            margin-left: auto;
+            border-bottom-left-radius: 0;
+        }
+        .typing-dot {
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Sparkle Animation for AI Buttons */
+        @keyframes sparkle {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .ai-btn-gradient {
+            background: linear-gradient(270deg, #b45309, #d97706, #b45309);
+            background-size: 200% 200%;
+            animation: sparkle 3s ease infinite;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
     <!-- Header -->
     <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-2">
+        <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between overflow-x-auto hide-scrollbar">
+            <div class="flex items-center gap-2 flex-shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
-                <h1 class="text-xl font-bold text-gray-800 book-font">فن العيش</h1>
+                <h1 class="text-xl font-bold text-gray-800 book-font whitespace-nowrap">فن العيش</h1>
             </div>
-            <nav class="flex gap-6">
-                <button onclick="switchTab('book')" id="btn-book" class="py-5 px-1 active-tab transition-colors duration-200">الكتاب</button>
-                <button onclick="switchTab('flashcards')" id="btn-flashcards" class="py-5 px-1 text-gray-500 hover:text-gray-800 transition-colors duration-200">بطاقات الذاكرة</button>
+            <nav class="flex gap-4 md:gap-6 flex-shrink-0">
+                <button onclick="switchTab('book')" id="btn-book" class="py-5 px-1 active-tab transition-colors duration-200 whitespace-nowrap">الكتاب</button>
+                <button onclick="switchTab('flashcards')" id="btn-flashcards" class="py-5 px-1 text-gray-500 hover:text-gray-800 transition-colors duration-200 whitespace-nowrap">بطاقات الذاكرة</button>
+                <button onclick="switchTab('sage')" id="btn-sage" class="py-5 px-1 text-gray-500 hover:text-gray-800 transition-colors duration-200 flex items-center gap-1 whitespace-nowrap">
+                    <span>المستشار الحكيم</span>
+                    <span class="text-amber-500 text-xs">✨</span>
+                </button>
             </nav>
         </div>
     </header>
 
     <!-- Main Content Area -->
-    <main class="flex-grow max-w-3xl mx-auto w-full px-4 py-8">
+    <main class="flex-grow max-w-3xl mx-auto w-full px-4 py-8 relative">
 
         <!-- VIEW 1: THE BOOK -->
         <div id="book-view" class="space-y-8 animate-fade-in">
@@ -145,10 +195,26 @@
             </article>
         </div>
 
-        <!-- VIEW 2: FLASHCARDS -->
-        <div id="flashcard-view" class="hidden h-[calc(100vh-140px)] flex flex-col justify-center items-center">
+        <!-- VIEW 2: FLASHCARDS (ID Updated to flashcards-view) -->
+        <div id="flashcards-view" class="hidden h-full flex flex-col items-center">
             
-            <div class="w-full max-w-md mx-auto perspective h-80 mb-8">
+            <!-- AI Generator Section -->
+            <div class="w-full max-w-md mb-8 bg-white p-4 rounded-xl shadow-sm border border-amber-100">
+                <label class="block text-sm font-medium text-amber-900 mb-2 book-font">✨ مولد البطاقات الذكي</label>
+                <div class="flex gap-2">
+                    <input type="text" id="topic-input" placeholder="اكتب موضوعاً (مثلاً: الصبر، الأمل، الحكمة)" 
+                        class="flex-grow p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none text-sm">
+                    <button onclick="generateFlashcards()" id="generate-btn" class="ai-btn-gradient text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-1">
+                        <span>توليد</span>
+                        <svg id="sparkle-icon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+                <p id="generation-status" class="text-xs text-amber-600 mt-2 hidden">جاري استحضار الحكمة...</p>
+            </div>
+
+            <div class="w-full max-w-md mx-auto perspective h-80 mb-8 mt-4">
                 <div class="card-inner h-full w-full relative" onclick="flipCard()" id="flashcard">
                     <!-- Front -->
                     <div class="card-face card-front">
@@ -189,16 +255,51 @@
             </div>
             
             <p class="mt-8 text-sm text-gray-400 text-center max-w-xs">
-                استخدم البطاقات لمراجعة أهم الدروس المستفادة من الكتاب.
+                استخدم البطاقات لمراجعة أهم الدروس، أو اطلب من الذكاء الاصطناعي إنشاء المزيد.
             </p>
 
+        </div>
+
+        <!-- VIEW 3: AI SAGE (CHAT) -->
+        <div id="sage-view" class="hidden h-[calc(100vh-140px)] flex flex-col bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <!-- Chat Header -->
+            <div class="bg-amber-50 p-4 border-b border-amber-100 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-amber-200 flex items-center justify-center text-xl">🧙‍♂️</div>
+                <div>
+                    <h3 class="font-bold text-amber-900 book-font text-lg">المستشار الحكيم</h3>
+                    <p class="text-xs text-amber-700">اسألني عن الحياة، الألم، أو المعنى...</p>
+                </div>
+            </div>
+
+            <!-- Messages Area -->
+            <div id="chat-messages" class="flex-grow p-4 overflow-y-auto space-y-4 bg-gray-50">
+                <div class="message-bubble ai-message shadow-sm">
+                    <p class="book-font">أهلاً بك أيها السالك في دروب الحياة. أنا هنا لأشاركك التأملات. ما الذي يشغل بالك اليوم؟</p>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-4 bg-white border-t border-gray-200">
+                <div class="flex gap-2">
+                    <input type="text" id="chat-input" placeholder="اكتب سؤالك هنا..." 
+                        class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                        onkeypress="handleChatKeyPress(event)">
+                    <button onclick="sendMessage()" class="ai-btn-gradient text-white px-6 py-2 rounded-lg font-bold shadow-md hover:shadow-lg transition-transform hover:scale-105 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform rotate-180" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
         </div>
 
     </main>
 
     <script>
-        // Data from the previous context
-        const flashcardsData = [
+        const apiKey = ""; // System provides this at runtime
+
+        // --- Data & State ---
+        let flashcardsData = [
             { front: "جوهر الحياة", back: "المسافة الغامضة بين الصرخة الأولى والزفير الأخير، وليست مجرد أيام تُحسب." },
             { front: "سمات مرحلة الطفولة", back: "امتلاك أقصى درجات الشجاعة: شجاعة السؤال، وشجاعة الحلم، وشجاعة الخطأ دون خجل." },
             { front: "المشكلة الحقيقية في النضج", back: "الخوف من حكم الآخرين والخوف من الفشل، وفقدان دهشة الطفل." },
@@ -217,17 +318,41 @@
         ];
 
         let currentIndex = 0;
+        
+        // --- API Helper ---
+        async function callGemini(promptText) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: promptText }] }]
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، لم أستطع التفكير بوضوح الآن.";
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                return null;
+            }
+        }
+
+        // --- Flashcard Logic ---
         const cardElement = document.getElementById('flashcard');
         const frontText = document.getElementById('card-front-text');
         const backText = document.getElementById('card-back-text');
         const counter = document.getElementById('card-counter');
+        const generationStatus = document.getElementById('generation-status');
+        const generateBtn = document.getElementById('generate-btn');
 
-        // Render Initial Card
         function renderCard() {
-            // Reset flip state if needed
             cardElement.classList.remove('flipped');
-            
-            // Short timeout to allow flip back before changing content (optional smooth feel)
             setTimeout(() => {
                 frontText.textContent = flashcardsData[currentIndex].front;
                 backText.textContent = flashcardsData[currentIndex].back;
@@ -240,51 +365,160 @@
         }
 
         function nextCard() {
-            if (currentIndex < flashcardsData.length - 1) {
-                currentIndex++;
-                renderCard();
-            } else {
-                // Loop back to start
-                currentIndex = 0;
-                renderCard();
-            }
+            currentIndex = (currentIndex < flashcardsData.length - 1) ? currentIndex + 1 : 0;
+            renderCard();
         }
 
         function prevCard() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                renderCard();
+            currentIndex = (currentIndex > 0) ? currentIndex - 1 : 0;
+            renderCard();
+        }
+
+        async function generateFlashcards() {
+            const topic = document.getElementById('topic-input').value.trim();
+            if (!topic) return alert("الرجاء كتابة موضوع أولاً");
+
+            // UI Loading State
+            generationStatus.classList.remove('hidden');
+            generateBtn.disabled = true;
+            generateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            const prompt = `
+                Generate 3 flashcards in Arabic about the philosophical concept of "${topic}".
+                Focus on deep wisdom and self-development suitable for the book 'Art of Living'.
+                Return ONLY a raw JSON array. strictly in this format: [{"front": "Question/Concept", "back": "Answer/Definition"}].
+                Do not include markdown formatting like \`\`\`json.
+            `;
+
+            const result = await callGemini(prompt);
+
+            if (result) {
+                try {
+                    // Cleanup basic markdown if present
+                    const cleanJson = result.replace(/```json/g, '').replace(/```/g, '').trim();
+                    const newCards = JSON.parse(cleanJson);
+                    
+                    if (Array.isArray(newCards)) {
+                        flashcardsData = [...flashcardsData, ...newCards];
+                        alert(`تمت إضافة ${newCards.length} بطاقة جديدة عن ${topic}!`);
+                        // Go to the first new card
+                        currentIndex = flashcardsData.length - newCards.length;
+                        renderCard();
+                        document.getElementById('topic-input').value = '';
+                    }
+                } catch (e) {
+                    console.error("JSON Parse Error", e);
+                    alert("عذراً، حدث خطأ أثناء صياغة البطاقات. حاول مرة أخرى.");
+                }
+            } else {
+                alert("تعذر الاتصال بالمستشار الذكي. تحقق من الإنترنت.");
+            }
+
+            // Reset UI
+            generationStatus.classList.add('hidden');
+            generateBtn.disabled = false;
+            generateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        // --- Chat Logic ---
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+
+        function handleChatKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function addMessage(text, isUser) {
+            const div = document.createElement('div');
+            div.className = `message-bubble ${isUser ? 'user-message' : 'ai-message'} shadow-sm book-font`;
+            
+            if (!isUser) {
+                // Parse markdown for AI responses
+                div.innerHTML = marked.parse(text);
+            } else {
+                div.textContent = text;
+            }
+            
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const div = document.createElement('div');
+            div.id = 'typing-indicator';
+            div.className = 'message-bubble ai-message shadow-sm flex gap-1 w-16 justify-center';
+            div.innerHTML = `
+                <div class="typing-dot w-2 h-2 bg-amber-600 rounded-full"></div>
+                <div class="typing-dot w-2 h-2 bg-amber-600 rounded-full"></div>
+                <div class="typing-dot w-2 h-2 bg-amber-600 rounded-full"></div>
+            `;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const el = document.getElementById('typing-indicator');
+            if (el) el.remove();
+        }
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            addMessage(text, true);
+            chatInput.value = '';
+            showTypingIndicator();
+
+            const prompt = `
+                You are a wise, calm philosopher and the author of the book "The Art of Living". 
+                The user asks: "${text}".
+                Answer in Arabic. 
+                Keep the tone soothing, profound, and encouraging. 
+                Use metaphors from nature (river, trees, wind). 
+                Keep the answer concise (under 80 words).
+            `;
+
+            const response = await callGemini(prompt);
+            removeTypingIndicator();
+            
+            if (response) {
+                addMessage(response, false);
+            } else {
+                addMessage("يبدو أن غيوم التفكير تحجب الرؤية الآن. هل يمكنك إعادة السؤال؟", false);
             }
         }
 
-        // Tab Switching Logic
+        // --- Tab Logic ---
         function switchTab(tabName) {
-            const bookView = document.getElementById('book-view');
-            const flashcardView = document.getElementById('flashcard-view');
-            const btnBook = document.getElementById('btn-book');
-            const btnFlashcards = document.getElementById('btn-flashcards');
+            const tabs = ['book', 'flashcards', 'sage'];
+            
+            tabs.forEach(t => {
+                const view = document.getElementById(`${t}-view`); // Looks for book-view, flashcards-view, sage-view
+                const btn = document.getElementById(`btn-${t}`);
+                
+                if (t === tabName) {
+                    if (view) { // Safety check
+                        view.classList.remove('hidden');
+                        if(t === 'flashcards') view.classList.add('flex');
+                        if(t === 'sage') view.classList.add('flex');
+                    }
 
-            if (tabName === 'book') {
-                bookView.classList.remove('hidden');
-                flashcardView.classList.add('hidden');
-                
-                btnBook.classList.add('active-tab', 'text-amber-700');
-                btnBook.classList.remove('text-gray-500');
-                
-                btnFlashcards.classList.remove('active-tab');
-                btnFlashcards.classList.add('text-gray-500');
-            } else {
-                bookView.classList.add('hidden');
-                flashcardView.classList.remove('hidden');
-                // Re-enable flex for centering
-                flashcardView.classList.add('flex');
-                
-                btnFlashcards.classList.add('active-tab', 'text-amber-700');
-                btnFlashcards.classList.remove('text-gray-500');
-                
-                btnBook.classList.remove('active-tab');
-                btnBook.classList.add('text-gray-500');
-            }
+                    if (btn) {
+                        btn.classList.add('active-tab', 'text-amber-700');
+                        btn.classList.remove('text-gray-500');
+                    }
+                } else {
+                    if (view) {
+                        view.classList.add('hidden');
+                        view.classList.remove('flex');
+                    }
+
+                    if (btn) {
+                        btn.classList.remove('active-tab', 'text-amber-700');
+                        btn.classList.add('text-gray-500');
+                    }
+                }
+            });
         }
 
         // Initialize
@@ -292,15 +526,18 @@
 
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
-            if (document.getElementById('flashcard-view').classList.contains('hidden')) return;
+            // Updated to check the correct ID
+            if (document.getElementById('flashcards-view').classList.contains('hidden')) return;
             
             if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'ArrowDown') {
-                e.preventDefault(); // prevent scroll
-                flipCard();
+                if(document.activeElement !== document.getElementById('topic-input')) {
+                    e.preventDefault();
+                    flipCard();
+                }
             } else if (e.code === 'ArrowLeft') {
-                nextCard(); // RTL: Left is next
+                nextCard();
             } else if (e.code === 'ArrowRight') {
-                prevCard(); // RTL: Right is prev
+                prevCard();
             }
         });
     </script>
