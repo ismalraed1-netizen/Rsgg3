@@ -3,722 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>فن العيش | رحلة في فهم الذات</title>
+    <title>شوارع تاون | الافتتاح قريباً</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <!-- Markdown Parser for AI responses -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-red': '#D80000',
+                        'brand-dark': '#050505',
+                        'brand-gray': '#1a1a1a',
+                    },
+                    fontFamily: {
+                        'cairo': ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body {
-            font-family: 'Tajawal', sans-serif;
-            background-color: #fcfbf9; /* لون كريمي هادئ */
-            color: #2c2c2c;
-        }
-        h1, h2, h3, .book-font {
-            font-family: 'Amiri', serif;
-        }
-        
-        /* تأثير تقليب البطاقة */
-        .perspective {
-            perspective: 1000px;
-        }
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-            cursor: pointer;
-        }
-        .card-inner.flipped {
-            transform: rotateY(180deg);
-        }
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            text-align: center;
-        }
-        .card-front {
-            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
-            border: 2px solid #e5e7eb;
-        }
-        .card-back {
-            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            font-family: 'Cairo', sans-serif;
+            background-color: #050505;
             color: white;
-            transform: rotateY(180deg);
+            overflow-x: hidden;
         }
         
-        /* إخفاء شريط التمرير */
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
+        /* Glitch Effect */
+        .glitch {
+            position: relative;
+            color: white;
+            font-weight: 900;
         }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
-
-        .active-tab {
-            border-bottom: 2px solid #b45309;
-            color: #b45309;
-            font-weight: bold;
+        .glitch::before {
+            left: 2px;
+            text-shadow: -1px 0 #D80000;
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
         }
-
-        /* AI Chat Styles */
-        .message-bubble {
-            max-width: 80%;
-            padding: 1rem;
-            border-radius: 1rem;
-            margin-bottom: 1rem;
-            line-height: 1.6;
+        .glitch::after {
+            left: -2px;
+            text-shadow: -1px 0 #00ffff;
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim 2.5s infinite linear alternate-reverse;
         }
-        .user-message {
-            background-color: #f3f4f6;
-            color: #1f2937;
-            margin-right: auto;
-            border-bottom-right-radius: 0;
+        @keyframes glitch-anim {
+            0% { clip: rect(11px, 9999px, 88px, 0); }
+            20% { clip: rect(54px, 9999px, 24px, 0); }
+            40% { clip: rect(74px, 9999px, 59px, 0); }
+            60% { clip: rect(2px, 9999px, 95px, 0); }
+            80% { clip: rect(29px, 9999px, 35px, 0); }
+            100% { clip: rect(25px, 9999px, 49px, 0); }
         }
-        .ai-message {
-            background-color: #fffbeb; /* Amber 50 */
-            border: 1px solid #fcd34d; /* Amber 300 */
-            color: #78350f; /* Amber 900 */
-            margin-left: auto;
-            border-bottom-left-radius: 0;
-        }
-        
-        /* Journal Styles */
-        .journal-entry {
-            transition: all 0.3s ease;
-        }
-        .journal-entry:focus-within {
-            box-shadow: 0 4px 6px -1px rgba(180, 83, 9, 0.1), 0 2px 4px -1px rgba(180, 83, 9, 0.06);
-            border-color: #d97706;
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(65px, 9999px, 100px, 0); }
+            100% { clip: rect(5px, 9999px, 30px, 0); }
         }
 
-        .typing-dot {
-            animation: typing 1.4s infinite ease-in-out both;
-        }
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        
-        @keyframes typing {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
-
-        /* Sparkle Animation for AI Buttons */
-        @keyframes sparkle {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .ai-btn-gradient {
-            background: linear-gradient(270deg, #b45309, #d97706, #b45309);
-            background-size: 200% 200%;
-            animation: sparkle 3s ease infinite;
-        }
-        
-        /* Audio Player Styles */
-        .audio-playing {
-            color: #b45309;
-            animation: pulse-audio 1.5s infinite;
-        }
-        @keyframes pulse-audio {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
+        .bg-grid-pattern {
+            background-image: radial-gradient(#D80000 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.05;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="selection:bg-brand-red selection:text-white">
 
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between overflow-x-auto hide-scrollbar">
-            <div class="flex items-center gap-2 flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-                <h1 class="text-xl font-bold text-gray-800 book-font whitespace-nowrap">فن العيش</h1>
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <span class="text-2xl font-black tracking-wider text-white">شوارع <span class="text-brand-red">تاون</span></span>
+                    <span class="bg-brand-red/20 text-brand-red text-xs px-2 py-1 rounded border border-brand-red/30">جديد</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4 space-x-reverse">
+                        <a href="#home" class="text-white hover:text-brand-red px-3 py-2 rounded-md text-sm font-bold transition">الرئيسية</a>
+                        <a href="#features" class="text-white hover:text-brand-red px-3 py-2 rounded-md text-sm font-bold transition">المميزات</a>
+                        <a href="https://discord.gg/YOUR_LINK" target="_blank" class="bg-brand-red hover:bg-red-700 text-white px-6 py-2 rounded-full text-sm font-bold transition flex items-center gap-2 shadow-[0_0_15px_rgba(216,0,0,0.5)] animate-pulse">
+                            <i class="fab fa-discord"></i> انضم للانتظار
+                        </a>
+                    </div>
+                </div>
             </div>
-            <nav class="flex gap-4 md:gap-6 flex-shrink-0">
-                <button onclick="switchTab('book')" id="btn-book" class="py-5 px-1 active-tab transition-colors duration-200 whitespace-nowrap">الكتاب</button>
-                <button onclick="switchTab('journal')" id="btn-journal" class="py-5 px-1 text-gray-500 hover:text-gray-800 transition-colors duration-200 flex items-center gap-1 whitespace-nowrap">
-                   <span>مرآة الروح</span>
-                   <span class="text-amber-500 text-xs">✨</span>
-                </button>
-                <button onclick="switchTab('flashcards')" id="btn-flashcards" class="py-5 px-1 text-gray-500 hover:text-gray-800 transition-colors duration-200 whitespace-nowrap">البطاقات</button>
-                <button onclick="switchTab('sage')" id="btn-sage" class="py-5 px-1 text-gray-500 hover:text-gray-800 transition-colors duration-200 flex items-center gap-1 whitespace-nowrap">
-                    <span>المستشار</span>
-                </button>
-            </nav>
         </div>
-    </header>
+    </nav>
 
-    <!-- Main Content Area -->
-    <main class="flex-grow max-w-3xl mx-auto w-full px-4 py-8 relative">
-
-        <!-- VIEW 1: THE BOOK -->
-        <div id="book-view" class="space-y-8 animate-fade-in">
-            <!-- Cover -->
-            <div class="text-center py-10 border-b border-gray-200">
-                <p class="text-amber-700 font-medium mb-2">إصدار خاص</p>
-                <h1 class="text-5xl md:text-6xl font-bold mb-4 book-font text-gray-900">فن العيش</h1>
-                <p class="text-xl text-gray-600 book-font italic">رحلة في فهم الذات والحياة</p>
-                <div class="mt-8 flex justify-center">
-                    <span class="w-16 h-1 bg-amber-700 rounded-full"></span>
-                </div>
-            </div>
-
-            <!-- Content -->
-            <article class="prose prose-lg prose-stone mx-auto">
-                <div class="bg-white p-8 md:p-12 rounded-lg shadow-sm border border-gray-100">
-                    <div class="flex justify-between items-start mb-6">
-                        <h2 class="text-3xl font-bold text-amber-800 book-font">المقدمة: اللغز الأزلي</h2>
-                        <button onclick="playAudio(this, 'intro-text')" class="text-gray-400 hover:text-amber-600 transition-colors" title="استمع للنص">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div id="intro-text">
-                        <p class="leading-loose text-gray-700 mb-4">
-                            الحياة ليست مجرد أيام تُحسب، ولا هي أنفاس تتردد في الصدور. الحياة، في جوهرها، هي تلك المسافة الغامضة بين الصرخة الأولى والزفير الأخير. نحن نأتي إلى هذا العالم دون دليل إرشادات.
-                        </p>
-                        <p class="leading-loose text-gray-700">
-                            هذا الكتاب ليس وصفة سحرية للسعادة، ولا خريطة طريق للثراء. إنه محاولة هادئة للتوقف قليلاً وسط ضجيج العالم، والتفكير في: ماذا يعني أن نكون أحياء حقاً؟
-                        </p>
-                    </div>
-                </div>
-
-                <div class="bg-white p-8 md:p-12 rounded-lg shadow-sm border border-gray-100 mt-8">
-                     <div class="flex justify-between items-start mb-6">
-                        <h2 class="text-3xl font-bold text-amber-800 book-font">الفصل الأول: لوحة البدايات</h2>
-                         <button onclick="playAudio(this, 'ch1-text')" class="text-gray-400 hover:text-amber-600 transition-colors" title="استمع للنص">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div id="ch1-text">
-                        <p class="leading-loose text-gray-700 mb-6">
-                            كل منا يولد كصفحة بيضاء، أو هكذا نحب أن نعتقد. لكن الحقيقة هي أننا نولد ونحن نحمل إرثاً جينياً وتاريخاً لم نعشه. ومع ذلك، تبقى الطفولة هي المرحلة التي نملك فيها أقصى درجات الشجاعة: شجاعة السؤال، وشجاعة الحلم.
-                        </p>
-                        <div class="bg-amber-50 p-6 rounded-r-4xl border-r-4 border-amber-600">
-                            <strong class="block text-amber-900 mb-2 book-font text-xl">الدرس المستفاد:</strong>
-                            <p class="text-amber-900">مشكلة "النضج" هي أننا نبدأ في الخوف. فن العيش يبدأ عندما نستعيد "دهشة الطفل" بداخلنا. أن تنظر للشجرة وكأنك تراها لأول مرة.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                 <div class="text-center py-8 text-gray-400">
-                    <p>... يتبع في النسخة الكاملة ...</p>
-                </div>
-            </article>
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <!-- Background -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1542300058-b94b8ab7411b?q=80&w=2069&auto=format&fit=crop" alt="Background" class="w-full h-full object-cover opacity-30 grayscale">
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/90 to-transparent"></div>
+            <div class="absolute inset-0 bg-grid-pattern"></div>
         </div>
 
-        <!-- VIEW 2: JOURNAL (SOUL MIRROR) -->
-        <div id="journal-view" class="hidden h-full flex flex-col animate-fade-in">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-amber-800 book-font mb-2">مرآة الروح</h2>
-                <p class="text-gray-600">اكتب ما يثقل قلبك، ودع الحكمة القديمة تعيد تشكيل رؤيتك.</p>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6 journal-entry">
-                <textarea id="journal-input" rows="5" class="w-full p-4 border-none focus:ring-0 text-gray-700 leading-relaxed resize-none text-lg book-font" placeholder="كيف تشعر اليوم؟ ما الذي يشغل بالك؟..."></textarea>
-                <div class="flex justify-between items-center mt-4 border-t border-gray-100 pt-4">
-                    <span class="text-xs text-gray-400">خصوصية تامة. لا يتم حفظ البيانات.</span>
-                    <button onclick="analyzeJournal()" id="analyze-btn" class="ai-btn-gradient text-white px-6 py-2 rounded-lg font-bold shadow-md hover:shadow-lg transition-transform hover:scale-105 flex items-center gap-2">
-                        <span>تأمل</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <div id="journal-result" class="hidden space-y-4">
-                <!-- Essence Card -->
-                <div class="bg-amber-50 p-6 rounded-lg border border-amber-100">
-                    <h3 class="text-amber-800 font-bold book-font text-lg mb-2">🌀 جوهر حالتك</h3>
-                    <p id="result-essence" class="text-amber-900 leading-relaxed"></p>
-                </div>
-                
-                <!-- Wisdom Card -->
-                <div class="bg-white p-6 rounded-lg border-l-4 border-amber-600 shadow-sm">
-                    <h3 class="text-gray-800 font-bold book-font text-lg mb-2">💡 منظور كوني</h3>
-                    <div id="result-wisdom" class="text-gray-700 leading-relaxed prose prose-amber"></div>
-                </div>
-
-                <!-- Action Card -->
-                <div class="bg-stone-800 text-stone-100 p-6 rounded-lg shadow-md">
-                    <h3 class="font-bold book-font text-lg mb-2 text-stone-300">🌱 تمرين مقترح</h3>
-                    <p id="result-action" class="leading-relaxed font-light"></p>
-                </div>
+        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto mt-10">
+            <div class="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/50 text-yellow-500 text-sm font-bold tracking-widest uppercase">
+                <i class="fas fa-hammer"></i> جاري العمل على اللمسات الأخيرة
             </div>
             
-            <div id="journal-loading" class="hidden text-center py-12">
-                <div class="typing-dot w-3 h-3 bg-amber-600 rounded-full inline-block mx-1"></div>
-                <div class="typing-dot w-3 h-3 bg-amber-600 rounded-full inline-block mx-1"></div>
-                <div class="typing-dot w-3 h-3 bg-amber-600 rounded-full inline-block mx-1"></div>
-                <p class="text-sm text-gray-500 mt-4">جاري استشارة النجوم...</p>
-            </div>
-        </div>
+            <h1 class="text-6xl md:text-9xl font-black mb-2 uppercase glitch" data-text="شوارع تاون">
+                شوارع تاون
+            </h1>
+            <h2 class="text-3xl md:text-5xl font-bold text-white mb-8">
+                الافتتاح <span class="text-brand-red bg-clip-text">قريباً</span>
+            </h2>
 
-        <!-- VIEW 3: FLASHCARDS -->
-        <div id="flashcards-view" class="hidden h-full flex flex-col items-center">
+            <!-- Countdown Timer -->
+            <div class="flex flex-wrap justify-center gap-4 md:gap-8 mb-12 text-center" id="countdown">
+                <div class="bg-white/5 backdrop-blur-sm border border-white/10 p-4 rounded-xl min-w-[100px]">
+                    <span class="block text-4xl md:text-6xl font-black text-white" id="days">00</span>
+                    <span class="text-sm text-gray-400">يوم</span>
+                </div>
+                <div class="bg-white/5 backdrop-blur-sm border border-white/10 p-4 rounded-xl min-w-[100px]">
+                    <span class="block text-4xl md:text-6xl font-black text-brand-red" id="hours">00</span>
+                    <span class="text-sm text-gray-400">ساعة</span>
+                </div>
+                <div class="bg-white/5 backdrop-blur-sm border border-white/10 p-4 rounded-xl min-w-[100px]">
+                    <span class="block text-4xl md:text-6xl font-black text-white" id="minutes">00</span>
+                    <span class="text-sm text-gray-400">دقيقة</span>
+                </div>
+                <div class="bg-white/5 backdrop-blur-sm border border-white/10 p-4 rounded-xl min-w-[100px]">
+                    <span class="block text-4xl md:text-6xl font-black text-brand-red" id="seconds">00</span>
+                    <span class="text-sm text-gray-400">ثانية</span>
+                </div>
+            </div>
+
+            <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto font-light">
+                نجهز لكم أقوى سيرفر حياة واقعية. سكربتات حصرية، سيارات سعودية، ونظام عصابات جديد كلياً.
+                <br> <span class="text-white font-bold">كن من الأوائل واحجز مكانك!</span>
+            </p>
             
-            <!-- AI Generator Section -->
-            <div class="w-full max-w-md mb-8 bg-white p-4 rounded-xl shadow-sm border border-amber-100">
-                <label class="block text-sm font-medium text-amber-900 mb-2 book-font">✨ مولد البطاقات الذكي</label>
-                <div class="flex gap-2">
-                    <input type="text" id="topic-input" placeholder="اكتب موضوعاً (مثلاً: الصبر، الأمل)" 
-                        class="flex-grow p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none text-sm">
-                    <button onclick="generateFlashcards()" id="generate-btn" class="ai-btn-gradient text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-1">
-                        <span>توليد</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <div class="w-full max-w-md mx-auto perspective h-80 mb-8 mt-4">
-                <div class="card-inner h-full w-full relative" onclick="flipCard()" id="flashcard">
-                    <!-- Front -->
-                    <div class="card-face card-front">
-                        <span class="text-sm uppercase tracking-widest text-gray-400 mb-4 font-bold">السؤال / المفهوم</span>
-                        <h3 class="text-3xl font-bold text-gray-800 book-font leading-snug" id="card-front-text">
-                            جوهر الحياة
-                        </h3>
-                        <p class="mt-8 text-xs text-gray-400">اضغط لقلب البطاقة</p>
-                    </div>
-                    <!-- Back -->
-                    <div class="card-face card-back">
-                        <span class="text-sm uppercase tracking-widest text-gray-400 mb-4 font-bold">الإجابة / المعنى</span>
-                        <p class="text-xl leading-relaxed font-light" id="card-back-text">
-                            المسافة الغامضة بين الصرخة الأولى والزفير الأخير، وليست مجرد أيام تُحسب.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Controls -->
-            <div class="flex items-center gap-6">
-                <button onclick="prevCard()" class="p-4 rounded-full bg-white shadow-md hover:bg-gray-50 text-gray-600 transition-all hover:scale-105 active:scale-95 border border-gray-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
-                
-                <div class="text-center">
-                    <span id="card-counter" class="block font-bold text-xl text-gray-800">1 / 15</span>
-                    <span class="text-xs text-gray-400">بطاقة</span>
-                </div>
-
-                <button onclick="nextCard()" class="p-4 rounded-full bg-amber-600 shadow-lg shadow-amber-200 hover:bg-amber-700 text-white transition-all hover:scale-105 active:scale-95">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </button>
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+                <a href="#discord" class="w-full md:w-auto px-10 py-5 bg-brand-red hover:bg-red-700 text-white font-bold rounded text-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(216,0,0,0.4)]">
+                    <i class="fab fa-discord ml-2"></i> دخول الديسكورد
+                </a>
             </div>
         </div>
+    </section>
 
-        <!-- VIEW 4: AI SAGE (CHAT) -->
-        <div id="sage-view" class="hidden h-[calc(100vh-140px)] flex flex-col bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <!-- Chat Header -->
-            <div class="bg-amber-50 p-4 border-b border-amber-100 flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-amber-200 flex items-center justify-center text-xl">🧙‍♂️</div>
+    <!-- Stats Bar (Upcoming) -->
+    <div class="bg-neutral-900 border-y border-white/5 relative z-20 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                 <div>
-                    <h3 class="font-bold text-amber-900 book-font text-lg">المستشار الحكيم</h3>
-                    <p class="text-xs text-amber-700">اسألني عن الحياة، الألم، أو المعنى...</p>
+                    <div class="text-3xl md:text-4xl font-black text-white mb-1"><i class="fas fa-server text-brand-red"></i></div>
+                    <div class="text-sm text-gray-400">سيرفر سعودي</div>
                 </div>
-            </div>
-
-            <!-- Messages Area -->
-            <div id="chat-messages" class="flex-grow p-4 overflow-y-auto space-y-4 bg-gray-50">
-                <div class="message-bubble ai-message shadow-sm">
-                    <p class="book-font">أهلاً بك أيها السالك في دروب الحياة. أنا هنا لأشاركك التأملات. ما الذي يشغل بالك اليوم؟</p>
+                <div>
+                    <div class="text-3xl md:text-4xl font-black text-white mb-1">+200</div>
+                    <div class="text-sm text-gray-400">سيارة حصرية</div>
                 </div>
-            </div>
-
-            <!-- Input Area -->
-            <div class="p-4 bg-white border-t border-gray-200">
-                <div class="flex gap-2">
-                    <input type="text" id="chat-input" placeholder="اكتب سؤالك هنا..." 
-                        class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                        onkeypress="handleChatKeyPress(event)">
-                    <button onclick="sendMessage()" class="ai-btn-gradient text-white px-6 py-2 rounded-lg font-bold shadow-md hover:shadow-lg transition-transform hover:scale-105 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform rotate-180" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                        </svg>
-                    </button>
+                <div>
+                    <div class="text-3xl md:text-4xl font-black text-white mb-1">64+</div>
+                    <div class="text-sm text-gray-400">سلوت (قابل للزيادة)</div>
+                </div>
+                <div>
+                    <div class="text-3xl md:text-4xl font-black text-white mb-1"><i class="fas fa-shield-alt text-brand-red"></i></div>
+                    <div class="text-sm text-gray-400">حماية عالية</div>
                 </div>
             </div>
         </div>
+    </div>
 
-    </main>
+    <!-- Sneak Peek Section -->
+    <section id="features" class="py-20 bg-black relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-black text-white mb-4">تسريبات <span class="text-brand-red">السيرفر</span></h2>
+                <p class="text-gray-400">نظرة سريعة على ما ينتظركم</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Feature 1 -->
+                <div class="group relative overflow-hidden rounded-xl h-64 border border-white/10 hover:border-brand-red transition">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10"></div>
+                    <img src="https://images.unsplash.com/photo-1597502396328-912533036e52?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" alt="Cars">
+                    <div class="absolute bottom-0 right-0 p-6 z-20">
+                        <h3 class="text-xl font-bold text-white mb-1">معرض السيارات</h3>
+                        <p class="text-gray-400 text-sm">أفخم السيارات بوزنيات واقعية.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="group relative overflow-hidden rounded-xl h-64 border border-white/10 hover:border-brand-red transition">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10"></div>
+                    <img src="https://images.unsplash.com/photo-1552074284-5e88487e1700?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" alt="Police">
+                    <div class="absolute bottom-0 right-0 p-6 z-20">
+                        <h3 class="text-xl font-bold text-white mb-1">القطاع الحكومي</h3>
+                        <p class="text-gray-400 text-sm">نظام شرطة واسعاف متطور.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="group relative overflow-hidden rounded-xl h-64 border border-white/10 hover:border-brand-red transition">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10"></div>
+                    <img src="https://images.unsplash.com/photo-1605218427306-022ba8c15661?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" alt="Gang">
+                    <div class="absolute bottom-0 right-0 p-6 z-20">
+                        <h3 class="text-xl font-bold text-white mb-1">حياة العصابات</h3>
+                        <p class="text-gray-400 text-sm">استولي على المناطق وسيطر على المدينة.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join Community -->
+    <section id="discord" class="py-20 relative overflow-hidden">
+        <div class="absolute inset-0 bg-brand-red/90 z-0"></div>
+        <div class="container mx-auto px-4 relative z-10 text-center">
+            <h2 class="text-3xl md:text-5xl font-black text-white mb-6">لا تفوت الافتتاح!</h2>
+            <p class="text-white/90 text-xl mb-8 max-w-2xl mx-auto">
+                كن أول من يعلم عن موعد الافتتاح واحصل على رتب وهدايا حصرية للأعضاء الأوائل.
+            </p>
+            <a href="https://discord.gg/YOUR_LINK" class="inline-flex items-center gap-3 bg-black text-white font-bold text-xl px-10 py-5 rounded-lg hover:bg-gray-900 transition transform hover:-translate-y-1 shadow-2xl">
+                <i class="fab fa-discord text-3xl text-brand-red"></i>
+                <span>رابط الديسكورد</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black py-8 border-t border-white/10 text-center">
+        <p class="text-gray-600 text-sm">
+            &copy; 2024 جميع الحقوق محفوظة لسيرفر شوارع تاون. <br>
+            <span class="text-xs text-gray-800">Coming Soon</span>
+        </p>
+    </footer>
 
     <script>
-        const apiKey = "AIzaSyBb38OZM1Ji7oJK3Xx7TiC5Ubzurgw5D1M"; // API Key Inserted!
+        (function() {
+            // Set the date we're counting down to
+            // تعديل: قم بتغيير التاريخ هنا لموعد الافتتاح المتوقع
+            const countDownDate = new Date("Dec 31, 2024 20:00:00").getTime();
 
-        // --- Data & State ---
-        let flashcardsData = [
-            { front: "جوهر الحياة", back: "المسافة الغامضة بين الصرخة الأولى والزفير الأخير، وليست مجرد أيام تُحسب." },
-            { front: "سمات مرحلة الطفولة", back: "امتلاك أقصى درجات الشجاعة: شجاعة السؤال، وشجاعة الحلم، وشجاعة الخطأ دون خجل." },
-            { front: "المشكلة الحقيقية في النضج", back: "الخوف من حكم الآخرين والخوف من الفشل، وفقدان دهشة الطفل." },
-            { front: "تعريف العودة للبراءة", back: "ليست سذاجة، بل قمة الحكمة، وتعني استعادة دهشة الطفل والنظر للأشياء كأنها جديدة." },
-            { front: "دور الألم في الحياة", back: "النحات الذي يشذب الأرواح، ورسول يخبرنا بضرورة التغيير أو مراجعة مسارنا." },
-            { front: "وهم السيطرة", back: "محاولة الإنسان التحكم في المستقبل ومجريات الأمور، بينما الحياة بطبيعتها متقلبة." },
-            { front: "مفهوم الاستسلام الإيجابي", back: "ليس الانهزام، بل التسليم والتماهي مع تيار الحياة بدلاً من مصارعته." },
-            { front: "سر البقاء والمرونة", back: "أن تكون كالأعشاب التي تنحني للعاصفة وتعود للوقوف، لا كالأشجار الصلبة التي تنكسر." },
-            { front: "الهدف الحقيقي للعلاقات", back: "مشاركة الامتلاء وليس ملء الفراغ الداخلي." },
-            { front: "فن المسافة في العلاقات", back: "ألا تقترب حد الاحتراق، ولا تبتعد حد التجمد." },
-            { front: "مصدر المعنى في الحياة", back: "شيء يخلقه الإنسان بنفسه ويعطيه للأشياء، وليس شيئاً يوجَد جاهزاً." },
-            { front: "الشيء الوحيد الحقيقي الذي نملكه", back: "اللحظة الحالية (الأنفاس التي تدخل وتخرج الآن)." },
-            { front: "الخلاصة النهائية للكتاب", back: "عش حياتك كنص نهائي يُكتب الآن، لا تؤجل الفرح، وعش، أحب، تعلم، وارحل بسلام." }
-        ];
-
-        let currentIndex = 0;
-        let currentAudio = null;
-        
-        // --- API Helpers ---
-        async function callGemini(promptText, jsonMode = false) {
-            // Updated to use the standard, stable model 'gemini-2.5-flash-preview-09-2025'
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            
-            const generationConfig = jsonMode ? 
-                { responseMimeType: "application/json", responseSchema: { type: "OBJECT", properties: { essence: {type: "STRING"}, wisdom: {type: "STRING"}, action: {type: "STRING"} } } } 
-                : {};
-
-            const payload = {
-                contents: [{ parts: [{ text: promptText }] }],
-                generationConfig: generationConfig
-            };
-
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                if (!response.ok) {
-                     const errData = await response.json();
-                     throw new Error(`API Error: ${response.status} - ${errData.error?.message || 'Unknown'}`);
-                }
-                
-                const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text;
-            } catch (error) {
-                console.error("Gemini API Error details:", error);
-                alert(`خطأ في الاتصال: ${error.message}`);
-                return null;
+            // Clear any existing interval to prevent duplicates on re-run
+            if (window.countdownInterval) {
+                clearInterval(window.countdownInterval);
             }
-        }
 
-        async function callGeminiTTS(text) {
-             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-             const payload = {
-                contents: [{ parts: [{ text: text }] }],
-                generationConfig: {
-                    responseModalities: ["AUDIO"],
-                    speechConfig: {
-                        voiceConfig: {
-                            prebuiltVoiceConfig: {
-                                voiceName: "Aoede"
-                            }
-                        }
+            const x = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = countDownDate - now;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                const elDays = document.getElementById("days");
+                const elHours = document.getElementById("hours");
+                const elMinutes = document.getElementById("minutes");
+                const elSeconds = document.getElementById("seconds");
+                const elCountdown = document.getElementById("countdown");
+
+                // Check if elements exist before trying to set innerText to avoid errors
+                if (elDays && elHours && elMinutes && elSeconds) {
+                    elDays.innerText = days < 10 ? "0" + days : days;
+                    elHours.innerText = hours < 10 ? "0" + hours : hours;
+                    elMinutes.innerText = minutes < 10 ? "0" + minutes : minutes;
+                    elSeconds.innerText = seconds < 10 ? "0" + seconds : seconds;
+                }
+
+                if (distance < 0) {
+                    clearInterval(x);
+                    if(elCountdown) {
+                        elCountdown.innerHTML = "<div class='text-4xl font-black text-brand-red'>تم الافتتاح!</div>";
                     }
                 }
-             };
+            }, 1000);
 
-             try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) throw new Error(`TTS API Error: ${response.status}`);
-                
-                const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data; // Base64 PCM
-             } catch (error) {
-                 console.error("TTS Error:", error);
-                 // Fallback alert is handled by caller
-                 return null;
-             }
-        }
-
-        // --- TTS Logic (Audio Handling) ---
-        function pcmToWav(base64Pcm, sampleRate = 24000) {
-            const binaryString = window.atob(base64Pcm);
-            const len = binaryString.length;
-            const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            
-            const wavHeader = new ArrayBuffer(44);
-            const view = new DataView(wavHeader);
-            
-            writeString(view, 0, 'RIFF');
-            view.setUint32(4, 36 + len, true);
-            writeString(view, 8, 'WAVE');
-            writeString(view, 12, 'fmt ');
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true); 
-            view.setUint16(22, 1, true); 
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, sampleRate * 2, true);
-            view.setUint16(32, 2, true);
-            view.setUint16(34, 16, true);
-            writeString(view, 36, 'data');
-            view.setUint32(40, len, true);
-            
-            const blob = new Blob([view, bytes], { type: 'audio/wav' });
-            return URL.createObjectURL(blob);
-        }
-
-        function writeString(view, offset, string) {
-            for (let i = 0; i < string.length; i++) {
-                view.setUint8(offset + i, string.charCodeAt(i));
-            }
-        }
-
-        async function playAudio(btn, elementId) {
-            const text = document.getElementById(elementId).innerText.substring(0, 400); 
-            
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio = null;
-                document.querySelectorAll('.audio-playing').forEach(el => el.classList.remove('audio-playing'));
-                if (btn.classList.contains('active-audio-btn')) {
-                    btn.classList.remove('active-audio-btn');
-                    return;
-                }
-            }
-
-            const originalIcon = btn.innerHTML;
-            btn.innerHTML = `<div class="typing-dot w-2 h-2 bg-amber-600 rounded-full inline-block"></div>`;
-            btn.disabled = true;
-
-            const base64Audio = await callGeminiTTS(text);
-
-            if (base64Audio) {
-                const wavUrl = pcmToWav(base64Audio);
-                const audio = new Audio(wavUrl);
-                
-                audio.onended = () => {
-                    btn.classList.remove('audio-playing');
-                    btn.classList.remove('active-audio-btn');
-                    currentAudio = null;
-                };
-
-                audio.play();
-                currentAudio = audio;
-                
-                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" /></svg>`; // Stop icon
-                btn.classList.add('audio-playing');
-                btn.classList.add('active-audio-btn');
-            } else {
-                alert("عذراً، خدمة الصوت غير متاحة حالياً.");
-                btn.innerHTML = originalIcon;
-            }
-            btn.disabled = false;
-        }
-
-
-        // --- Journal Logic (Soul Mirror) - FIXED ---
-        async function analyzeJournal() {
-            const input = document.getElementById('journal-input').value.trim();
-            if (!input) return alert("الرجاء كتابة شيء ما أولاً.");
-
-            document.getElementById('journal-result').classList.add('hidden');
-            document.getElementById('journal-loading').classList.remove('hidden');
-            document.getElementById('analyze-btn').disabled = true;
-
-            const prompt = `
-                Analyze this journal entry: "${input}".
-                Act as a wise philosopher.
-                Return a JSON object with these 3 keys (Arabic text):
-                1. "essence": A short, poetic summary of the user's emotional state (e.g. "عاصفة من الشك تبحث عن اليقين").
-                2. "wisdom": A deep philosophical paragraph reframing their problem using metaphors (nature/universe).
-                3. "action": A simple, concrete meditative action they can do right now (e.g. "أغمض عينيك وتنفس 5 مرات").
-            `;
-
-            const jsonResponseString = await callGemini(prompt, true); 
-
-            document.getElementById('journal-loading').classList.add('hidden');
-            document.getElementById('analyze-btn').disabled = false;
-
-            if (jsonResponseString) {
-                try {
-                    const cleanJson = jsonResponseString.replace(/```json/g, '').replace(/```/g, '').trim();
-                    const data = JSON.parse(cleanJson);
-                    
-                    document.getElementById('result-essence').textContent = data.essence;
-                    document.getElementById('result-wisdom').innerHTML = marked.parse(data.wisdom);
-                    document.getElementById('result-action').textContent = data.action;
-                    document.getElementById('journal-result').classList.remove('hidden');
-                } catch (e) {
-                    console.error("JSON Error", e);
-                    alert("حدث خطأ في استيعاب مشاعرك. حاول مرة أخرى.");
-                }
-            }
-        }
-
-        // --- Flashcard Logic ---
-        const cardElement = document.getElementById('flashcard');
-        const frontText = document.getElementById('card-front-text');
-        const backText = document.getElementById('card-back-text');
-        const counter = document.getElementById('card-counter');
-
-        function renderCard() {
-            cardElement.classList.remove('flipped');
-            setTimeout(() => {
-                frontText.textContent = flashcardsData[currentIndex].front;
-                backText.textContent = flashcardsData[currentIndex].back;
-                counter.textContent = `${currentIndex + 1} / ${flashcardsData.length}`;
-            }, 150);
-        }
-
-        function flipCard() {
-            cardElement.classList.toggle('flipped');
-        }
-
-        function nextCard() {
-            currentIndex = (currentIndex < flashcardsData.length - 1) ? currentIndex + 1 : 0;
-            renderCard();
-        }
-
-        function prevCard() {
-            currentIndex = (currentIndex > 0) ? currentIndex - 1 : 0;
-            renderCard();
-        }
-
-        async function generateFlashcards() {
-            const topic = document.getElementById('topic-input').value.trim();
-            if (!topic) return alert("الرجاء كتابة موضوع أولاً");
-            
-            const btn = document.getElementById('generate-btn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '✨...';
-            btn.disabled = true;
-
-            const prompt = `
-                Generate 3 flashcards in Arabic about the philosophical concept of "${topic}".
-                Return ONLY a raw JSON array: [{"front": "Question", "back": "Answer"}].
-                No markdown formatting.
-            `;
-
-            const result = await callGemini(prompt);
-            
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-
-            if (result) {
-                try {
-                    const cleanJson = result.replace(/```json/g, '').replace(/```/g, '').trim();
-                    const newCards = JSON.parse(cleanJson);
-                    if (Array.isArray(newCards)) {
-                        flashcardsData = [...flashcardsData, ...newCards];
-                        alert(`تمت إضافة ${newCards.length} بطاقة!`);
-                        currentIndex = flashcardsData.length - newCards.length;
-                        renderCard();
-                        document.getElementById('topic-input').value = '';
-                    }
-                } catch (e) {
-                    console.error("Parse Error", e);
-                }
-            }
-        }
-
-        // --- Chat Logic ---
-        const chatMessages = document.getElementById('chat-messages');
-        const chatInput = document.getElementById('chat-input');
-
-        function handleChatKeyPress(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
-
-        function addMessage(text, isUser) {
-            const div = document.createElement('div');
-            div.className = `message-bubble ${isUser ? 'user-message' : 'ai-message'} shadow-sm book-font`;
-            if (!isUser) div.innerHTML = marked.parse(text);
-            else div.textContent = text;
-            chatMessages.appendChild(div);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        async function sendMessage() {
-            const text = chatInput.value.trim();
-            if (!text) return;
-            addMessage(text, true);
-            chatInput.value = '';
-            
-            const loadingDiv = document.createElement('div');
-            loadingDiv.id = 'chat-loading';
-            loadingDiv.className = 'message-bubble ai-message';
-            loadingDiv.innerHTML = '<div class="typing-dot w-2 h-2 bg-amber-600 rounded-full inline-block mx-1"></div><div class="typing-dot w-2 h-2 bg-amber-600 rounded-full inline-block mx-1"></div>';
-            chatMessages.appendChild(loadingDiv);
-
-            const prompt = `You are a wise philosopher. User says: "${text}". Answer in Arabic. Short, profound.`;
-            const response = await callGemini(prompt);
-            
-            loadingDiv.remove();
-            if (response) addMessage(response, false);
-        }
-
-        // --- Tab Logic ---
-        function switchTab(tabName) {
-            ['book', 'flashcards', 'sage', 'journal'].forEach(t => {
-                const view = document.getElementById(`${t}-view`);
-                const btn = document.getElementById(`btn-${t}`);
-                if (!view || !btn) return;
-
-                if (t === tabName) {
-                    view.classList.remove('hidden');
-                    if (t === 'flashcards' || t === 'sage' || t === 'journal') view.classList.add('flex');
-                    btn.classList.add('active-tab', 'text-amber-700');
-                    btn.classList.remove('text-gray-500');
-                } else {
-                    view.classList.add('hidden');
-                    view.classList.remove('flex');
-                    btn.classList.remove('active-tab', 'text-amber-700');
-                    btn.classList.add('text-gray-500');
-                }
-            });
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio = null;
-                document.querySelectorAll('.audio-playing').forEach(el => el.classList.remove('audio-playing'));
-            }
-        }
-
-        renderCard();
-        
-         document.addEventListener('keydown', (e) => {
-            if (!document.getElementById('flashcards-view').classList.contains('hidden')) {
-                if (e.code === 'Space' || e.code === 'ArrowUp') {
-                     if(document.activeElement !== document.getElementById('topic-input')) {
-                        e.preventDefault(); flipCard();
-                     }
-                }
-                else if (e.code === 'ArrowLeft') nextCard();
-                else if (e.code === 'ArrowRight') prevCard();
-            }
-        });
+            // Store the interval ID globally so we can clear it next time
+            window.countdownInterval = x;
+        })();
     </script>
 </body>
-</html>
+        </html>
