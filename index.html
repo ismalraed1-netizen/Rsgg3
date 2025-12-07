@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تصميم ملصق السيارة - إضافة شعار وحفظ</title>
+    <title>تصميم ملصق السيارة - رفع شعارات البنوك</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- مكتبة لتحويل التصميم إلى صورة -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         :root {
             --primary-orange: #eb7c22;
             --primary-green: #7ab53d;
             --bg-sticker: #fffcf5;
-            --alinma-color: #a47c50;
-            --rajhi-color: #003f7e;
+            --alinma-color: #6d4c41; /* بني الإنماء */
+            --rajhi-color: #003f7e; /* أزرق الراجحي */
         }
 
         body {
@@ -45,7 +44,6 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        /* هذا هو الجزء الذي سيتم حفظه كصورة */
         .sticker {
             background: linear-gradient(to bottom right, #ffffff, #fdfbf7);
             border: 2px solid #e0e0e0;
@@ -60,7 +58,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
-        /* منطقة رفع الشعار */
+        /* منطقة رفع الشعار الرئيسي */
         .logo-upload-area {
             flex: 0 0 220px;
             height: 220px;
@@ -101,7 +99,6 @@
             font-weight: 600;
         }
 
-        /* الصورة المرفوعة */
         #preview-image {
             width: 100%;
             height: 100%;
@@ -128,8 +125,7 @@
             z-index: 10;
         }
 
-        #file-input { display: none; }
-
+        /* قسم المعلومات */
         .info-section {
             flex: 1;
             display: flex;
@@ -140,40 +136,89 @@
         .info-row {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 15px;
+            gap: 15px;
+            padding: 12px 15px;
             border-radius: 8px;
             background: rgba(255,255,255,0.7);
             border: 1px solid transparent;
             transition: all 0.3s ease;
         }
 
-        .bank-icon {
-            font-size: 1.4rem;
-            width: 40px;
-            text-align: center;
+        /* منطقة رفع شعار البنك */
+        .bank-upload-area {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px dashed #ccc;
+            background: #fafafa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .bank-upload-area:hover {
+            border-color: var(--primary-orange);
+            background-color: #fffaf5;
+        }
+
+        .bank-upload-icon {
+            font-size: 1.5rem;
+            color: #ddd;
+            pointer-events: none;
+        }
+
+        .bank-preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .bank-reset-btn {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            z-index: 10;
         }
 
         .label {
             font-weight: 700;
             font-size: 1.1rem;
             min-width: 170px;
+            color: #444;
         }
 
+        /* الآيبان بخط واحد ونظيف */
         .iban-text {
-            font-family: 'Courier New', monospace;
+            font-family: 'Arial', sans-serif;
             font-weight: 700;
             font-size: 1.25rem;
             letter-spacing: 0.5px;
             direction: ltr;
-            color: #444;
+            color: #333;
             text-align: left;
             flex: 1;
+            white-space: nowrap;
         }
 
-        .alinma .label { color: var(--alinma-color); }
-        .rajhi .label { color: var(--rajhi-color); }
-        
         .contact-row {
             display: flex;
             justify-content: space-between;
@@ -201,7 +246,6 @@
         .email-item i { color: #0078D4; }
         .email-text { font-family: sans-serif; direction: ltr; }
 
-        /* زر الحفظ */
         .save-button {
             background-color: var(--primary-green);
             color: white;
@@ -217,30 +261,11 @@
             align-items: center;
             gap: 10px;
         }
-
-        .save-button:hover {
-            background-color: #6a9b35;
-            transform: translateY(-2px);
-        }
-
-        .save-button:active {
-            transform: translateY(0);
-        }
-
-        .controls {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
+        .save-button:hover { background-color: #6a9b35; transform: translateY(-2px); }
 
         @media (max-width: 768px) {
             .sticker { flex-direction: column; padding: 20px; }
-            .logo-upload-area {
-                width: 100%;
-                height: 180px;
-                margin-left: 0;
-                margin-bottom: 25px;
-            }
+            .logo-upload-area { width: 100%; height: 180px; margin-left: 0; margin-bottom: 25px; }
             .info-section { width: 100%; }
             .info-row { flex-direction: column; align-items: flex-start; gap: 8px; }
             .contact-row { flex-direction: column; }
@@ -251,36 +276,48 @@
 <body>
 
 <div class="container">
-    <h2 style="color: #444;">1. اضغط على المربع لرفع الشعار</h2>
+    <h2 style="color: #444;">التصميم النهائي (رفع الشعارات يدوياً)</h2>
     
     <div class="sticker-wrapper" id="sticker-capture-area">
         <div class="sticker">
             
-            <!-- Logo Upload Area -->
-            <div class="logo-upload-area" onclick="document.getElementById('file-input').click()">
-                <button class="reset-btn" id="reset-btn" onclick="resetLogo(event)">✕</button>
-                
-                <div class="upload-placeholder" id="upload-placeholder">
+            <!-- Main Logo Upload -->
+            <div class="logo-upload-area" onclick="document.getElementById('main-file-input').click()">
+                <button class="reset-btn" id="main-reset-btn" onclick="resetMainLogo(event)">✕</button>
+                <div class="upload-placeholder" id="main-upload-placeholder">
                     <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                    <div class="upload-text">اضغط هنا لرفع الشعار</div>
+                    <div class="upload-text">اضغط لرفع الشعار الرئيسي</div>
                 </div>
-
                 <img id="preview-image" alt="شعارك">
-                <input type="file" id="file-input" accept="image/*" onchange="previewLogo(event)">
+                <input type="file" id="main-file-input" accept="image/*" onchange="previewMainLogo(event)" style="display: none;">
             </div>
 
-            <!-- Info Side -->
+            <!-- Info -->
             <div class="info-section">
+                <!-- Alinma -->
                 <div class="info-row alinma">
-                    <div class="bank-icon"><i class="fas fa-university"></i></div>
-                    <div class="label">حسابنا في مصرف الإنماء</div>
-                    <div class="iban-text">SA88 0500 0086 2800 8000 8000</div>
+                    <div class="bank-upload-area" onclick="document.getElementById('alinma-file-input').click()">
+                         <button class="bank-reset-btn" id="alinma-reset-btn" onclick="resetBankLogo(event, 'alinma')">✕</button>
+                        <i class="fas fa-plus-circle bank-upload-icon" id="alinma-upload-icon"></i>
+                        <img id="alinma-preview-image" class="bank-preview-image" alt="شعار الإنماء">
+                        <input type="file" id="alinma-file-input" accept="image/*" onchange="previewBankLogo(event, 'alinma')" style="display: none;">
+                    </div>
+                    <div class="label" style="color: var(--alinma-color);">حسابنا في مصرف الإنماء</div>
+                    <div class="iban-text">SA8805000086280080008000</div>
                 </div>
+
+                <!-- Rajhi -->
                 <div class="info-row rajhi">
-                    <div class="bank-icon"><i class="fas fa-money-check-alt"></i></div>
-                    <div class="label">حسابنا في مصرف الراجحي</div>
-                    <div class="iban-text">SA93 8000 0601 6080 1099 0904</div>
+                    <div class="bank-upload-area" onclick="document.getElementById('rajhi-file-input').click()">
+                        <button class="bank-reset-btn" id="rajhi-reset-btn" onclick="resetBankLogo(event, 'rajhi')">✕</button>
+                        <i class="fas fa-plus-circle bank-upload-icon" id="rajhi-upload-icon"></i>
+                        <img id="rajhi-preview-image" class="bank-preview-image" alt="شعار الراجحي">
+                        <input type="file" id="rajhi-file-input" accept="image/*" onchange="previewBankLogo(event, 'rajhi')" style="display: none;">
+                    </div>
+                    <div class="label" style="color: var(--rajhi-color);">حسابنا في مصرف الراجحي</div>
+                    <div class="iban-text">SA9380000601608010990904</div>
                 </div>
+
                 <div class="contact-row">
                     <div class="contact-item whatsapp-item">
                         <i class="fab fa-whatsapp"></i>
@@ -295,24 +332,19 @@
         </div>
     </div>
     
-    <!-- Save Button -->
-    <div class="controls">
-        <button class="save-button" onclick="downloadSticker()">
-            <i class="fas fa-download"></i>
-            2. حفظ التصميم كصورة
-        </button>
-    </div>
-
-    <p style="color:#888; font-size:0.9rem;">ملاحظة: تأكد من رفع الشعار أولاً قبل الضغط على حفظ.</p>
-
+    <button class="save-button" onclick="downloadSticker()">
+        <i class="fas fa-download"></i>
+        حفظ التصميم كصورة
+    </button>
 </div>
 
 <script>
-    function previewLogo(event) {
+    // دالة الشعار الرئيسي
+    function previewMainLogo(event) {
         const input = event.target;
         const preview = document.getElementById('preview-image');
-        const placeholder = document.getElementById('upload-placeholder');
-        const resetBtn = document.getElementById('reset-btn');
+        const placeholder = document.getElementById('main-upload-placeholder');
+        const resetBtn = document.getElementById('main-reset-btn');
         const container = document.querySelector('.logo-upload-area');
 
         if (input.files && input.files[0]) {
@@ -324,18 +356,18 @@
                 resetBtn.style.display = 'flex';
                 container.style.borderStyle = 'solid';
                 container.style.borderColor = 'transparent';
-                container.style.backgroundColor = 'white'; // Make sure background is white for capture
+                container.style.backgroundColor = 'white'; 
             }
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    function resetLogo(event) {
+    function resetMainLogo(event) {
         event.stopPropagation();
-        const input = document.getElementById('file-input');
+        const input = document.getElementById('main-file-input');
         const preview = document.getElementById('preview-image');
-        const placeholder = document.getElementById('upload-placeholder');
-        const resetBtn = document.getElementById('reset-btn');
+        const placeholder = document.getElementById('main-upload-placeholder');
+        const resetBtn = document.getElementById('main-reset-btn');
         const container = document.querySelector('.logo-upload-area');
 
         input.value = "";
@@ -348,31 +380,85 @@
         container.style.backgroundColor = '#fafafa';
     }
 
-    function downloadSticker() {
-        // Hide reset button temporarily before capture so it doesn't appear in image
-        const resetBtn = document.getElementById('reset-btn');
-        const wasVisible = resetBtn.style.display;
+    // دالة شعارات البنوك
+    function previewBankLogo(event, bankName) {
+        const input = event.target;
+        const preview = document.getElementById(bankName + '-preview-image');
+        const icon = document.getElementById(bankName + '-upload-icon');
+        const resetBtn = document.getElementById(bankName + '-reset-btn');
+        const container = input.parentElement;
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                icon.style.display = 'none';
+                resetBtn.style.display = 'flex';
+                container.style.borderStyle = 'solid';
+                container.style.borderColor = 'transparent';
+                container.style.backgroundColor = 'white';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function resetBankLogo(event, bankName) {
+        event.stopPropagation();
+        const input = document.getElementById(bankName + '-file-input');
+        const preview = document.getElementById(bankName + '-preview-image');
+        const icon = document.getElementById(bankName + '-upload-icon');
+        const resetBtn = document.getElementById(bankName + '-reset-btn');
+        const container = input.parentElement;
+
+        input.value = "";
+        preview.src = "";
+        preview.style.display = 'none';
+        icon.style.display = 'block';
         resetBtn.style.display = 'none';
+        container.style.borderStyle = 'dashed';
+        container.style.borderColor = '#ccc';
+        container.style.backgroundColor = '#fafafa';
+    }
+
+
+    function downloadSticker() {
+        // إخفاء أزرار الحذف قبل الالتقاط
+        const mainResetBtn = document.getElementById('main-reset-btn');
+        const alinmaResetBtn = document.getElementById('alinma-reset-btn');
+        const rajhiResetBtn = document.getElementById('rajhi-reset-btn');
+
+        const mainWasVisible = mainResetBtn.style.display;
+        const alinmaWasVisible = alinmaResetBtn.style.display;
+        const rajhiWasVisible = rajhiResetBtn.style.display;
+
+        mainResetBtn.style.display = 'none';
+        alinmaResetBtn.style.display = 'none';
+        rajhiResetBtn.style.display = 'none';
 
         const stickerElement = document.querySelector('.sticker');
 
         html2canvas(stickerElement, {
-            scale: 2, // High resolution
+            scale: 2, 
             useCORS: true,
-            backgroundColor: null // Transparent background handling if needed
+            backgroundColor: null
         }).then(canvas => {
-            // Restore reset button
-            resetBtn.style.display = wasVisible;
+            // إعادة إظهار أزرار الحذف
+            mainResetBtn.style.display = mainWasVisible;
+            alinmaResetBtn.style.display = alinmaWasVisible;
+            rajhiResetBtn.style.display = rajhiWasVisible;
 
-            // Trigger download
             const link = document.createElement('a');
-            link.download = 'sticker-design.png';
+            link.download = 'sticker-design-final-custom-logos.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         }).catch(err => {
-            console.error("Error capturing image:", err);
-            alert("حدث خطأ أثناء حفظ الصورة. يرجى المحاولة مرة أخرى.");
-            resetBtn.style.display = wasVisible;
+            console.error("Error:", err);
+            alert("حدث خطأ أثناء حفظ الصورة.");
+            // إعادة إظهار أزرار الحذف في حال الخطأ
+            mainResetBtn.style.display = mainWasVisible;
+            alinmaResetBtn.style.display = alinmaWasVisible;
+            rajhiResetBtn.style.display = rajhiWasVisible;
         });
     }
 </script>
