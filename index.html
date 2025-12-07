@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تصميم ملصق السيارة - الشعار على اليسار</title>
+    <title>تصميم ملصق السيارة - خلفية برتقالية وخط رمادي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -11,6 +11,8 @@
         :root {
             --primary-orange: #eb7c22;
             --primary-green: #7ab53d;
+            /* تم تغميق الرمادي قليلاً ليظهر بوضوح فوق البرتقالي */
+            --primary-grey: #545454; 
             --bg-sticker: #fffcf5;
             --alinma-color: #6d4c41;
             --rajhi-color: #003f7e;
@@ -60,10 +62,12 @@
         .top-header {
             width: 100%;
             text-align: center;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: 800;
+            /* تمت إعادة الخلفية البرتقالية */
             background-color: var(--primary-orange); 
-            color: #ffffff; 
+            /* تم تغيير لون الخط للرصاصي (الرمادي) */
+            color: #333333; /* رمادي غامق لضمان القراءة */
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 25px;
@@ -78,13 +82,13 @@
             justify-content: space-between;
         }
 
-        /* حاوية الشعار مع أدوات التحكم - تم تعديل الهامش */
+        /* Logo Container */
         .logo-container-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-right: 20px; /* تغيير الهامش لليمين */
-            margin-left: 0; /* إزالة الهامش الأيسر */
+            margin-right: 20px; 
+            margin-left: 0;
         }
 
         .logo-upload-area {
@@ -194,7 +198,6 @@
 
         #file-input { display: none; }
 
-        /* Info Section - يأتي أولاً الآن */
         .info-section {
             flex: 1;
             display: flex;
@@ -313,8 +316,7 @@
 
         @media (max-width: 768px) {
             .sticker-body { flex-direction: column; }
-            /* تعديل الهامش في الجوال */
-            .logo-container-wrapper { margin-right: 0; margin-bottom: 25px; order: -1; /* الشعار أولاً في الجوال */ }
+            .logo-container-wrapper { margin-right: 0; margin-bottom: 25px; order: -1; }
             .info-section { width: 100%; }
             .contact-row { flex-direction: column; }
         }
@@ -323,15 +325,16 @@
 <body>
 
 <div class="container">
-    <h2 style="color: #444;">التصميم النهائي (الشعار على اليسار)</h2>
+    <h2 style="color: #444;">التصميم النهائي</h2>
     
     <div class="sticker-wrapper" id="sticker-capture-area">
         <div class="sticker">
             
+            <!-- تم إعادة الخلفية البرتقالية وتغيير الخط للرمادي -->
             <div class="top-header">جمعية بناء وتنمية المساكن بمنطقة جازان</div>
 
             <div class="sticker-body">
-                <!-- Info Section - تم نقله هنا ليظهر على اليمين -->
+                <!-- Info Section -->
                 <div class="info-section">
                     <!-- Alinma -->
                     <div class="info-row alinma">
@@ -370,7 +373,7 @@
                     </div>
                 </div>
 
-                <!-- Main Logo Wrapper - تم نقله هنا ليظهر على اليسار -->
+                <!-- Main Logo Wrapper -->
                 <div class="logo-container-wrapper">
                     <div class="logo-upload-area" id="main-logo-area" onclick="handleAreaClick()">
                         <button class="reset-btn" id="main-reset-btn" onclick="resetMainLogo(event)">✕</button>
@@ -380,13 +383,11 @@
                             <div class="upload-text">اضغط لرفع الشعار</div>
                         </div>
                         
-                        <!-- الصورة القابلة للتحريك -->
                         <img id="preview-image" alt="شعارك">
                         
                         <input type="file" id="main-file-input" accept="image/*" onchange="previewMainLogo(event)" style="display: none;">
                     </div>
 
-                    <!-- أدوات التحكم بالتكبير -->
                     <div class="zoom-controls" id="zoom-controls">
                         <i class="fas fa-search-minus zoom-icon"></i>
                         <input type="range" min="0.5" max="3" step="0.1" value="1" class="zoom-slider" id="zoom-slider" oninput="updateZoom(this.value)">
@@ -402,7 +403,6 @@
         <i class="fas fa-download"></i>
         حفظ التصميم كصورة
     </button>
-    <p style="margin-top:10px; color:#666; font-size:0.9rem;">بعد رفع الشعار، يمكنك تحريكه بالفأرة واستخدام الشريط في الأسفل للتكبير.</p>
 </div>
 
 <script>
@@ -585,7 +585,7 @@
             rajhiResetBtn.style.display = rajhiWasVisible;
 
             const link = document.createElement('a');
-            link.download = 'sticker-final-left-logo.png';
+            link.download = 'sticker-final-bg-orange.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         }).catch(err => {
