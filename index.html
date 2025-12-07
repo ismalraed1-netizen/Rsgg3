@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تصميم ملصق السيارة - خلفية برتقالية وخط رمادي</title>
+    <title>تصميم ملصق السيارة - النسخة النهائية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -11,8 +11,7 @@
         :root {
             --primary-orange: #eb7c22;
             --primary-green: #7ab53d;
-            /* تم تغميق الرمادي قليلاً ليظهر بوضوح فوق البرتقالي */
-            --primary-grey: #545454; 
+            --primary-grey: #545454; /* رمادي الهوية */
             --bg-sticker: #fffcf5;
             --alinma-color: #6d4c41;
             --rajhi-color: #003f7e;
@@ -64,10 +63,10 @@
             text-align: center;
             font-size: 1.4rem;
             font-weight: 800;
-            /* تمت إعادة الخلفية البرتقالية */
+            /* الخلفية البرتقالية */
             background-color: var(--primary-orange); 
-            /* تم تغيير لون الخط للرصاصي (الرمادي) */
-            color: #333333; /* رمادي غامق لضمان القراءة */
+            /* لون الخط الرمادي */
+            color: #333333; 
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 25px;
@@ -82,7 +81,26 @@
             justify-content: space-between;
         }
 
-        /* Logo Container */
+        /* تنسيق قسم المعلومات (يمين) */
+        .info-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.7);
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        /* تنسيق قسم الشعار (يسار) */
         .logo-container-wrapper {
             display: flex;
             flex-direction: column;
@@ -198,24 +216,6 @@
 
         #file-input { display: none; }
 
-        .info-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .info-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 15px;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.7);
-            border: 1px solid transparent;
-            transition: all 0.3s ease;
-        }
-
         .bank-upload-area {
             width: 50px;
             height: 50px;
@@ -325,16 +325,16 @@
 <body>
 
 <div class="container">
-    <h2 style="color: #444;">التصميم النهائي</h2>
+    <h2 style="color: #444;">التصميم النهائي (مصحح)</h2>
     
     <div class="sticker-wrapper" id="sticker-capture-area">
         <div class="sticker">
             
-            <!-- تم إعادة الخلفية البرتقالية وتغيير الخط للرمادي -->
-            <div class="top-header">جمعية بناء وتنمية المساكن بمنطقة جازان</div>
+            <!-- العنوان المصحح: مساكن بدل المساكن -->
+            <div class="top-header">جمعية بناء وتنمية مساكن بمنطقة جازان</div>
 
             <div class="sticker-body">
-                <!-- Info Section -->
+                <!-- Info Section (Right) -->
                 <div class="info-section">
                     <!-- Alinma -->
                     <div class="info-row alinma">
@@ -373,7 +373,7 @@
                     </div>
                 </div>
 
-                <!-- Main Logo Wrapper -->
+                <!-- Main Logo Wrapper (Left) -->
                 <div class="logo-container-wrapper">
                     <div class="logo-upload-area" id="main-logo-area" onclick="handleAreaClick()">
                         <button class="reset-btn" id="main-reset-btn" onclick="resetMainLogo(event)">✕</button>
@@ -585,7 +585,7 @@
             rajhiResetBtn.style.display = rajhiWasVisible;
 
             const link = document.createElement('a');
-            link.download = 'sticker-final-bg-orange.png';
+            link.download = 'sticker-final-v8.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         }).catch(err => {
