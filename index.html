@@ -3,446 +3,380 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موسوعة مسجات 2026 (+1000)</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Cairo -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
+    <title>تصميم ملصق السيارة - إضافة شعار وحفظ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة لتحويل التصميم إلى صورة -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
+        :root {
+            --primary-orange: #eb7c22;
+            --primary-green: #7ab53d;
+            --bg-sticker: #fffcf5;
+            --alinma-color: #a47c50;
+            --rajhi-color: #003f7e;
+        }
+
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: #f8fafc;
-            overflow-x: hidden;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
         }
-        .glass-header {
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-            color: white;
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
         }
-        .category-btn.active {
-            background-color: #059669;
-            color: white;
-            border-color: #059669;
-            transform: scale(1.05);
+
+        .sticker-wrapper {
+            width: 100%;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        .category-btn {
-            transition: all 0.2s ease;
+
+        /* هذا هو الجزء الذي سيتم حفظه كصورة */
+        .sticker {
+            background: linear-gradient(to bottom right, #ffffff, #fdfbf7);
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 25px 35px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
-        .message-card {
+
+        /* منطقة رفع الشعار */
+        .logo-upload-area {
+            flex: 0 0 220px;
+            height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-left: 30px;
+            border: 3px dashed #ccc;
+            border-radius: 12px;
+            background-color: #fafafa;
+            cursor: pointer;
             transition: all 0.3s ease;
-            break-inside: avoid;
+            position: relative;
+            overflow: hidden;
         }
-        .message-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            border-color: #10b981;
+
+        .logo-upload-area:hover {
+            border-color: var(--primary-orange);
+            background-color: #fffaf5;
         }
-        .no-scrollbar::-webkit-scrollbar {
+
+        .upload-placeholder {
+            text-align: center;
+            color: #888;
+            pointer-events: none;
+            padding: 10px;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+
+        .upload-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* الصورة المرفوعة */
+        #preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
             display: none;
+            padding: 10px;
         }
-        .toast {
-            visibility: hidden;
-            min-width: 250px; 
-            background-color: #1e293b; 
-            color: #fff; 
-            text-align: center; 
-            border-radius: 50px; 
-            padding: 12px 24px; 
-            position: fixed; 
-            z-index: 50; 
-            left: 50%; 
-            bottom: 30px; 
-            transform: translateX(-50%) translateY(20px);
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+        .reset-btn {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: rgba(255, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            z-index: 10;
         }
-        .toast.show {
-            visibility: visible;
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+
+        #file-input { display: none; }
+
+        .info-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-        .stats-badge {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.7);
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .bank-icon {
+            font-size: 1.4rem;
+            width: 40px;
+            text-align: center;
+        }
+
+        .label {
+            font-weight: 700;
+            font-size: 1.1rem;
+            min-width: 170px;
+        }
+
+        .iban-text {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: 0.5px;
+            direction: ltr;
+            color: #444;
+            text-align: left;
+            flex: 1;
+        }
+
+        .alinma .label { color: var(--alinma-color); }
+        .rajhi .label { color: var(--rajhi-color); }
+        
+        .contact-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #555;
+            background: #f9f9f9;
+            padding: 8px 16px;
+            border-radius: 50px;
+        }
+
+        .contact-item i { font-size: 1.2rem; }
+        .whatsapp-item i { color: #25D366; }
+        .email-item i { color: #0078D4; }
+        .email-text { font-family: sans-serif; direction: ltr; }
+
+        /* زر الحفظ */
+        .save-button {
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(124, 179, 66, 0.4);
+            transition: transform 0.2s, background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .save-button:hover {
+            background-color: #6a9b35;
+            transform: translateY(-2px);
+        }
+
+        .save-button:active {
+            transform: translateY(0);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .sticker { flex-direction: column; padding: 20px; }
+            .logo-upload-area {
+                width: 100%;
+                height: 180px;
+                margin-left: 0;
+                margin-bottom: 25px;
+            }
+            .info-section { width: 100%; }
+            .info-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .contact-row { flex-direction: column; }
+            .iban-text { font-size: 1.1rem; align-self: flex-end; text-align: right; }
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body>
 
-    <!-- Header Section -->
-    <header class="glass-header py-10 px-4 shadow-xl rounded-b-[2.5rem] relative overflow-hidden">
-        <!-- Abstract Background Shapes -->
-        <div class="absolute top-0 right-0 w-64 h-64 bg-green-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div class="absolute top-0 left-0 w-64 h-64 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-
-        <div class="container mx-auto text-center relative z-10">
-            <div class="flex justify-center items-center gap-3 mb-2">
-                <div class="bg-white/10 p-2 rounded-xl">
-                    <i data-lucide="sparkles" class="w-8 h-8 text-yellow-300"></i>
+<div class="container">
+    <h2 style="color: #444;">1. اضغط على المربع لرفع الشعار</h2>
+    
+    <div class="sticker-wrapper" id="sticker-capture-area">
+        <div class="sticker">
+            
+            <!-- Logo Upload Area -->
+            <div class="logo-upload-area" onclick="document.getElementById('file-input').click()">
+                <button class="reset-btn" id="reset-btn" onclick="resetLogo(event)">✕</button>
+                
+                <div class="upload-placeholder" id="upload-placeholder">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <div class="upload-text">اضغط هنا لرفع الشعار</div>
                 </div>
-                <h1 class="text-4xl md:text-5xl font-black tracking-tight">مسجات 2026</h1>
-            </div>
-            <p class="text-green-50 text-lg font-medium mt-3 mb-6">أضخم مكتبة رسائل منوعة لكل المناسبات</p>
-            
-            <!-- Stats -->
-            <div class="inline-flex items-center justify-center gap-4 mb-8 stats-badge px-6 py-2 rounded-full text-sm">
-                <span id="totalCount" class="font-bold text-yellow-300 text-lg">0</span>
-                <span class="text-white/80">رسالة متاحة الآن</span>
+
+                <img id="preview-image" alt="شعارك">
+                <input type="file" id="file-input" accept="image/*" onchange="previewLogo(event)">
             </div>
 
-            <!-- Search Bar -->
-            <div class="max-w-xl mx-auto relative group">
-                <input type="text" id="searchInput" placeholder="ابحث في الرسائل..." class="w-full py-4 px-6 pr-12 rounded-2xl text-gray-800 bg-white/95 backdrop-blur border-0 shadow-lg focus:outline-none focus:ring-4 focus:ring-green-400/30 transition-all placeholder:text-gray-400 text-lg">
-                <div class="absolute inset-y-0 right-0 flex items-center pr-5 pointer-events-none text-gray-400 group-focus-within:text-green-600 transition-colors">
-                    <i data-lucide="search" class="w-6 h-6"></i>
+            <!-- Info Side -->
+            <div class="info-section">
+                <div class="info-row alinma">
+                    <div class="bank-icon"><i class="fas fa-university"></i></div>
+                    <div class="label">حسابنا في مصرف الإنماء</div>
+                    <div class="iban-text">SA88 0500 0086 2800 8000 8000</div>
                 </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Categories Filters -->
-    <div class="sticky top-0 z-40 bg-slate-50/80 backdrop-blur-md border-b border-gray-200 py-4 shadow-sm">
-        <div class="container mx-auto px-4">
-            <div class="flex overflow-x-auto gap-3 pb-2 no-scrollbar" id="categoryContainer">
-                <!-- Categories injected via JS -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Messages Grid -->
-    <main class="container mx-auto px-4 py-8 flex-grow min-h-[500px]">
-        <div class="flex justify-between items-center mb-4 px-2">
-            <h2 class="text-xl font-bold text-slate-700 flex items-center gap-2">
-                <i data-lucide="message-circle" class="w-5 h-5"></i>
-                الرسائل المقترحة
-            </h2>
-            <span id="showingCount" class="text-sm text-slate-500 bg-slate-200 px-3 py-1 rounded-full"></span>
-        </div>
-
-        <div id="messagesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            <!-- Messages injected via JS -->
-        </div>
-        
-        <!-- Loading / Show More -->
-        <div class="mt-10 text-center">
-            <button id="loadMoreBtn" class="hidden bg-white hover:bg-gray-50 text-green-600 font-bold py-3 px-8 rounded-full shadow-md border border-gray-200 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 mx-auto">
-                <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                عرض المزيد
-            </button>
-        </div>
-
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden text-center py-20">
-            <div class="bg-gray-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i data-lucide="search-x" class="w-10 h-10 text-gray-400"></i>
-            </div>
-            <h3 class="text-xl font-bold text-gray-700">لم يتم العثور على نتائج</h3>
-            <p class="text-gray-500 mt-2">جرب البحث بكلمة أخرى.</p>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-white border-t mt-auto py-8 text-center text-slate-500 text-sm">
-        <p class="mb-2">تم التوليد بواسطة مولد الرسائل الذكي 2026</p>
-        <p>&copy; 2026 جميع الحقوق محفوظة</p>
-    </footer>
-
-    <!-- Toast Notification -->
-    <div id="toast" class="toast flex items-center justify-center gap-3 shadow-2xl border border-white/10">
-        <div class="bg-green-500 rounded-full p-1">
-            <i data-lucide="check" class="w-4 h-4 text-white"></i>
-        </div>
-        <span class="font-medium">تم نسخ النص بنجاح!</span>
-    </div>
-
-    <!-- JavaScript logic -->
-    <script>
-        // --- Configuration ---
-        const ITEMS_PER_PAGE = 24; 
-        const TOTAL_TARGET = 1200; 
-
-        // --- Data Generators (GENERIC) ---
-        const prefixes = {
-            general: ["يا غالي", "عزيزي", "صديقي العزيز", "يا طيب القلب", "أخي الغالي", "يا صاحب الذوق", "إلى أغلى الناس", "يا رفيق الدرب", "يا جميل الروح"],
-            love: ["حبيبي", "يا نبض قلبي", "عمري", "يا روح الروح", "معشوقي", "يا نور عيني", "أميري", "يا أغلى من سكن قلبي"],
-            morning: ["صباح الخير", "يا صباح الجمال", "صباحك سكر", "أحلى صباح", "صباح الهمة والنشاط", "يسعد صباحك"],
-            evening: ["مساء الورد", "يا مساء الأنوار", "مساك الله بالخير", "ليلة سعيدة", "مساء الرضا"]
-        };
-
-        const bodies = {
-            motivation: [
-                "عام 2026 هو عام تحقيق المستحيل بإذن الله.",
-                "أنت تمتلك قدرات عظيمة، استغلها هذا العام لتصنع الفرق.",
-                "لا تتوقف عن الحلم، فالمستقبل المشرق ينتظرك.",
-                "كن أنت القائد والتغيير الذي تريده في 2026.",
-                "تذكر دائماً أنك خلقت لتكون مميزاً.",
-                "كل تحدٍ يواجهك هو خطوة جديدة نحو القمة.",
-                "ثق بنفسك، فأنت قادر على صنع المعجزات.",
-                "النجاح يليق بك، والطموح هو وقودك.",
-                "اجعل من 2026 محطة انطلاقك الكبرى نحو الأحلام."
-            ],
-            love: [
-                "حبك في قلبي يزداد مع كل دقيقة في 2026.",
-                "وجودك بجانبي هو أجمل هدية في هذا العام.",
-                "أنت الحكاية الجميلة التي لا أريد لها نهاية.",
-                "كل التواريخ تتغير إلا مكانتك في قلبي ثابتة.",
-                "أعيذ قلبك من كل حزن يمسك يا أغلى البشر.",
-                "أنت السعادة التي كنت أنتظرها طوال عمري.",
-                "معك، كل الأيام تبدو كالأعياد والمناسبات السعيدة.",
-                "أحب تفاصيلك، صوتك، ووجودك في حياتي."
-            ],
-            morning: [
-                "أتمنى لك يوماً مليئاً بالإنجازات العظيمة.",
-                "ابدأ يومك بابتسامة، فالعالم يحتاج نورك.",
-                "يوم جديد، فرصة جديدة، نجاح جديد ينتظرك.",
-                "قهوتك وصباحك أجمل بداية لعام 2026.",
-                "دع التفاؤل يقود خطواتك اليوم وكل يوم."
-            ],
-            evening: [
-                "أتمنى لك ليلة هادئة ومريحة تشبه نقاء قلبك.",
-                "استرح الآن لتنطلق بقوة وعزيمة غداً.",
-                "نهاية يوم سعيد وبداية ليلة أجمل بإذن الله.",
-                "هدوء الليل يذكرني دائماً برقي أخلاقك.",
-                "تصبح على خير وسعادة وتحقيق أمنيات."
-            ],
-            congrats: [
-                "كل عام وأنت بألف خير وصحة وسلامة.",
-                "سنة 2026 سنة خير وبركة عليك يا رب.",
-                "جعل الله أيامك كلها أفراح ومسرات.",
-                "أبارك لك قدوم العام الجديد، جعله الله عام السعد.",
-                "عسى عامك الجديد مليان تباشير وتحقيق أماني."
-            ],
-            friendship: [
-                "أنت الأخ الذي لم تلده أمي، والسند الحقيقي.",
-                "صداقتنا كنز لا يقدر بثمن في 2026 وطوال العمر.",
-                "شكراً لأنك دائماً بجانبي يا صديقي الوفي.",
-                "المواقف هي التي أثبتت أن معدنك أصيل.",
-                "دمت لي سنداً وعوناً في هذه الدنيا."
-            ]
-        };
-
-        const suffixes = {
-            general: ["دمت بخير.", "تحياتي لك.", "يا بطل.", "بالتوفيق دائماً.", "الله يحفظك.", "مع خالص الود.", "أنت الأفضل.", "يا غالي.", "بكل حب.", "حفظك المولى."],
-            love: ["أحبك.", "يا أغلى البشر.", "أنت روحي.", "لا حرمني الله منك.", "قبلاتي.", "إلى الأبد.", "دمت لي حباً."]
-        };
-
-        // Static High Quality Messages (Base - GENERIC)
-        const baseMessages = [
-            { id: 'static_1', category: 'تحفيز', icon: 'zap', text: "عام 2026 ليس مجرد رقم، هو فرصتك لتكتب التاريخ. انطلق نحو أحلامك!" },
-            { id: 'static_2', category: 'حب', icon: 'heart', text: "في دستور الحب، أنت القانون والسيادة، وأنت النبض للقلب." },
-            { id: 'static_3', category: 'تحفيز', icon: 'star', text: "لا تنظر للخلف، 2026 أمامك والمستقبل ينتظر إبداعك." },
-            { id: 'static_4', category: 'صباحية', icon: 'sun', text: "يا صباح الرضا والتفاؤل، عسى يومك تساهيل وتوفيق من الرحمن." },
-            { id: 'static_5', category: 'صداقة', icon: 'users', text: "الصديق الحقيقي عملة نادرة، وأنت رصيدي الأغلى في هذا العام." },
-            { id: 'static_6', category: 'تهنئة', icon: 'party-popper', text: "بكل لغات العالم، كل عام وأنت عنوان للنجاح والسعادة." }
-        ];
-
-        // Global State
-        let allMessages = [];
-        let displayedMessages = [];
-        let activeCategory = 'الكل';
-        let searchQuery = '';
-        let visibleCount = 0;
-
-        // --- Core Functions ---
-
-        // 1. Generator Function
-        function generateMegaDataset() {
-            let generated = [...baseMessages];
-            let idCounter = 100;
-
-            const categoriesConfig = [
-                { id: 'تحفيز', icon: 'trending-up', bodies: bodies.motivation, prefix: prefixes.general, suffix: suffixes.general },
-                { id: 'حب', icon: 'heart', bodies: bodies.love, prefix: prefixes.love, suffix: suffixes.love },
-                { id: 'صباحية', icon: 'sun', bodies: bodies.morning, prefix: prefixes.morning, suffix: suffixes.general },
-                { id: 'مسائية', icon: 'moon', bodies: bodies.evening, prefix: prefixes.evening, suffix: suffixes.general },
-                { id: 'تهنئة', icon: 'gift', bodies: bodies.congrats, prefix: prefixes.general, suffix: suffixes.general },
-                { id: 'صداقة', icon: 'users', bodies: bodies.friendship, prefix: prefixes.general, suffix: suffixes.general }
-            ];
-
-            // Generate until we hit target
-            while (generated.length < TOTAL_TARGET) {
-                // Pick random category config
-                const config = categoriesConfig[Math.floor(Math.random() * categoriesConfig.length)];
-                
-                // Construct message parts
-                const prefix = config.prefix[Math.floor(Math.random() * config.prefix.length)];
-                const body = config.bodies[Math.floor(Math.random() * config.bodies.length)];
-                const suffix = config.suffix[Math.floor(Math.random() * config.suffix.length)];
-                
-                const fullText = `${prefix}.. ${body} ${suffix}`;
-                
-                generated.push({
-                    id: idCounter++,
-                    category: config.id,
-                    icon: config.icon,
-                    text: fullText
-                });
-            }
-
-            // Shuffle array for variety
-            return generated.sort(() => Math.random() - 0.5);
-        }
-
-        // 2. Initialization
-        function init() {
-            allMessages = generateMegaDataset();
-            document.getElementById('totalCount').textContent = allMessages.length.toLocaleString('en-US');
-            
-            renderCategories();
-            filterAndRender(true); 
-            setupEventListeners();
-            lucide.createIcons();
-        }
-
-        // 3. Categories Render (Updated list without Name category)
-        function renderCategories() {
-            const categories = ['الكل', 'تحفيز', 'حب', 'صباحية', 'مسائية', 'صداقة', 'تهنئة'];
-            const container = document.getElementById('categoryContainer');
-            
-            container.innerHTML = categories.map(cat => `
-                <button 
-                    onclick="setCategory('${cat}')"
-                    class="category-btn whitespace-nowrap px-5 py-2 rounded-full border border-gray-200 bg-white hover:bg-green-50 text-gray-600 font-bold text-sm shadow-sm ${activeCategory === cat ? 'active' : ''}">
-                    ${cat}
-                </button>
-            `).join('');
-        }
-
-        // 4. Filtering Logic
-        function filterMessages() {
-            let filtered = allMessages;
-
-            if (activeCategory !== 'الكل') {
-                filtered = filtered.filter(m => m.category === activeCategory);
-            }
-
-            if (searchQuery.trim()) {
-                filtered = filtered.filter(m => m.text.includes(searchQuery));
-            }
-
-            return filtered;
-        }
-
-        // 5. Rendering Logic (Pagination)
-        function filterAndRender(reset = false) {
-            const filtered = filterMessages();
-            displayedMessages = filtered;
-            
-            const grid = document.getElementById('messagesGrid');
-            const loadMoreBtn = document.getElementById('loadMoreBtn');
-            const emptyState = document.getElementById('emptyState');
-            const showingCountEl = document.getElementById('showingCount');
-
-            if (reset) {
-                grid.innerHTML = '';
-                visibleCount = 0;
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-
-            if (filtered.length === 0) {
-                grid.classList.add('hidden');
-                emptyState.classList.remove('hidden');
-                loadMoreBtn.classList.add('hidden');
-                showingCountEl.textContent = '0';
-                return;
-            }
-
-            grid.classList.remove('hidden');
-            emptyState.classList.add('hidden');
-
-            // Calculate range
-            const start = visibleCount;
-            const end = Math.min(visibleCount + ITEMS_PER_PAGE, filtered.length);
-            const itemsToRender = filtered.slice(start, end);
-
-            // Generate HTML
-            const html = itemsToRender.map(msg => `
-                <div class="message-card bg-white rounded-xl p-5 shadow-sm border border-slate-100 flex flex-col h-full group relative overflow-hidden">
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="p-2 bg-green-50 rounded-lg text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors">
-                            <i data-lucide="${msg.icon}" class="w-5 h-5"></i>
-                        </div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-2 py-1 rounded-md">
-                            ${msg.category}
-                        </span>
+                <div class="info-row rajhi">
+                    <div class="bank-icon"><i class="fas fa-money-check-alt"></i></div>
+                    <div class="label">حسابنا في مصرف الراجحي</div>
+                    <div class="iban-text">SA93 8000 0601 6080 1099 0904</div>
+                </div>
+                <div class="contact-row">
+                    <div class="contact-item whatsapp-item">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>055 105 6560 :للتواصل</span>
                     </div>
-                    
-                    <p class="text-gray-700 text-base leading-relaxed font-medium flex-grow mb-4">
-                        ${msg.text}
-                    </p>
-
-                    <button onclick="copyToClipboard('${msg.text.replace(/'/g, "\\'")}')" 
-                        class="w-full py-2.5 rounded-lg border border-slate-200 text-slate-600 font-bold text-sm hover:bg-green-600 hover:text-white hover:border-green-600 transition-all flex items-center justify-center gap-2 active:scale-95">
-                        <i data-lucide="copy" class="w-4 h-4"></i>
-                        نسخ النص
-                    </button>
+                    <div class="contact-item email-item">
+                        <i class="far fa-envelope"></i>
+                        <span class="email-text">jbwk1438@hotmail.com</span>
+                    </div>
                 </div>
-            `).join('');
+            </div>
+        </div>
+    </div>
+    
+    <!-- Save Button -->
+    <div class="controls">
+        <button class="save-button" onclick="downloadSticker()">
+            <i class="fas fa-download"></i>
+            2. حفظ التصميم كصورة
+        </button>
+    </div>
 
-            // Append or Set
-            grid.insertAdjacentHTML('beforeend', html);
-            visibleCount = end;
+    <p style="color:#888; font-size:0.9rem;">ملاحظة: تأكد من رفع الشعار أولاً قبل الضغط على حفظ.</p>
 
-            // Update UI State
-            showingCountEl.textContent = `${visibleCount} من ${filtered.length}`;
-            
-            if (visibleCount >= filtered.length) {
-                loadMoreBtn.classList.add('hidden');
-            } else {
-                loadMoreBtn.classList.remove('hidden');
+</div>
+
+<script>
+    function previewLogo(event) {
+        const input = event.target;
+        const preview = document.getElementById('preview-image');
+        const placeholder = document.getElementById('upload-placeholder');
+        const resetBtn = document.getElementById('reset-btn');
+        const container = document.querySelector('.logo-upload-area');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+                resetBtn.style.display = 'flex';
+                container.style.borderStyle = 'solid';
+                container.style.borderColor = 'transparent';
+                container.style.backgroundColor = 'white'; // Make sure background is white for capture
             }
-
-            lucide.createIcons();
+            reader.readAsDataURL(input.files[0]);
         }
+    }
 
-        // --- Actions ---
+    function resetLogo(event) {
+        event.stopPropagation();
+        const input = document.getElementById('file-input');
+        const preview = document.getElementById('preview-image');
+        const placeholder = document.getElementById('upload-placeholder');
+        const resetBtn = document.getElementById('reset-btn');
+        const container = document.querySelector('.logo-upload-area');
 
-        window.setCategory = (cat) => {
-            activeCategory = cat;
-            renderCategories();
-            filterAndRender(true);
-        };
+        input.value = "";
+        preview.src = "";
+        preview.style.display = 'none';
+        placeholder.style.display = 'block';
+        resetBtn.style.display = 'none';
+        container.style.borderStyle = 'dashed';
+        container.style.borderColor = '#ccc';
+        container.style.backgroundColor = '#fafafa';
+    }
 
-        function setupEventListeners() {
-            // Search
-            const searchInput = document.getElementById('searchInput');
-            searchInput.addEventListener('input', (e) => {
-                searchQuery = e.target.value;
-                filterAndRender(true);
-            });
+    function downloadSticker() {
+        // Hide reset button temporarily before capture so it doesn't appear in image
+        const resetBtn = document.getElementById('reset-btn');
+        const wasVisible = resetBtn.style.display;
+        resetBtn.style.display = 'none';
 
-            // Load More
-            document.getElementById('loadMoreBtn').addEventListener('click', () => {
-                filterAndRender(false);
-            });
-        }
+        const stickerElement = document.querySelector('.sticker');
 
-        window.copyToClipboard = (text) => {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                showToast();
-            } catch (err) {}
-            document.body.removeChild(textarea);
-        };
+        html2canvas(stickerElement, {
+            scale: 2, // High resolution
+            useCORS: true,
+            backgroundColor: null // Transparent background handling if needed
+        }).then(canvas => {
+            // Restore reset button
+            resetBtn.style.display = wasVisible;
 
-        function showToast() {
-            const toast = document.getElementById('toast');
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
-        }
+            // Trigger download
+            const link = document.createElement('a');
+            link.download = 'sticker-design.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }).catch(err => {
+            console.error("Error capturing image:", err);
+            alert("حدث خطأ أثناء حفظ الصورة. يرجى المحاولة مرة أخرى.");
+            resetBtn.style.display = wasVisible;
+        });
+    }
+</script>
 
-        // Run
-        init();
-
-    </script>
 </body>
 </html>
 
