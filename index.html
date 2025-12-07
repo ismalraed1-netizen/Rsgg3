@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تصميم ملصق السيارة - عنوان بسيط</title>
+    <title>تصميم ملصق السيارة - إصلاح الرقم</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -50,26 +50,24 @@
             border-radius: 15px;
             padding: 20px 30px;
             display: flex;
-            flex-direction: column; /* ترتيب عمودي للعنوان والمحتوى */
+            flex-direction: column;
             align-items: center;
             position: relative;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
-        /* تنسيق العنوان العلوي - بسيط وغير ضخم */
         .top-header {
             width: 100%;
             text-align: center;
-            font-size: 1.1rem; /* حجم خط متوسط ومناسب */
+            font-size: 1.1rem;
             font-weight: 700;
             color: #444;
-            margin-bottom: 15px; /* مسافة بسيطة تحت العنوان */
+            margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 1px solid #eee; /* خط فاصل خفيف جداً */
+            border-bottom: 1px solid #eee;
         }
 
-        /* جسم الملصق (يحتوي الشعار والمعلومات) */
         .sticker-body {
             display: flex;
             flex-direction: row;
@@ -78,7 +76,6 @@
             justify-content: space-between;
         }
 
-        /* Logo Upload Area */
         .logo-upload-area {
             flex: 0 0 200px;
             height: 200px;
@@ -147,7 +144,6 @@
 
         #file-input { display: none; }
 
-        /* Info Section */
         .info-section {
             flex: 1;
             display: flex;
@@ -166,7 +162,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Bank Upload Area */
         .bank-upload-area {
             width: 50px;
             height: 50px;
@@ -223,21 +218,32 @@
             gap: 15px;
         }
 
+        /* تعديل خاص لخانة التواصل لإصلاح اتجاه الرقم */
         .contact-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             font-weight: 600;
             font-size: 1rem;
             color: #555;
             background: #f9f9f9;
             padding: 8px 16px;
             border-radius: 50px;
+            direction: rtl; /* التأكيد على الاتجاه العام */
         }
 
-        .contact-item i { font-size: 1.1rem; }
-        .whatsapp-item i { color: #25D366; }
+        .contact-item i { font-size: 1.2rem; color: #25D366; }
         .email-item i { color: #0078D4; }
+
+        /* فصل الرقم وتوجيهه من اليسار لليمين */
+        .phone-number {
+            direction: ltr;
+            unicode-bidi: embed;
+            font-family: sans-serif;
+            font-weight: 700;
+            color: #333;
+        }
+
         .email-text { font-family: sans-serif; direction: ltr; }
 
         .save-button {
@@ -267,16 +273,15 @@
 <body>
 
 <div class="container">
-    <h2 style="color: #444;">التصميم النهائي (مع العنوان)</h2>
+    <h2 style="color: #444;">التصميم النهائي (إصلاح الرقم)</h2>
     
     <div class="sticker-wrapper" id="sticker-capture-area">
         <div class="sticker">
             
-            <!-- العنوان العلوي البسيط -->
             <div class="top-header">جمعية بناء وتنمية المساكن بمنطقة جازان</div>
 
             <div class="sticker-body">
-                <!-- Main Logo Upload -->
+                <!-- Main Logo -->
                 <div class="logo-upload-area" onclick="document.getElementById('main-file-input').click()">
                     <button class="reset-btn" id="main-reset-btn" onclick="resetMainLogo(event)">✕</button>
                     <div class="upload-placeholder" id="main-upload-placeholder">
@@ -314,9 +319,11 @@
                     </div>
 
                     <div class="contact-row">
+                        <!-- تم إصلاح ترتيب الرقم هنا -->
                         <div class="contact-item whatsapp-item">
                             <i class="fab fa-whatsapp"></i>
-                            <span>055 105 6560 :للتواصل</span>
+                            <span>للتواصل:</span>
+                            <span class="phone-number">055 105 6560</span>
                         </div>
                         <div class="contact-item email-item">
                             <i class="far fa-envelope"></i>
@@ -399,7 +406,7 @@
         const stickerElement = document.querySelector('.sticker');
         html2canvas(stickerElement, { scale: 2, useCORS: true, backgroundColor: null }).then(canvas => {
             mainResetBtn.style.display = mainWasVisible; alinmaResetBtn.style.display = alinmaWasVisible; rajhiResetBtn.style.display = rajhiWasVisible;
-            const link = document.createElement('a'); link.download = 'sticker-final-simple-header.png';
+            const link = document.createElement('a'); link.download = 'sticker-final-fixed-number.png';
             link.href = canvas.toDataURL('image/png'); link.click();
         }).catch(err => {
             console.error("Error:", err); alert("حدث خطأ أثناء حفظ الصورة.");
