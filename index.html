@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تصميم ملصق السيارة - إصلاح الرقم</title>
+    <title>تصميم ملصق السيارة - تحكم كامل بالشعار</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -45,10 +45,10 @@
         }
 
         .sticker {
-            background: linear-gradient(to bottom right, #ffffff, #fdfbf7);
+            background: #ffffff;
             border: 2px solid #e0e0e0;
             border-radius: 15px;
-            padding: 20px 30px;
+            padding: 25px 35px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -60,12 +60,14 @@
         .top-header {
             width: 100%;
             text-align: center;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #444;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
+            font-size: 1.3rem;
+            font-weight: 800;
+            background-color: var(--primary-orange); 
+            color: #ffffff; 
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(235, 124, 34, 0.3);
         }
 
         .sticker-body {
@@ -76,21 +78,27 @@
             justify-content: space-between;
         }
 
+        /* حاوية الشعار مع أدوات التحكم */
+        .logo-container-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        }
+
         .logo-upload-area {
-            flex: 0 0 200px;
-            height: 200px;
+            width: 220px; /* حجم متوازن */
+            height: 220px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin-left: 20px;
             border: 3px dashed #ccc;
             border-radius: 12px;
             background-color: #fafafa;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            cursor: pointer; /* يتغير عند الرفع */
             position: relative;
-            overflow: hidden;
+            overflow: hidden; /* مهم جداً لقص الصورة عند التكبير */
         }
 
         .logo-upload-area:hover {
@@ -103,6 +111,7 @@
             color: #888;
             pointer-events: none;
             padding: 10px;
+            z-index: 5;
         }
 
         .upload-icon {
@@ -116,12 +125,20 @@
             font-weight: 600;
         }
 
+        /* الصورة القابلة للتحريك والتكبير */
         #preview-image {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+            /* نبدأ بحجم افتراضي */
+            max-width: 100%; 
+            max-height: 100%;
             display: none;
-            padding: 5px;
+            position: absolute; /* للسماح بالتحريك */
+            cursor: grab;
+            transform-origin: center;
+            user-select: none;
+        }
+
+        #preview-image:active {
+            cursor: grabbing;
         }
 
         .reset-btn {
@@ -132,14 +149,49 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 25px;
+            height: 25px;
             cursor: pointer;
             display: none;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
+            font-size: 12px;
             z-index: 10;
+        }
+
+        /* شريط التحكم بالتكبير */
+        .zoom-controls {
+            width: 100%;
+            margin-top: 10px;
+            display: none; /* مخفي حتى يتم رفع صورة */
+            align-items: center;
+            gap: 10px;
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .zoom-slider {
+            flex: 1;
+            cursor: pointer;
+            height: 5px;
+            -webkit-appearance: none;
+            background: #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+        .zoom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            background: var(--primary-orange);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .zoom-icon {
+            color: #666;
+            font-size: 0.9rem;
         }
 
         #file-input { display: none; }
@@ -218,7 +270,6 @@
             gap: 15px;
         }
 
-        /* تعديل خاص لخانة التواصل لإصلاح اتجاه الرقم */
         .contact-item {
             display: flex;
             align-items: center;
@@ -229,13 +280,12 @@
             background: #f9f9f9;
             padding: 8px 16px;
             border-radius: 50px;
-            direction: rtl; /* التأكيد على الاتجاه العام */
+            direction: rtl;
         }
 
         .contact-item i { font-size: 1.2rem; color: #25D366; }
         .email-item i { color: #0078D4; }
 
-        /* فصل الرقم وتوجيهه من اليسار لليمين */
         .phone-number {
             direction: ltr;
             unicode-bidi: embed;
@@ -264,7 +314,7 @@
 
         @media (max-width: 768px) {
             .sticker-body { flex-direction: column; }
-            .logo-upload-area { width: 100%; height: 180px; margin-left: 0; margin-bottom: 20px; }
+            .logo-container-wrapper { margin-left: 0; margin-bottom: 25px; }
             .info-section { width: 100%; }
             .contact-row { flex-direction: column; }
         }
@@ -273,7 +323,7 @@
 <body>
 
 <div class="container">
-    <h2 style="color: #444;">التصميم النهائي (إصلاح الرقم)</h2>
+    <h2 style="color: #444;">التصميم النهائي (تحكم كامل بالشعار)</h2>
     
     <div class="sticker-wrapper" id="sticker-capture-area">
         <div class="sticker">
@@ -281,15 +331,28 @@
             <div class="top-header">جمعية بناء وتنمية المساكن بمنطقة جازان</div>
 
             <div class="sticker-body">
-                <!-- Main Logo -->
-                <div class="logo-upload-area" onclick="document.getElementById('main-file-input').click()">
-                    <button class="reset-btn" id="main-reset-btn" onclick="resetMainLogo(event)">✕</button>
-                    <div class="upload-placeholder" id="main-upload-placeholder">
-                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                        <div class="upload-text">اضغط لرفع الشعار</div>
+                <!-- Main Logo Wrapper -->
+                <div class="logo-container-wrapper">
+                    <div class="logo-upload-area" id="main-logo-area" onclick="handleAreaClick()">
+                        <button class="reset-btn" id="main-reset-btn" onclick="resetMainLogo(event)">✕</button>
+                        
+                        <div class="upload-placeholder" id="main-upload-placeholder">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <div class="upload-text">اضغط لرفع الشعار</div>
+                        </div>
+                        
+                        <!-- الصورة القابلة للتحريك -->
+                        <img id="preview-image" alt="شعارك">
+                        
+                        <input type="file" id="main-file-input" accept="image/*" onchange="previewMainLogo(event)" style="display: none;">
                     </div>
-                    <img id="preview-image" alt="شعارك">
-                    <input type="file" id="main-file-input" accept="image/*" onchange="previewMainLogo(event)" style="display: none;">
+
+                    <!-- أدوات التحكم بالتكبير -->
+                    <div class="zoom-controls" id="zoom-controls">
+                        <i class="fas fa-search-minus zoom-icon"></i>
+                        <input type="range" min="0.5" max="3" step="0.1" value="1" class="zoom-slider" id="zoom-slider" oninput="updateZoom(this.value)">
+                        <i class="fas fa-search-plus zoom-icon"></i>
+                    </div>
                 </div>
 
                 <!-- Info -->
@@ -319,7 +382,6 @@
                     </div>
 
                     <div class="contact-row">
-                        <!-- تم إصلاح ترتيب الرقم هنا -->
                         <div class="contact-item whatsapp-item">
                             <i class="fab fa-whatsapp"></i>
                             <span>للتواصل:</span>
@@ -340,24 +402,121 @@
         <i class="fas fa-download"></i>
         حفظ التصميم كصورة
     </button>
+    <p style="margin-top:10px; color:#666; font-size:0.9rem;">بعد رفع الشعار، يمكنك تحريكه بالفأرة واستخدام الشريط في الأسفل للتكبير.</p>
 </div>
 
 <script>
+    let currentScale = 1;
+    let isDragging = false;
+    let startX, startY, initialLeft, initialTop;
+    const imgElement = document.getElementById('preview-image');
+
+    // تفعيل النقر لرفع الصورة
+    function handleAreaClick() {
+        if (!document.getElementById('preview-image').src || document.getElementById('preview-image').style.display === 'none') {
+            document.getElementById('main-file-input').click();
+        }
+    }
+
     function previewMainLogo(event) {
         const input = event.target;
         const preview = document.getElementById('preview-image');
         const placeholder = document.getElementById('main-upload-placeholder');
         const resetBtn = document.getElementById('main-reset-btn');
         const container = document.querySelector('.logo-upload-area');
+        const zoomControls = document.getElementById('zoom-controls');
+
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                preview.src = e.target.result; preview.style.display = 'block'; placeholder.style.display = 'none'; resetBtn.style.display = 'flex';
-                container.style.borderStyle = 'solid'; container.style.borderColor = 'transparent'; container.style.backgroundColor = 'white'; 
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+                resetBtn.style.display = 'flex';
+                container.style.borderStyle = 'solid';
+                container.style.borderColor = 'transparent';
+                container.style.backgroundColor = 'white';
+                zoomControls.style.display = 'flex';
+                
+                // Reset Zoom and Position
+                currentScale = 1;
+                document.getElementById('zoom-slider').value = 1;
+                preview.style.transform = `scale(1)`;
+                preview.style.left = '0px';
+                preview.style.top = '0px';
+                preview.style.position = 'relative'; // Reset to relative initially
             }
             reader.readAsDataURL(input.files[0]);
         }
     }
+
+    function updateZoom(val) {
+        const img = document.getElementById('preview-image');
+        currentScale = val;
+        img.style.transform = `scale(${val})`;
+        
+        // إذا كبرنا الصورة، نغير نوع العرض للسماح بالتحريك الأفضل
+        if (val > 1) {
+            img.style.cursor = 'grab';
+        } else {
+            img.style.cursor = 'default';
+        }
+    }
+
+    // Drag Logic
+    imgElement.addEventListener('mousedown', startDrag);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', endDrag);
+
+    // Touch support for mobile
+    imgElement.addEventListener('touchstart', startDrag, {passive: false});
+    document.addEventListener('touchmove', drag, {passive: false});
+    document.addEventListener('touchend', endDrag);
+
+    function startDrag(e) {
+        if (currentScale <= 1 && e.type !== 'touchstart') return; // Only drag if zoomed (optional logic, removed to allow adjust always)
+        
+        e.preventDefault();
+        isDragging = true;
+        
+        const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+
+        startX = clientX;
+        startY = clientY;
+        
+        // Get current transform translate values if needed, but we use top/left relative positioning
+        const style = window.getComputedStyle(imgElement);
+        // Switch to relative/absolute positioning logic if not already
+        if (imgElement.style.position !== 'relative' && imgElement.style.position !== 'absolute') {
+            imgElement.style.position = 'relative';
+        }
+        
+        initialLeft = parseInt(style.left || 0);
+        initialTop = parseInt(style.top || 0);
+        
+        imgElement.style.cursor = 'grabbing';
+    }
+
+    function drag(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+
+        const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+
+        imgElement.style.left = `${initialLeft + dx}px`;
+        imgElement.style.top = `${initialTop + dy}px`;
+    }
+
+    function endDrag() {
+        isDragging = false;
+        imgElement.style.cursor = 'grab';
+    }
+
     function resetMainLogo(event) {
         event.stopPropagation();
         const input = document.getElementById('main-file-input');
@@ -365,9 +524,20 @@
         const placeholder = document.getElementById('main-upload-placeholder');
         const resetBtn = document.getElementById('main-reset-btn');
         const container = document.querySelector('.logo-upload-area');
-        input.value = ""; preview.src = ""; preview.style.display = 'none'; placeholder.style.display = 'block'; resetBtn.style.display = 'none';
-        container.style.borderStyle = 'dashed'; container.style.borderColor = '#ccc'; container.style.backgroundColor = '#fafafa';
+        const zoomControls = document.getElementById('zoom-controls');
+
+        input.value = "";
+        preview.src = "";
+        preview.style.display = 'none';
+        placeholder.style.display = 'block';
+        resetBtn.style.display = 'none';
+        zoomControls.style.display = 'none';
+        container.style.borderStyle = 'dashed';
+        container.style.borderColor = '#ccc';
+        container.style.backgroundColor = '#fafafa';
     }
+
+    // Bank Logo Functions
     function previewBankLogo(event, bankName) {
         const input = event.target;
         const preview = document.getElementById(bankName + '-preview-image');
@@ -395,22 +565,46 @@
     }
 
     function downloadSticker() {
+        const zoomControls = document.getElementById('zoom-controls');
         const mainResetBtn = document.getElementById('main-reset-btn');
         const alinmaResetBtn = document.getElementById('alinma-reset-btn');
         const rajhiResetBtn = document.getElementById('rajhi-reset-btn');
+        
+        // Hide controls before capture
+        const zoomWasVisible = zoomControls.style.display;
         const mainWasVisible = mainResetBtn.style.display;
         const alinmaWasVisible = alinmaResetBtn.style.display;
         const rajhiWasVisible = rajhiResetBtn.style.display;
-        mainResetBtn.style.display = 'none'; alinmaResetBtn.style.display = 'none'; rajhiResetBtn.style.display = 'none';
+        
+        zoomControls.style.display = 'none';
+        mainResetBtn.style.display = 'none';
+        alinmaResetBtn.style.display = 'none';
+        rajhiResetBtn.style.display = 'none';
 
         const stickerElement = document.querySelector('.sticker');
-        html2canvas(stickerElement, { scale: 2, useCORS: true, backgroundColor: null }).then(canvas => {
-            mainResetBtn.style.display = mainWasVisible; alinmaResetBtn.style.display = alinmaWasVisible; rajhiResetBtn.style.display = rajhiWasVisible;
-            const link = document.createElement('a'); link.download = 'sticker-final-fixed-number.png';
-            link.href = canvas.toDataURL('image/png'); link.click();
+        
+        html2canvas(stickerElement, { 
+            scale: 2, 
+            useCORS: true, 
+            backgroundColor: null 
+        }).then(canvas => {
+            // Restore controls
+            zoomControls.style.display = zoomWasVisible;
+            mainResetBtn.style.display = mainWasVisible;
+            alinmaResetBtn.style.display = alinmaWasVisible;
+            rajhiResetBtn.style.display = rajhiWasVisible;
+
+            const link = document.createElement('a');
+            link.download = 'sticker-final-zoom-pan.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
         }).catch(err => {
-            console.error("Error:", err); alert("حدث خطأ أثناء حفظ الصورة.");
-            mainResetBtn.style.display = mainWasVisible; alinmaResetBtn.style.display = alinmaWasVisible; rajhiResetBtn.style.display = rajhiWasVisible;
+            console.error("Error:", err);
+            alert("حدث خطأ أثناء حفظ الصورة.");
+            zoomControls.style.display = zoomWasVisible;
+            mainResetBtn.style.display = mainWasVisible;
+            alinmaResetBtn.style.display = alinmaWasVisible;
+            rajhiResetBtn.style.display = rajhiWasVisible;
         });
     }
 </script>
