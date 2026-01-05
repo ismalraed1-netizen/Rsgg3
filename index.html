@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مصمم بطاقات العمل - جمعية بناء</title>
+    <title>مصمم بطاقات العمل الاحترافي - جمعية بناء</title>
     <!-- استيراد الخطوط -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <!-- مكتبة Tailwind CSS للتنسيق العام -->
@@ -14,10 +14,10 @@
     <style>
         body {
             font-family: 'Tajawal', sans-serif;
-            background-color: #f0f2f5;
+            background-color: #f8fafc;
         }
 
-        /* تنسيقات البطاقة المخصصة لضمان الدقة */
+        /* تنسيقات البطاقة المخصصة */
         .card-container {
             width: 350px;
             height: 580px;
@@ -25,18 +25,16 @@
             border-radius: 20px;
             overflow: hidden;
             position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            transition: all 0.3s ease;
         }
 
         .header-shape {
             width: 160%;
             height: 240px;
-            /* سيتم تغيير اللون عبر الجافاسكربت */
             background: var(--main-color, #0f172a); 
             border-bottom-left-radius: 50%;
             border-bottom-right-radius: 50%;
@@ -59,9 +57,10 @@
             transition: background 0.3s;
         }
 
+        /* حاوية الشعار */
         .logo-box {
-            width: 80px;
-            height: 80px;
+            width: 85px;
+            height: 85px;
             background-color: white;
             border-radius: 12px;
             position: relative;
@@ -70,52 +69,48 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border 0.3s;
         }
-
-        /* تحسين عرض الشعار */
-        .logo-placeholder-icon {
-            color: #cbd5e1;
-            width: 40px;
-            height: 40px;
-        }
+        .logo-box:hover { border-color: var(--accent-color, #fbbf24); }
 
         .logo-img {
-            max-width: 90%;
-            max-height: 90%;
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
-            display: none; /* مخفي افتراضياً حتى يتم الرفع */
+            display: none; 
+            transform-origin: center center;
         }
+        .logo-img.active { display: block; }
 
-        .logo-img.active {
-            display: block;
-        }
-
-        .logo-placeholder-icon.hidden {
-            display: none;
-        }
-
+        /* حاوية الصورة الشخصية */
         .profile-box {
-            width: 150px;
-            height: 150px;
+            width: 160px;
+            height: 160px;
             background-color: #f1f5f9;
             border-radius: 50%;
             border: 6px solid white;
             position: relative;
             z-index: 2;
             margin-top: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            overflow: hidden; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             display: flex;
             justify-content: center;
             align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s;
         }
+        .profile-box:hover { transform: scale(1.02); }
 
         .profile-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transform-origin: center center;
         }
 
         .info-area {
@@ -129,20 +124,18 @@
             font-size: 26px;
             font-weight: 800;
             color: #1e293b;
-            margin: 0;
+            margin-bottom: 5px;
         }
 
         .title-badge {
             display: inline-block;
             background-color: var(--accent-color, #fbbf24);
             color: #0f172a;
-            padding: 5px 20px;
+            padding: 6px 24px;
             border-radius: 50px;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 14px;
-            margin-top: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
         }
 
         .org-text {
@@ -150,322 +143,282 @@
             color: #64748b;
             line-height: 1.6;
             border-top: 1px dashed #cbd5e1;
-            padding-top: 15px;
-            margin-top: 5px;
+            padding-top: 12px;
         }
 
         .qr-area {
             margin-top: auto;
-            margin-bottom: 30px;
-            padding: 10px;
+            margin-bottom: 25px;
+            padding: 8px;
             background: white;
             border-radius: 10px;
-            /* border: 1px solid #e2e8f0; */
+            z-index: 2;
         }
 
         .bottom-bar {
             width: 100%;
-            height: 12px;
+            height: 15px;
             background: var(--main-color, #0f172a);
             position: absolute;
             bottom: 0;
         }
 
-        /* File Upload styling */
-        .file-upload-wrapper {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-        }
+        input[type=range] { width: 100%; cursor: pointer; }
         
-        .upload-btn {
-            border: 2px dashed #cbd5e1;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
+        .upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             width: 100%;
-            background: #f8fafc;
+            padding: 1rem;
+            border: 2px dashed #cbd5e1;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            background-color: #f8fafc;
+            transition: all 0.3s;
         }
-        
-        .upload-btn:hover {
-            border-color: #3b82f6;
-            background: #eff6ff;
-            color: #3b82f6;
-        }
-
-        .hole-punch {
-            width: 60px;
-            height: 8px;
-            background: rgba(255,255,255,0.25);
-            position: absolute;
-            top: 20px;
-            border-radius: 10px;
-            z-index: 10;
-            left: 50%;
-            transform: translateX(-50%);
+        .upload-label:hover {
+            background-color: #eff6ff;
+            border-color: #60a5fa;
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen p-4 md:p-8">
+<body class="p-4 md:p-8">
 
     <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        <!-- لوحة التحكم (يمين) -->
-        <div class="lg:col-span-4 bg-white p-6 rounded-2xl shadow-sm h-fit">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-4">⚙️ لوحة التعديل</h2>
-            
-            <div class="space-y-5">
-                <!-- قسم البيانات الشخصية -->
-                <div>
-                    <h3 class="text-sm font-semibold text-gray-500 uppercase mb-3">البيانات</h3>
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">الاسم</label>
-                            <input type="text" id="inputName" value="محمد جازان" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">المسمى الوظيفي</label>
-                            <input type="text" id="inputTitle" value="مدير تنفيذي" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">اسم الجمعية (السطر 1)</label>
-                            <input type="text" id="inputOrg1" value="جمعية بناء وتنمية مساكن" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">المنطقة (السطر 2)</label>
-                            <input type="text" id="inputOrg2" value="بمنطقة جازان" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- قسم الصور -->
-                <div>
-                    <h3 class="text-sm font-semibold text-gray-500 uppercase mb-3 pt-4 border-t">الصور</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">الصورة الشخصية</label>
-                            <div class="file-upload-wrapper w-full">
-                                <label for="uploadPhoto" class="upload-btn text-xs text-gray-600">
-                                    <span id="photoFileName">اختر صورة...</span>
-                                </label>
-                                <input type="file" id="uploadPhoto" accept="image/*" class="hidden">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">الشعار (Logo)</label>
-                            <div class="file-upload-wrapper w-full">
-                                <label for="uploadLogo" class="upload-btn text-xs text-gray-600">
-                                    <span id="logoFileName">اختر شعار...</span>
-                                </label>
-                                <input type="file" id="uploadLogo" accept="image/*" class="hidden">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- قسم الألوان -->
-                <div>
-                    <h3 class="text-sm font-semibold text-gray-500 uppercase mb-3 pt-4 border-t">الألوان</h3>
-                    <div class="flex gap-4">
-                        <div class="flex-1">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">اللون الأساسي</label>
-                            <div class="flex items-center gap-2">
-                                <input type="color" id="mainColorPicker" value="#0f172a" class="h-10 w-full rounded cursor-pointer">
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">لون التمييز (ذهبي)</label>
-                            <div class="flex items-center gap-2">
-                                <input type="color" id="accentColorPicker" value="#fbbf24" class="h-10 w-full rounded cursor-pointer">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                 <!-- قسم الباركود -->
-                 <div>
-                    <h3 class="text-sm font-semibold text-gray-500 uppercase mb-3 pt-4 border-t">الباركود (QR Code)</h3>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">رابط أو نص الباركود</label>
-                        <input type="text" id="qrInput" value="https://jazanhousing.org.sa" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-left" dir="ltr">
-                    </div>
-                </div>
-
-                <button onclick="downloadCard()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl shadow mt-6 flex items-center justify-center gap-2 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    حفظ البطاقة كصورة
-                </button>
+        <!-- لوحة التحكم -->
+        <div class="lg:col-span-5 bg-white p-6 rounded-3xl shadow-xl h-fit space-y-8">
+            <div class="flex items-center justify-between border-b pb-4">
+                <h2 class="text-2xl font-black text-gray-800">تخصيص البطاقة</h2>
+                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">إصدار 2.2 - دعم اللونين</span>
             </div>
+            
+            <!-- رفع الصور -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-bold text-gray-700 flex items-center gap-2">
+                    <span>🖼️</span> الصور والشعارات
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-gray-600">الصورة الشخصية</label>
+                        <label for="uploadPhoto" class="upload-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 4v16m8-8H4" stroke-width="2" stroke-linecap="round"/></svg>
+                            <span class="text-xs font-bold text-blue-600" id="photoStatus">اضغط لرفع الصورة</span>
+                        </label>
+                        <input type="file" id="uploadPhoto" accept="image/*" class="hidden">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-gray-600">شعار الجمعية</label>
+                        <label for="uploadLogo" class="upload-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01" stroke-width="2" stroke-linecap="round"/></svg>
+                            <span class="text-xs font-bold text-orange-600" id="logoStatus">اضغط لرفع الشعار</span>
+                        </label>
+                        <input type="file" id="uploadLogo" accept="image/*" class="hidden">
+                    </div>
+                </div>
+            </div>
+
+            <!-- التحكم في الحجم والمكان -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t">
+                <div class="bg-blue-50 p-4 rounded-2xl space-y-3">
+                    <p class="text-sm font-black text-blue-800 mb-2">ضبط الصورة الشخصية</p>
+                    <div>
+                        <div class="flex justify-between text-[10px] mb-1"><span>تكبير</span><span id="zoomVal">1x</span></div>
+                        <input type="range" id="zoomSlider" min="1" max="3" step="0.05" value="1">
+                    </div>
+                    <div>
+                        <p class="text-[10px] mb-1">تحريك (أفقي/عمودي)</p>
+                        <input type="range" id="panXSlider" min="-100" max="100" step="1" value="0">
+                        <input type="range" id="panYSlider" min="-100" max="100" step="1" value="0">
+                    </div>
+                </div>
+
+                <div class="bg-orange-50 p-4 rounded-2xl space-y-3">
+                    <p class="text-sm font-black text-orange-800 mb-2">ضبط الشعار</p>
+                    <div>
+                        <div class="flex justify-between text-[10px] mb-1"><span>تكبير</span><span id="lZoomVal">1x</span></div>
+                        <input type="range" id="logoZoom" min="0.5" max="3" step="0.05" value="1">
+                    </div>
+                    <div>
+                        <p class="text-[10px] mb-1">تحريك (أفقي/عمودي)</p>
+                        <input type="range" id="logoPanX" min="-50" max="50" step="1" value="0">
+                        <input type="range" id="logoPanY" min="-50" max="50" step="1" value="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- البيانات النصية -->
+            <div class="space-y-4 pt-4 border-t">
+                <h3 class="text-lg font-bold text-gray-700">📝 بيانات الموظف</h3>
+                <input type="text" id="inputName" value="محمد جازان" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500" placeholder="الاسم الكامل">
+                <input type="text" id="inputTitle" value="مدير تنفيذي" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500" placeholder="المسمى الوظيفي">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" id="inputOrg1" value="جمعية بناء وتنمية مساكن" class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500" placeholder="الجمعية">
+                    <input type="text" id="inputOrg2" value="بمنطقة جازان" class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500" placeholder="المنطقة">
+                </div>
+            </div>
+
+            <!-- الألوان والباركود (تم إضافة اللون الثاني هنا) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">اللون الأساسي</label>
+                    <input type="color" id="mainColorPicker" value="#0f172a" class="w-full h-10 rounded-lg cursor-pointer">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">اللون الثاني</label>
+                    <input type="color" id="accentColorPicker" value="#fbbf24" class="w-full h-10 rounded-lg cursor-pointer">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">الباركود (QR)</label>
+                    <input type="text" id="qrInput" value="https://jazanhousing.org.sa" class="w-full p-2 border rounded-lg text-xs" placeholder="الرابط">
+                </div>
+            </div>
+
+            <button onclick="downloadCard()" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-4 rounded-2xl shadow-lg flex items-center justify-center gap-3 transition-all active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-width="2" stroke-linecap="round"/></svg>
+                حفظ البطاقة النهائية
+            </button>
         </div>
 
-        <!-- منطقة المعاينة (يسار) -->
-        <div class="lg:col-span-8 bg-gray-200 rounded-2xl flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-300 min-h-[600px]">
-            <h3 class="text-gray-500 font-bold mb-4">معاينة البطاقة</h3>
-            
-            <!-- البطاقة -->
+        <!-- منطقة المعاينة -->
+        <div class="lg:col-span-7 flex flex-col items-center justify-center bg-slate-200 rounded-3xl p-8 border-4 border-white shadow-inner min-h-[700px]">
             <div id="cardPreview" class="card-container">
-                <!-- الألوان الخلفية -->
-                <div class="header-accent" id="accentBg"></div>
-                <div class="header-shape" id="mainBg"></div>
-                <div class="hole-punch"></div>
-
+                <div class="header-accent"></div>
+                <div class="header-shape"></div>
+                
                 <!-- الشعار -->
-                <div class="logo-box">
-                    <!-- أيقونة افتراضية SVG مضمنة لتجنب أخطاء التحميل -->
-                    <svg id="logoPlaceholder" class="logo-placeholder-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
-                    <!-- الصورة التي ستظهر عند الرفع -->
+                <div class="logo-box" onclick="document.getElementById('uploadLogo').click()">
+                    <span id="logoText" class="text-[10px] text-gray-300 font-bold px-2 text-center">اضغط لرفع الشعار</span>
                     <img id="cardLogo" src="" class="logo-img" alt="Logo">
                 </div>
 
-                <!-- الصورة الشخصية -->
-                <div class="profile-box">
-                    <img id="cardPhoto" src="https://ui-avatars.com/api/?name=User&background=random&color=fff&size=256" class="profile-img" crossorigin="anonymous" alt="Profile">
+                <!-- الصورة -->
+                <div class="profile-box" onclick="document.getElementById('uploadPhoto').click()">
+                    <img id="cardPhoto" src="https://ui-avatars.com/api/?name=%D9%85+%D8%AC&background=E2E8F0&color=64748B&size=256" class="profile-img" alt="Profile">
                 </div>
 
-                <!-- المعلومات -->
                 <div class="info-area">
                     <h2 class="name-text" id="cardName">محمد جازان</h2>
                     <span class="title-badge" id="cardTitle">مدير تنفيذي</span>
                     <div class="org-text">
-                        <div id="cardOrg1" class="font-bold text-gray-700">جمعية بناء وتنمية مساكن</div>
+                        <div id="cardOrg1" class="font-black text-gray-700">جمعية بناء وتنمية مساكن</div>
                         <div id="cardOrg2">بمنطقة جازان</div>
                     </div>
                 </div>
 
-                <!-- الباركود -->
                 <div class="qr-area">
-                    <img id="cardQR" src="" alt="QR Code" width="80" height="80" crossorigin="anonymous">
+                    <img id="cardQR" src="" alt="QR" width="80" height="80">
                 </div>
 
-                <!-- الشريط السفلي -->
-                <div class="bottom-bar" id="bottomBar"></div>
+                <div class="bottom-bar"></div>
             </div>
-
-            <p class="text-xs text-gray-500 mt-4">نصيحة: استخدم صور عالية الجودة لنتيجة أفضل عند الطباعة</p>
+            
+            <p class="mt-6 text-slate-500 text-sm font-bold bg-white/50 px-4 py-2 rounded-full">يمكنك التحكم في لون الخلفية ولون الزخرفة بشكل منفصل</p>
         </div>
     </div>
 
     <script>
-        // دالة مساعدة للحصول على العناصر
         const get = (id) => document.getElementById(id);
 
-        // عناصر الإدخال
-        const inputName = get('inputName');
-        const inputTitle = get('inputTitle');
-        const inputOrg1 = get('inputOrg1');
-        const inputOrg2 = get('inputOrg2');
-        const mainColorPicker = get('mainColorPicker');
-        const accentColorPicker = get('accentColorPicker');
-        const qrInput = get('qrInput');
-        const uploadPhoto = get('uploadPhoto');
-        const uploadLogo = get('uploadLogo');
+        document.addEventListener('DOMContentLoaded', () => {
+            const card = get('cardPreview');
+            if (!card) return;
 
-        // عناصر البطاقة
-        const cardName = get('cardName');
-        const cardTitle = get('cardTitle');
-        const cardOrg1 = get('cardOrg1');
-        const cardOrg2 = get('cardOrg2');
-        const cardContainer = get('cardPreview');
-        const cardQR = get('cardQR');
-        const cardPhoto = get('cardPhoto');
-        const cardLogo = get('cardLogo');
-        const logoPlaceholder = get('logoPlaceholder');
+            const updateText = () => {
+                const name = get('cardName'), title = get('cardTitle'), org1 = get('cardOrg1'), org2 = get('cardOrg2');
+                if (name) name.innerText = get('inputName')?.value || "";
+                if (title) title.innerText = get('inputTitle')?.value || "";
+                if (org1) org1.innerText = get('inputOrg1')?.value || "";
+                if (org2) org2.innerText = get('inputOrg2')?.value || "";
+            };
 
-        // تحديث النصوص
-        function updateText() {
-            cardName.innerText = inputName.value;
-            cardTitle.innerText = inputTitle.value;
-            cardOrg1.innerText = inputOrg1.value;
-            cardOrg2.innerText = inputOrg2.value;
-        }
+            const updateColors = () => {
+                const mainPicker = get('mainColorPicker');
+                const accentPicker = get('accentColorPicker');
+                if (mainPicker) card.style.setProperty('--main-color', mainPicker.value);
+                if (accentPicker) card.style.setProperty('--accent-color', accentPicker.value);
+            };
 
-        // تحديث الألوان
-        function updateColors() {
-            const main = mainColorPicker.value;
-            const accent = accentColorPicker.value;
+            const updateQR = () => {
+                const qrImg = get('cardQR');
+                const qrVal = get('qrInput')?.value || " ";
+                if (qrImg) qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrVal)}`;
+            };
+
+            const updateImgPos = () => {
+                const z = get('zoomSlider')?.value || 1;
+                const valDisplay = get('zoomVal');
+                if (valDisplay) valDisplay.innerText = z + 'x';
+                const photo = get('cardPhoto');
+                if (photo) photo.style.transform = `scale(${z}) translate(${get('panXSlider')?.value || 0}px, ${get('panYSlider')?.value || 0}px)`;
+            };
+
+            const updateLogoPos = () => {
+                const z = get('logoZoom')?.value || 1;
+                const valDisplay = get('lZoomVal');
+                if (valDisplay) valDisplay.innerText = z + 'x';
+                const logo = get('cardLogo');
+                if (logo) logo.style.transform = `scale(${z}) translate(${get('logoPanX')?.value || 0}px, ${get('logoPanY')?.value || 0}px)`;
+            };
+
+            const handleUpload = (input, img, statusId, isLogo = false) => {
+                if (input && input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        if (img) img.src = e.target.result;
+                        const status = get(statusId);
+                        if (status) status.innerText = "تم الرفع بنجاح ✅";
+                        if(isLogo && img) {
+                            img.classList.add('active');
+                            const logoText = get('logoText');
+                            if (logoText) logoText.style.display = 'none';
+                        }
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            };
+
+            ['inputName', 'inputTitle', 'inputOrg1', 'inputOrg2'].forEach(id => {
+                const el = get(id); if (el) el.oninput = updateText;
+            });
+
+            ['mainColorPicker', 'accentColorPicker'].forEach(id => {
+                const el = get(id); if (el) el.oninput = updateColors;
+            });
+
+            const qrInput = get('qrInput'); if (qrInput) qrInput.onchange = updateQR;
             
-            // استخدام CSS Variables للتحديث السلس
-            cardContainer.style.setProperty('--main-color', main);
-            cardContainer.style.setProperty('--accent-color', accent);
-        }
+            ['zoomSlider', 'panXSlider', 'panYSlider'].forEach(id => {
+                const el = get(id); if (el) el.oninput = updateImgPos;
+            });
 
-        // تحديث الباركود
-        function updateQR() {
-            const data = qrInput.value || "Empty";
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(data)}`;
-            cardQR.src = qrUrl;
-        }
+            ['logoZoom', 'logoPanX', 'logoPanY'].forEach(id => {
+                const el = get(id); if (el) el.oninput = updateLogoPos;
+            });
 
-        // معالجة رفع الصور
-        function handleImageUpload(input, imgElement, labelElementId, isLogo = false) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imgElement.src = e.target.result;
-                    
-                    // إذا كان شعارًا، قم بإظهار الصورة وإخفاء الرمز
-                    if(isLogo) {
-                        imgElement.classList.add('active');
-                        logoPlaceholder.classList.add('hidden');
-                    }
-                }
-                reader.readAsDataURL(input.files[0]);
-                
-                // تحديث نص الزر
-                if(labelElementId) {
-                    document.getElementById(labelElementId).innerText = input.files[0].name;
-                    document.getElementById(labelElementId).parentElement.style.borderColor = "#3b82f6";
-                    document.getElementById(labelElementId).parentElement.style.color = "#3b82f6";
-                }
-            }
-        }
+            const upPhoto = get('uploadPhoto');
+            if (upPhoto) upPhoto.onchange = function() { handleUpload(this, get('cardPhoto'), 'photoStatus'); };
 
-        // ربط الأحداث (Event Listeners)
-        inputName.addEventListener('input', updateText);
-        inputTitle.addEventListener('input', updateText);
-        inputOrg1.addEventListener('input', updateText);
-        inputOrg2.addEventListener('input', updateText);
-        
-        mainColorPicker.addEventListener('input', updateColors);
-        accentColorPicker.addEventListener('input', updateColors);
-        
-        qrInput.addEventListener('input', updateQR);
+            const upLogo = get('uploadLogo');
+            if (upLogo) upLogo.onchange = function() { handleUpload(this, get('cardLogo'), 'logoStatus', true); };
 
-        uploadPhoto.addEventListener('change', function() {
-            handleImageUpload(this, cardPhoto, 'photoFileName');
+            updateQR(); updateColors(); updateText();
         });
 
-        uploadLogo.addEventListener('change', function() {
-            handleImageUpload(this, cardLogo, 'logoFileName', true);
-        });
-
-        // دالة التحميل
         function downloadCard() {
             const card = document.getElementById('cardPreview');
-            
-            // تحسين جودة الصورة عند الحفظ
-            html2canvas(card, {
-                scale: 3, // دقة عالية
-                useCORS: true, // للسماح بتحميل صور خارجية إن وجدت
-                backgroundColor: null,
-                logging: false // إيقاف السجلات المزعجة في الكونسول
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `بطاقة-${inputName.value}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+            const nameInput = document.getElementById('inputName');
+            if (!card) return;
+            html2canvas(card, { scale: 3, useCORS: true, backgroundColor: null }).then(canvas => {
+                const a = document.createElement('a');
+                a.download = `ID-${nameInput?.value || 'Employee'}.png`;
+                a.href = canvas.toDataURL();
+                a.click();
             });
         }
-
-        // التهيئة الأولية
-        updateQR();
-        updateColors();
     </script>
 </body>
 </html>
