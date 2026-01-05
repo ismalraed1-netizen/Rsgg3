@@ -3,602 +3,469 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تصميم ملصق السيارة - النسخة النهائية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <title>مصمم بطاقات العمل - جمعية بناء</title>
+    <!-- استيراد الخطوط -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- مكتبة Tailwind CSS للتنسيق العام -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- مكتبة html2canvas لحفظ الصورة -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <style>
-        :root {
-            --primary-orange: #eb7c22;
-            --primary-green: #7ab53d;
-            --primary-grey: #545454; /* رمادي الهوية */
-            --bg-sticker: #fffcf5;
-            --alinma-color: #6d4c41;
-            --rajhi-color: #003f7e;
-        }
-
         body {
-            font-family: 'Cairo', sans-serif;
+            font-family: 'Tajawal', sans-serif;
             background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
         }
 
-        .container {
-            width: 100%;
-            max-width: 980px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .sticker-wrapper {
-            width: 100%;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .sticker {
-            background: #ffffff;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            padding: 25px 35px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
+        /* تنسيقات البطاقة المخصصة لضمان الدقة */
+        .card-container {
+            width: 350px;
+            height: 580px;
+            background-color: white;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-
-        .top-header {
-            width: 100%;
-            text-align: center;
-            font-size: 1.4rem;
-            font-weight: 800;
-            /* الخلفية البرتقالية */
-            background-color: var(--primary-orange); 
-            /* لون الخط الرمادي */
-            color: #333333; 
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 10px rgba(235, 124, 34, 0.3);
-        }
-
-        .sticker-body {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        /* تنسيق قسم المعلومات (يمين) */
-        .info-section {
-            flex: 1;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             display: flex;
             flex-direction: column;
-            gap: 12px;
-        }
-
-        .info-row {
-            display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 15px;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.7);
-            border: 1px solid transparent;
+            text-align: center;
             transition: all 0.3s ease;
         }
 
-        /* تنسيق قسم الشعار (يسار) */
-        .logo-container-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-right: 20px; 
-            margin-left: 0;
+        .header-shape {
+            width: 160%;
+            height: 240px;
+            /* سيتم تغيير اللون عبر الجافاسكربت */
+            background: var(--main-color, #0f172a); 
+            border-bottom-left-radius: 50%;
+            border-bottom-right-radius: 50%;
+            position: absolute;
+            top: -70px;
+            z-index: 1;
+            transition: background 0.3s;
         }
 
-        .logo-upload-area {
-            width: 220px;
-            height: 220px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 3px dashed #ccc;
+        .header-accent {
+            width: 155%;
+            height: 245px;
+            background: var(--accent-color, #fbbf24);
+            border-bottom-left-radius: 50%;
+            border-bottom-right-radius: 50%;
+            position: absolute;
+            top: -75px;
+            z-index: 0;
+            opacity: 0.8;
+            transition: background 0.3s;
+        }
+
+        .logo-box {
+            width: 80px;
+            height: 80px;
+            background-color: white;
             border-radius: 12px;
-            background-color: #fafafa;
-            cursor: pointer;
             position: relative;
-            overflow: hidden;
-        }
-
-        .logo-upload-area:hover {
-            border-color: var(--primary-orange);
-            background-color: #fffaf5;
-        }
-
-        .upload-placeholder {
-            text-align: center;
-            color: #888;
-            pointer-events: none;
-            padding: 10px;
-            z-index: 5;
-        }
-
-        .upload-icon {
-            font-size: 2.5rem;
-            margin-bottom: 5px;
-            color: #bbb;
-        }
-
-        .upload-text {
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        #preview-image {
-            max-width: 100%; 
-            max-height: 100%;
-            display: none;
-            position: absolute;
-            cursor: grab;
-            transform-origin: center;
-            user-select: none;
-        }
-
-        #preview-image:active {
-            cursor: grabbing;
-        }
-
-        .reset-btn {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            background: rgba(255, 0, 0, 0.7);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            z-index: 10;
-        }
-
-        .zoom-controls {
-            width: 100%;
-            margin-top: 10px;
-            display: none;
-            align-items: center;
-            gap: 10px;
-            background: #f0f0f0;
-            padding: 5px 10px;
-            border-radius: 20px;
-        }
-
-        .zoom-slider {
-            flex: 1;
-            cursor: pointer;
-            height: 5px;
-            -webkit-appearance: none;
-            background: #ccc;
-            border-radius: 5px;
-            outline: none;
-        }
-        .zoom-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 15px;
-            height: 15px;
-            background: var(--primary-orange);
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .zoom-icon {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        #file-input { display: none; }
-
-        .bank-upload-area {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px dashed #ccc;
-            background: #fafafa;
+            z-index: 2;
+            margin-top: 30px;
             display: flex;
-            align-items: center;
             justify-content: center;
-            cursor: pointer;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* تحسين عرض الشعار */
+        .logo-placeholder-icon {
+            color: #cbd5e1;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            display: none; /* مخفي افتراضياً حتى يتم الرفع */
+        }
+
+        .logo-img.active {
+            display: block;
+        }
+
+        .logo-placeholder-icon.hidden {
+            display: none;
+        }
+
+        .profile-box {
+            width: 150px;
+            height: 150px;
+            background-color: #f1f5f9;
+            border-radius: 50%;
+            border: 6px solid white;
+            position: relative;
+            z-index: 2;
+            margin-top: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .info-area {
+            margin-top: 25px;
+            width: 100%;
+            padding: 0 20px;
+            z-index: 2;
+        }
+
+        .name-text {
+            font-size: 26px;
+            font-weight: 800;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .title-badge {
+            display: inline-block;
+            background-color: var(--accent-color, #fbbf24);
+            color: #0f172a;
+            padding: 5px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .org-text {
+            font-size: 15px;
+            color: #64748b;
+            line-height: 1.6;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 15px;
+            margin-top: 5px;
+        }
+
+        .qr-area {
+            margin-top: auto;
+            margin-bottom: 30px;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            /* border: 1px solid #e2e8f0; */
+        }
+
+        .bottom-bar {
+            width: 100%;
+            height: 12px;
+            background: var(--main-color, #0f172a);
+            position: absolute;
+            bottom: 0;
+        }
+
+        /* File Upload styling */
+        .file-upload-wrapper {
             position: relative;
             overflow: hidden;
-            flex-shrink: 0;
+            display: inline-block;
         }
         
-        .bank-upload-area:hover { border-color: var(--primary-orange); background-color: #fffaf5; }
-        .bank-upload-icon { font-size: 1.5rem; color: #ddd; pointer-events: none; }
-        .bank-preview-image { width: 100%; height: 100%; object-fit: contain; display: none; position: absolute; top: 0; left: 0; }
-
-        .bank-reset-btn {
-            position: absolute; top: -5px; right: -5px; background: rgba(255, 0, 0, 0.8);
-            color: white; border: none; border-radius: 50%; width: 20px; height: 20px;
-            cursor: pointer; display: none; align-items: center; justify-content: center;
-            font-size: 10px; z-index: 10;
+        .upload-btn {
+            border: 2px dashed #cbd5e1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            width: 100%;
+            background: #f8fafc;
+        }
+        
+        .upload-btn:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            color: #3b82f6;
         }
 
-        .label {
-            font-weight: 800;
-            font-size: 1.2rem;
-            min-width: 250px;
-            color: #444;
-            line-height: 1.2;
-        }
-
-        .iban-text {
-            font-family: 'Arial', sans-serif;
-            font-weight: 700;
-            font-size: 1.2rem;
-            letter-spacing: 0.5px;
-            direction: ltr;
-            color: #333;
-            text-align: left;
-            flex: 1;
-            white-space: nowrap;
-        }
-
-        .contact-row {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            color: #555;
-            background: #f9f9f9;
-            padding: 8px 16px;
-            border-radius: 50px;
-            direction: rtl;
-        }
-
-        .contact-item i { font-size: 1.2rem; color: #25D366; }
-        .email-item i { color: #0078D4; }
-
-        .phone-number {
-            direction: ltr;
-            unicode-bidi: embed;
-            font-family: sans-serif;
-            font-weight: 700;
-            color: #333;
-        }
-
-        .email-text { font-family: sans-serif; direction: ltr; }
-
-        .save-button {
-            background-color: var(--primary-green);
-            color: white; border: none; padding: 12px 30px; font-size: 1.1rem;
-            font-weight: bold; border-radius: 50px; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(124, 179, 66, 0.4);
-            display: flex; align-items: center; gap: 10px;
-        }
-        .save-button:hover { background-color: #6a9b35; }
-
-        @media (max-width: 900px) {
-             .container { max-width: 100%; }
-             .info-row { flex-wrap: wrap; }
-             .label { min-width: 100%; margin-bottom: 5px; } 
-             .iban-text { text-align: right; width: 100%; }
-        }
-
-        @media (max-width: 768px) {
-            .sticker-body { flex-direction: column; }
-            .logo-container-wrapper { margin-right: 0; margin-bottom: 25px; order: -1; }
-            .info-section { width: 100%; }
-            .contact-row { flex-direction: column; }
+        .hole-punch {
+            width: 60px;
+            height: 8px;
+            background: rgba(255,255,255,0.25);
+            position: absolute;
+            top: 20px;
+            border-radius: 10px;
+            z-index: 10;
+            left: 50%;
+            transform: translateX(-50%);
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
 
-<div class="container">
-    <h2 style="color: #444;">التصميم النهائي (مصحح)</h2>
-    
-    <div class="sticker-wrapper" id="sticker-capture-area">
-        <div class="sticker">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- لوحة التحكم (يمين) -->
+        <div class="lg:col-span-4 bg-white p-6 rounded-2xl shadow-sm h-fit">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-4">⚙️ لوحة التعديل</h2>
             
-            <!-- العنوان المصحح: مساكن بدل المساكن -->
-            <div class="top-header">جمعية بناء وتنمية مساكن بمنطقة جازان</div>
-
-            <div class="sticker-body">
-                <!-- Info Section (Right) -->
-                <div class="info-section">
-                    <!-- Alinma -->
-                    <div class="info-row alinma">
-                        <div class="bank-upload-area" onclick="document.getElementById('alinma-file-input').click()">
-                            <button class="bank-reset-btn" id="alinma-reset-btn" onclick="resetBankLogo(event, 'alinma')">✕</button>
-                            <i class="fas fa-plus-circle bank-upload-icon" id="alinma-upload-icon"></i>
-                            <img id="alinma-preview-image" class="bank-preview-image" alt="شعار الإنماء">
-                            <input type="file" id="alinma-file-input" accept="image/*" onchange="previewBankLogo(event, 'alinma')" style="display: none;">
+            <div class="space-y-5">
+                <!-- قسم البيانات الشخصية -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase mb-3">البيانات</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">الاسم</label>
+                            <input type="text" id="inputName" value="محمد جازان" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
-                        <div class="label" style="color: var(--alinma-color);">حسابنا في مصرف الإنماء</div>
-                        <div class="iban-text">SA8805000086280080008000</div>
-                    </div>
-
-                    <!-- Rajhi -->
-                    <div class="info-row rajhi">
-                        <div class="bank-upload-area" onclick="document.getElementById('rajhi-file-input').click()">
-                            <button class="bank-reset-btn" id="rajhi-reset-btn" onclick="resetBankLogo(event, 'rajhi')">✕</button>
-                            <i class="fas fa-plus-circle bank-upload-icon" id="rajhi-upload-icon"></i>
-                            <img id="rajhi-preview-image" class="bank-preview-image" alt="شعار الراجحي">
-                            <input type="file" id="rajhi-file-input" accept="image/*" onchange="previewBankLogo(event, 'rajhi')" style="display: none;">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">المسمى الوظيفي</label>
+                            <input type="text" id="inputTitle" value="مدير تنفيذي" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
-                        <div class="label" style="color: var(--rajhi-color);">حسابنا في مصرف الراجحي</div>
-                        <div class="iban-text">SA9380000601608010990904</div>
-                    </div>
-
-                    <div class="contact-row">
-                        <div class="contact-item whatsapp-item">
-                            <i class="fab fa-whatsapp"></i>
-                            <span>للتواصل:</span>
-                            <span class="phone-number">055 105 6560</span>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">اسم الجمعية (السطر 1)</label>
+                            <input type="text" id="inputOrg1" value="جمعية بناء وتنمية مساكن" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
-                        <div class="contact-item email-item">
-                            <i class="far fa-envelope"></i>
-                            <span class="email-text">jbwk1438@hotmail.com</span>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">المنطقة (السطر 2)</label>
+                            <input type="text" id="inputOrg2" value="بمنطقة جازان" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
                     </div>
                 </div>
 
-                <!-- Main Logo Wrapper (Left) -->
-                <div class="logo-container-wrapper">
-                    <div class="logo-upload-area" id="main-logo-area" onclick="handleAreaClick()">
-                        <button class="reset-btn" id="main-reset-btn" onclick="resetMainLogo(event)">✕</button>
-                        
-                        <div class="upload-placeholder" id="main-upload-placeholder">
-                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                            <div class="upload-text">اضغط لرفع الشعار</div>
+                <!-- قسم الصور -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase mb-3 pt-4 border-t">الصور</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">الصورة الشخصية</label>
+                            <div class="file-upload-wrapper w-full">
+                                <label for="uploadPhoto" class="upload-btn text-xs text-gray-600">
+                                    <span id="photoFileName">اختر صورة...</span>
+                                </label>
+                                <input type="file" id="uploadPhoto" accept="image/*" class="hidden">
+                            </div>
                         </div>
-                        
-                        <img id="preview-image" alt="شعارك">
-                        
-                        <input type="file" id="main-file-input" accept="image/*" onchange="previewMainLogo(event)" style="display: none;">
-                    </div>
-
-                    <div class="zoom-controls" id="zoom-controls">
-                        <i class="fas fa-search-minus zoom-icon"></i>
-                        <input type="range" min="0.5" max="3" step="0.1" value="1" class="zoom-slider" id="zoom-slider" oninput="updateZoom(this.value)">
-                        <i class="fas fa-search-plus zoom-icon"></i>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">الشعار (Logo)</label>
+                            <div class="file-upload-wrapper w-full">
+                                <label for="uploadLogo" class="upload-btn text-xs text-gray-600">
+                                    <span id="logoFileName">اختر شعار...</span>
+                                </label>
+                                <input type="file" id="uploadLogo" accept="image/*" class="hidden">
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- قسم الألوان -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase mb-3 pt-4 border-t">الألوان</h3>
+                    <div class="flex gap-4">
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">اللون الأساسي</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" id="mainColorPicker" value="#0f172a" class="h-10 w-full rounded cursor-pointer">
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">لون التمييز (ذهبي)</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" id="accentColorPicker" value="#fbbf24" class="h-10 w-full rounded cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- قسم الباركود -->
+                 <div>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase mb-3 pt-4 border-t">الباركود (QR Code)</h3>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">رابط أو نص الباركود</label>
+                        <input type="text" id="qrInput" value="https://jazanhousing.org.sa" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-left" dir="ltr">
+                    </div>
+                </div>
+
+                <button onclick="downloadCard()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl shadow mt-6 flex items-center justify-center gap-2 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    حفظ البطاقة كصورة
+                </button>
+            </div>
+        </div>
+
+        <!-- منطقة المعاينة (يسار) -->
+        <div class="lg:col-span-8 bg-gray-200 rounded-2xl flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-300 min-h-[600px]">
+            <h3 class="text-gray-500 font-bold mb-4">معاينة البطاقة</h3>
+            
+            <!-- البطاقة -->
+            <div id="cardPreview" class="card-container">
+                <!-- الألوان الخلفية -->
+                <div class="header-accent" id="accentBg"></div>
+                <div class="header-shape" id="mainBg"></div>
+                <div class="hole-punch"></div>
+
+                <!-- الشعار -->
+                <div class="logo-box">
+                    <!-- أيقونة افتراضية SVG مضمنة لتجنب أخطاء التحميل -->
+                    <svg id="logoPlaceholder" class="logo-placeholder-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    <!-- الصورة التي ستظهر عند الرفع -->
+                    <img id="cardLogo" src="" class="logo-img" alt="Logo">
+                </div>
+
+                <!-- الصورة الشخصية -->
+                <div class="profile-box">
+                    <img id="cardPhoto" src="https://ui-avatars.com/api/?name=User&background=random&color=fff&size=256" class="profile-img" crossorigin="anonymous" alt="Profile">
+                </div>
+
+                <!-- المعلومات -->
+                <div class="info-area">
+                    <h2 class="name-text" id="cardName">محمد جازان</h2>
+                    <span class="title-badge" id="cardTitle">مدير تنفيذي</span>
+                    <div class="org-text">
+                        <div id="cardOrg1" class="font-bold text-gray-700">جمعية بناء وتنمية مساكن</div>
+                        <div id="cardOrg2">بمنطقة جازان</div>
+                    </div>
+                </div>
+
+                <!-- الباركود -->
+                <div class="qr-area">
+                    <img id="cardQR" src="" alt="QR Code" width="80" height="80" crossorigin="anonymous">
+                </div>
+
+                <!-- الشريط السفلي -->
+                <div class="bottom-bar" id="bottomBar"></div>
             </div>
 
+            <p class="text-xs text-gray-500 mt-4">نصيحة: استخدم صور عالية الجودة لنتيجة أفضل عند الطباعة</p>
         </div>
     </div>
-    
-    <button class="save-button" onclick="downloadSticker()">
-        <i class="fas fa-download"></i>
-        حفظ التصميم كصورة
-    </button>
-</div>
 
-<script>
-    let currentScale = 1;
-    let isDragging = false;
-    let startX, startY, initialLeft, initialTop;
-    const imgElement = document.getElementById('preview-image');
+    <script>
+        // دالة مساعدة للحصول على العناصر
+        const get = (id) => document.getElementById(id);
 
-    function handleAreaClick() {
-        if (!document.getElementById('preview-image').src || document.getElementById('preview-image').style.display === 'none') {
-            document.getElementById('main-file-input').click();
+        // عناصر الإدخال
+        const inputName = get('inputName');
+        const inputTitle = get('inputTitle');
+        const inputOrg1 = get('inputOrg1');
+        const inputOrg2 = get('inputOrg2');
+        const mainColorPicker = get('mainColorPicker');
+        const accentColorPicker = get('accentColorPicker');
+        const qrInput = get('qrInput');
+        const uploadPhoto = get('uploadPhoto');
+        const uploadLogo = get('uploadLogo');
+
+        // عناصر البطاقة
+        const cardName = get('cardName');
+        const cardTitle = get('cardTitle');
+        const cardOrg1 = get('cardOrg1');
+        const cardOrg2 = get('cardOrg2');
+        const cardContainer = get('cardPreview');
+        const cardQR = get('cardQR');
+        const cardPhoto = get('cardPhoto');
+        const cardLogo = get('cardLogo');
+        const logoPlaceholder = get('logoPlaceholder');
+
+        // تحديث النصوص
+        function updateText() {
+            cardName.innerText = inputName.value;
+            cardTitle.innerText = inputTitle.value;
+            cardOrg1.innerText = inputOrg1.value;
+            cardOrg2.innerText = inputOrg2.value;
         }
-    }
 
-    function previewMainLogo(event) {
-        const input = event.target;
-        const preview = document.getElementById('preview-image');
-        const placeholder = document.getElementById('main-upload-placeholder');
-        const resetBtn = document.getElementById('main-reset-btn');
-        const container = document.querySelector('.logo-upload-area');
-        const zoomControls = document.getElementById('zoom-controls');
+        // تحديث الألوان
+        function updateColors() {
+            const main = mainColorPicker.value;
+            const accent = accentColorPicker.value;
+            
+            // استخدام CSS Variables للتحديث السلس
+            cardContainer.style.setProperty('--main-color', main);
+            cardContainer.style.setProperty('--accent-color', accent);
+        }
 
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-                placeholder.style.display = 'none';
-                resetBtn.style.display = 'flex';
-                container.style.borderStyle = 'solid';
-                container.style.borderColor = 'transparent';
-                container.style.backgroundColor = 'white';
-                zoomControls.style.display = 'flex';
+        // تحديث الباركود
+        function updateQR() {
+            const data = qrInput.value || "Empty";
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(data)}`;
+            cardQR.src = qrUrl;
+        }
+
+        // معالجة رفع الصور
+        function handleImageUpload(input, imgElement, labelElementId, isLogo = false) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imgElement.src = e.target.result;
+                    
+                    // إذا كان شعارًا، قم بإظهار الصورة وإخفاء الرمز
+                    if(isLogo) {
+                        imgElement.classList.add('active');
+                        logoPlaceholder.classList.add('hidden');
+                    }
+                }
+                reader.readAsDataURL(input.files[0]);
                 
-                currentScale = 1;
-                document.getElementById('zoom-slider').value = 1;
-                preview.style.transform = `scale(1)`;
-                preview.style.left = '0px';
-                preview.style.top = '0px';
-                preview.style.position = 'relative';
+                // تحديث نص الزر
+                if(labelElementId) {
+                    document.getElementById(labelElementId).innerText = input.files[0].name;
+                    document.getElementById(labelElementId).parentElement.style.borderColor = "#3b82f6";
+                    document.getElementById(labelElementId).parentElement.style.color = "#3b82f6";
+                }
             }
-            reader.readAsDataURL(input.files[0]);
         }
-    }
 
-    function updateZoom(val) {
-        const img = document.getElementById('preview-image');
-        currentScale = val;
-        img.style.transform = `scale(${val})`;
+        // ربط الأحداث (Event Listeners)
+        inputName.addEventListener('input', updateText);
+        inputTitle.addEventListener('input', updateText);
+        inputOrg1.addEventListener('input', updateText);
+        inputOrg2.addEventListener('input', updateText);
         
-        if (val > 1) {
-            img.style.cursor = 'grab';
-        } else {
-            img.style.cursor = 'default';
-        }
-    }
-
-    imgElement.addEventListener('mousedown', startDrag);
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('mouseup', endDrag);
-
-    imgElement.addEventListener('touchstart', startDrag, {passive: false});
-    document.addEventListener('touchmove', drag, {passive: false});
-    document.addEventListener('touchend', endDrag);
-
-    function startDrag(e) {
-        if (currentScale <= 1 && e.type !== 'touchstart') return;
+        mainColorPicker.addEventListener('input', updateColors);
+        accentColorPicker.addEventListener('input', updateColors);
         
-        e.preventDefault();
-        isDragging = true;
-        
-        const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-        const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+        qrInput.addEventListener('input', updateQR);
 
-        startX = clientX;
-        startY = clientY;
-        
-        const style = window.getComputedStyle(imgElement);
-        if (imgElement.style.position !== 'relative' && imgElement.style.position !== 'absolute') {
-            imgElement.style.position = 'relative';
-        }
-        
-        initialLeft = parseInt(style.left || 0);
-        initialTop = parseInt(style.top || 0);
-        
-        imgElement.style.cursor = 'grabbing';
-    }
-
-    function drag(e) {
-        if (!isDragging) return;
-        e.preventDefault();
-
-        const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-        const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-
-        const dx = clientX - startX;
-        const dy = clientY - startY;
-
-        imgElement.style.left = `${initialLeft + dx}px`;
-        imgElement.style.top = `${initialTop + dy}px`;
-    }
-
-    function endDrag() {
-        isDragging = false;
-        imgElement.style.cursor = 'grab';
-    }
-
-    function resetMainLogo(event) {
-        event.stopPropagation();
-        const input = document.getElementById('main-file-input');
-        const preview = document.getElementById('preview-image');
-        const placeholder = document.getElementById('main-upload-placeholder');
-        const resetBtn = document.getElementById('main-reset-btn');
-        const container = document.querySelector('.logo-upload-area');
-        const zoomControls = document.getElementById('zoom-controls');
-
-        input.value = "";
-        preview.src = "";
-        preview.style.display = 'none';
-        placeholder.style.display = 'block';
-        resetBtn.style.display = 'none';
-        zoomControls.style.display = 'none';
-        container.style.borderStyle = 'dashed';
-        container.style.borderColor = '#ccc';
-        container.style.backgroundColor = '#fafafa';
-    }
-
-    function previewBankLogo(event, bankName) {
-        const input = event.target;
-        const preview = document.getElementById(bankName + '-preview-image');
-        const icon = document.getElementById(bankName + '-upload-icon');
-        const resetBtn = document.getElementById(bankName + '-reset-btn');
-        const container = input.parentElement;
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result; preview.style.display = 'block'; icon.style.display = 'none'; resetBtn.style.display = 'flex';
-                container.style.borderStyle = 'solid'; container.style.borderColor = 'transparent'; container.style.backgroundColor = 'white';
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    function resetBankLogo(event, bankName) {
-        event.stopPropagation();
-        const input = document.getElementById(bankName + '-file-input');
-        const preview = document.getElementById(bankName + '-preview-image');
-        const icon = document.getElementById(bankName + '-upload-icon');
-        const resetBtn = document.getElementById(bankName + '-reset-btn');
-        const container = input.parentElement;
-        input.value = ""; preview.src = ""; preview.style.display = 'none'; icon.style.display = 'block'; resetBtn.style.display = 'none';
-        container.style.borderStyle = 'dashed'; container.style.borderColor = '#ccc'; container.style.backgroundColor = '#fafafa';
-    }
-
-    function downloadSticker() {
-        const zoomControls = document.getElementById('zoom-controls');
-        const mainResetBtn = document.getElementById('main-reset-btn');
-        const alinmaResetBtn = document.getElementById('alinma-reset-btn');
-        const rajhiResetBtn = document.getElementById('rajhi-reset-btn');
-        
-        const zoomWasVisible = zoomControls.style.display;
-        const mainWasVisible = mainResetBtn.style.display;
-        const alinmaWasVisible = alinmaResetBtn.style.display;
-        const rajhiWasVisible = rajhiResetBtn.style.display;
-        
-        zoomControls.style.display = 'none';
-        mainResetBtn.style.display = 'none';
-        alinmaResetBtn.style.display = 'none';
-        rajhiResetBtn.style.display = 'none';
-
-        const stickerElement = document.querySelector('.sticker');
-        
-        html2canvas(stickerElement, { 
-            scale: 2, 
-            useCORS: true, 
-            backgroundColor: null 
-        }).then(canvas => {
-            zoomControls.style.display = zoomWasVisible;
-            mainResetBtn.style.display = mainWasVisible;
-            alinmaResetBtn.style.display = alinmaWasVisible;
-            rajhiResetBtn.style.display = rajhiWasVisible;
-
-            const link = document.createElement('a');
-            link.download = 'sticker-final-v8.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        }).catch(err => {
-            console.error("Error:", err);
-            alert("حدث خطأ أثناء حفظ الصورة.");
-            zoomControls.style.display = zoomWasVisible;
-            mainResetBtn.style.display = mainWasVisible;
-            alinmaResetBtn.style.display = alinmaWasVisible;
-            rajhiResetBtn.style.display = rajhiWasVisible;
+        uploadPhoto.addEventListener('change', function() {
+            handleImageUpload(this, cardPhoto, 'photoFileName');
         });
-    }
-</script>
 
+        uploadLogo.addEventListener('change', function() {
+            handleImageUpload(this, cardLogo, 'logoFileName', true);
+        });
+
+        // دالة التحميل
+        function downloadCard() {
+            const card = document.getElementById('cardPreview');
+            
+            // تحسين جودة الصورة عند الحفظ
+            html2canvas(card, {
+                scale: 3, // دقة عالية
+                useCORS: true, // للسماح بتحميل صور خارجية إن وجدت
+                backgroundColor: null,
+                logging: false // إيقاف السجلات المزعجة في الكونسول
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `بطاقة-${inputName.value}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        // التهيئة الأولية
+        updateQR();
+        updateColors();
+    </script>
 </body>
 </html>
-
