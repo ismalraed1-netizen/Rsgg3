@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>خطوات التقديم - لوحة الاستقبال</title>
+    <title>خطوات التقديم - جمعية بناء وتنمية</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -18,15 +18,22 @@
         }
         /* إخفاء عناصر التحكم عند الطباعة */
         @media print {
-            body { background-color: white; }
+            body { background-color: white; padding: 0; }
             .no-print { display: none !important; }
             .print-container { 
                 box-shadow: none; 
                 border: none;
                 width: 100%;
                 max-width: 100%;
-                padding: 0;
+                margin: 0;
+                padding: 10px !important;
             }
+            /* تصغير الهوامش في الطباعة لتسع الصفحة الواحدة */
+            h1 { font-size: 24px !important; }
+            .step-card { padding: 8px !important; margin-bottom: 8px !important; }
+            .step-img { height: 80px !important; width: 120px !important; }
+            .arrow-icon { height: 20px !important; }
+            
             /* إجبار الخلفيات على الظهور */
             * {
                 -webkit-print-color-adjust: exact !important;
@@ -51,7 +58,6 @@
                 reader.onload = function(e) {
                     document.getElementById(imgId).src = e.target.result;
                     document.getElementById(imgId).classList.remove('hidden');
-                    // إخفاء النص التوجيهي "اضغط لإضافة صورة" وجعله شفافاً لكي تظهر الصورة
                     if(labelId) {
                         document.getElementById(labelId).style.opacity = '0';
                     }
@@ -62,145 +68,167 @@
         }
     </script>
 </head>
-<body class="p-8 flex flex-col items-center min-h-screen">
+<body class="p-4 md:p-8 flex flex-col items-center min-h-screen">
 
     <!-- Print Instructions & Button -->
     <div class="no-print mb-6 text-center space-y-4">
         <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg text-blue-800 max-w-lg mx-auto">
-            <p class="font-bold">📝 طريقة الاستخدام:</p>
-            <ul class="text-sm list-disc list-inside mt-2 text-right">
-                <li>اضغط على المربع الرمادي بجانب كل خطوة لاختيار الصورة من جهازك.</li>
-                <li>بعد تعبئة جميع الصور، اضغط زر الطباعة في الأسفل.</li>
-            </ul>
+            <p class="font-bold">📝 ملاحظة:</p>
+            <p class="text-sm">تم تصغير حجم الصور قليلاً لضمان ظهور الـ 6 خطوات في ورقة واحدة عند الطباعة.</p>
         </div>
         <button onclick="window.print()" class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-bold shadow-lg hover:bg-emerald-700 transition flex items-center gap-2 mx-auto">
             <span>🖨️</span>
-            <span>طباعة اللوحة النهائية</span>
+            <span>طباعة اللوحة</span>
         </button>
     </div>
 
     <!-- Poster Container -->
-    <div class="print-container bg-white w-full max-w-[800px] p-8 rounded-xl shadow-2xl border border-gray-200">
+    <div class="print-container bg-white w-full max-w-[800px] p-6 rounded-xl shadow-2xl border border-gray-200">
         
         <!-- Header -->
-        <div class="text-center border-b-4 border-emerald-500 pb-6 mb-8">
-            <h1 class="text-4xl font-extrabold text-gray-800 mb-2">رحلة المستفيد</h1>
-            <p class="text-xl text-emerald-600 font-bold">خطوات التقديم الإلكتروني</p>
+        <div class="text-center border-b-4 border-emerald-500 pb-4 mb-6">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-2">تقديم في موقع الجمعية بناء وتنمية</h1>
+            <p class="text-lg text-emerald-600 font-bold">خطوات التسجيل والتقديم الإلكتروني</p>
         </div>
 
         <!-- Steps Container -->
-        <div class="space-y-4">
+        <div class="space-y-3">
 
             <!-- Step 1 -->
-            <div class="step-card flex flex-col md:flex-row items-center bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-                <div class="flex-shrink-0 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl ml-4 shadow-md">1</div>
-                <div class="flex-1 text-center md:text-right mb-4 md:mb-0">
-                    <h3 class="font-bold text-xl text-gray-800">الدخول إلى البوابة</h3>
-                    <p class="text-gray-600">امسح الباركود أو ادخل على موقع الجمعية عبر الجوال.</p>
+            <div class="step-card flex flex-row items-center bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                <div class="flex-shrink-0 bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ml-4 shadow-md">1</div>
+                <div class="flex-1 text-right">
+                    <h3 class="font-bold text-lg text-gray-800">الدخول إلى الموقع</h3>
+                    <p class="text-gray-600 text-sm">ادخل عبر الرابط أو امسح الباركود.</p>
                 </div>
-                
-                <!-- Image Upload Area 1 -->
-                <div class="w-48 h-32 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
+                <div class="step-img w-32 h-24 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
                     <input type="file" id="upload-1" accept="image/*" class="hidden" onchange="previewImage(this, 'img-1', 'label-1')">
-                    <label for="upload-1" id="label-1" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 transition p-2 text-center cursor-pointer z-10">
-                        <svg class="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <span class="text-xs font-bold">اضغط لإضافة صورة</span>
+                    <label for="upload-1" id="label-1" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 p-1 text-center cursor-pointer z-10">
+                        <span class="text-xs font-bold">صورة 1</span>
                     </label>
                     <img id="img-1" src="" class="hidden w-full h-full object-cover absolute inset-0 z-0">
                 </div>
             </div>
 
             <!-- Arrow -->
-            <div class="flex justify-center">
-                <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            <div class="flex justify-center -my-1">
+                <svg class="arrow-icon w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
             </div>
 
             <!-- Step 2 -->
-            <div class="step-card flex flex-col md:flex-row items-center bg-white p-4 rounded-xl border border-gray-200">
-                <div class="flex-shrink-0 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl ml-4 shadow-md">2</div>
-                <div class="flex-1 text-center md:text-right mb-4 md:mb-0">
-                    <h3 class="font-bold text-xl text-gray-800">الخدمات الإلكترونية</h3>
-                    <p class="text-gray-600">من القائمة الرئيسية، اضغط على خيار "الخدمات الإلكترونية".</p>
+            <div class="step-card flex flex-row items-center bg-white p-3 rounded-xl border border-gray-200">
+                <div class="flex-shrink-0 bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ml-4 shadow-md">2</div>
+                <div class="flex-1 text-right">
+                    <h3 class="font-bold text-lg text-gray-800">الخدمات الإلكترونية</h3>
+                    <p class="text-gray-600 text-sm">اختر "الخدمات الإلكترونية" من القائمة.</p>
                 </div>
-                
-                <!-- Image Upload Area 2 -->
-                <div class="w-48 h-32 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
+                <div class="step-img w-32 h-24 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
                     <input type="file" id="upload-2" accept="image/*" class="hidden" onchange="previewImage(this, 'img-2', 'label-2')">
-                    <label for="upload-2" id="label-2" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 transition p-2 text-center cursor-pointer z-10">
-                        <svg class="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <span class="text-xs font-bold">اضغط لإضافة صورة</span>
+                    <label for="upload-2" id="label-2" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 p-1 text-center cursor-pointer z-10">
+                        <span class="text-xs font-bold">صورة 2</span>
                     </label>
                     <img id="img-2" src="" class="hidden w-full h-full object-cover absolute inset-0 z-0">
                 </div>
             </div>
 
             <!-- Arrow -->
-            <div class="flex justify-center">
-                 <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            <div class="flex justify-center -my-1">
+                 <svg class="arrow-icon w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
             </div>
 
             <!-- Step 3 -->
-            <div class="step-card flex flex-col md:flex-row items-center bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-                <div class="flex-shrink-0 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl ml-4 shadow-md">3</div>
-                <div class="flex-1 text-center md:text-right mb-4 md:mb-0">
-                    <h3 class="font-bold text-xl text-gray-800">تسجيل المستفيدين</h3>
-                    <p class="text-gray-600">سجل دخولك برقم الهوية، أو اختر "تسجيل جديد" لإنشاء حساب.</p>
+            <div class="step-card flex flex-row items-center bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                <div class="flex-shrink-0 bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ml-4 shadow-md">3</div>
+                <div class="flex-1 text-right">
+                    <h3 class="font-bold text-lg text-gray-800">تسجيل المستفيدين</h3>
+                    <p class="text-gray-600 text-sm">الدخول لبوابة المستفيد.</p>
                 </div>
-                
-                <!-- Image Upload Area 3 -->
-                <div class="w-48 h-32 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
+                <div class="step-img w-32 h-24 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
                     <input type="file" id="upload-3" accept="image/*" class="hidden" onchange="previewImage(this, 'img-3', 'label-3')">
-                    <label for="upload-3" id="label-3" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 transition p-2 text-center cursor-pointer z-10">
-                        <svg class="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <span class="text-xs font-bold">اضغط لإضافة صورة</span>
+                    <label for="upload-3" id="label-3" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 p-1 text-center cursor-pointer z-10">
+                        <span class="text-xs font-bold">صورة 3</span>
                     </label>
                     <img id="img-3" src="" class="hidden w-full h-full object-cover absolute inset-0 z-0">
                 </div>
             </div>
 
             <!-- Arrow -->
-            <div class="flex justify-center">
-                 <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            <div class="flex justify-center -my-1">
+                 <svg class="arrow-icon w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
             </div>
 
             <!-- Step 4 -->
-            <div class="step-card flex flex-col md:flex-row items-center bg-white p-4 rounded-xl border border-gray-200">
-                <div class="flex-shrink-0 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl ml-4 shadow-md">4</div>
-                <div class="flex-1 text-center md:text-right mb-4 md:mb-0">
-                    <h3 class="font-bold text-xl text-gray-800">تقديم طلب</h3>
-                    <p class="text-gray-600">اختر المرفقات المطلوبة من عندك.</p>
+            <div class="step-card flex flex-row items-center bg-white p-3 rounded-xl border border-gray-200">
+                <div class="flex-shrink-0 bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ml-4 shadow-md">4</div>
+                <div class="flex-1 text-right">
+                    <h3 class="font-bold text-lg text-gray-800">تسجيل حساب أو دخول</h3>
+                    <p class="text-gray-600 text-sm">سجل دخولك أو أنشئ حساباً جديداً.</p>
                 </div>
-                
-                <!-- Image Upload Area 4 -->
-                <div class="w-48 h-32 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
+                <div class="step-img w-32 h-24 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
                     <input type="file" id="upload-4" accept="image/*" class="hidden" onchange="previewImage(this, 'img-4', 'label-4')">
-                    <label for="upload-4" id="label-4" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 transition p-2 text-center cursor-pointer z-10">
-                        <svg class="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <span class="text-xs font-bold">اضغط لإضافة صورة</span>
+                    <label for="upload-4" id="label-4" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 p-1 text-center cursor-pointer z-10">
+                        <span class="text-xs font-bold">صورة 4</span>
                     </label>
                     <img id="img-4" src="" class="hidden w-full h-full object-cover absolute inset-0 z-0">
+                </div>
+            </div>
+
+            <!-- Arrow -->
+            <div class="flex justify-center -my-1">
+                 <svg class="arrow-icon w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="step-card flex flex-row items-center bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                <div class="flex-shrink-0 bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ml-4 shadow-md">5</div>
+                <div class="flex-1 text-right">
+                    <h3 class="font-bold text-lg text-gray-800">البيانات والمرفقات</h3>
+                    <p class="text-gray-600 text-sm">أدخل بياناتك وأرفق المستندات المطلوبة.</p>
+                </div>
+                <div class="step-img w-32 h-24 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
+                    <input type="file" id="upload-5" accept="image/*" class="hidden" onchange="previewImage(this, 'img-5', 'label-5')">
+                    <label for="upload-5" id="label-5" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 p-1 text-center cursor-pointer z-10">
+                        <span class="text-xs font-bold">صورة 5</span>
+                    </label>
+                    <img id="img-5" src="" class="hidden w-full h-full object-cover absolute inset-0 z-0">
+                </div>
+            </div>
+
+             <!-- Arrow -->
+            <div class="flex justify-center -my-1">
+                 <svg class="arrow-icon w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            </div>
+
+            <!-- Step 6 -->
+            <div class="step-card flex flex-row items-center bg-white p-3 rounded-xl border border-gray-200">
+                <div class="flex-shrink-0 bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ml-4 shadow-md">6</div>
+                <div class="flex-1 text-right">
+                    <h3 class="font-bold text-lg text-gray-800">تقديم الطلب</h3>
+                    <p class="text-gray-600 text-sm">اضغط على زر "تقديم" بعد اكتمال المرفقات.</p>
+                </div>
+                <div class="step-img w-32 h-24 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
+                    <input type="file" id="upload-6" accept="image/*" class="hidden" onchange="previewImage(this, 'img-6', 'label-6')">
+                    <label for="upload-6" id="label-6" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 p-1 text-center cursor-pointer z-10">
+                        <span class="text-xs font-bold">صورة 6</span>
+                    </label>
+                    <img id="img-6" src="" class="hidden w-full h-full object-cover absolute inset-0 z-0">
                 </div>
             </div>
 
         </div>
 
         <!-- Footer / QR Area -->
-        <div class="mt-8 bg-gray-800 text-white p-6 rounded-xl flex flex-col md:flex-row items-center justify-between">
-            <div class="text-center md:text-right mb-4 md:mb-0">
-                <p class="text-lg font-bold">هل تحتاج مساعدة؟</p>
-                <p class="text-gray-300 text-sm">امسح الكود للوصول المباشر للموقع</p>
+        <div class="mt-4 bg-gray-800 text-white p-4 rounded-xl flex flex-row items-center justify-between">
+            <div class="text-right">
+                <p class="text-md font-bold">جمعية بناء وتنمية</p>
+                <p class="text-gray-300 text-xs">امسح الكود لزيارة الموقع</p>
             </div>
             
-            <!-- Fake QR Code Placeholder -->
-            <div class="bg-white p-2 rounded-lg cursor-pointer image-upload-area" title="اضغط لتغيير الباركود">
+            <div class="bg-white p-1 rounded-lg cursor-pointer image-upload-area" title="اضغط لتغيير الباركود">
                 <input type="file" id="upload-qr" accept="image/*" class="hidden" onchange="previewImage(this, 'img-qr', 'label-qr')">
                 <label for="upload-qr" id="label-qr" class="hidden">تغيير</label>
-                <img id="img-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Example" alt="QR Code" class="w-24 h-24 object-contain">
+                <img id="img-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Example" alt="QR Code" class="w-16 h-16 object-contain">
             </div>
-        </div>
-        
-        <div class="text-center mt-4 text-gray-400 text-sm">
-            جمعية بناء وتنمية مساكن - خدمة المستفيدين
         </div>
 
     </div>
