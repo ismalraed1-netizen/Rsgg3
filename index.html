@@ -3,235 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>خطوات التقديم - جمعية بناء وتنمية</title>
+    <title>بطاقة هوية ذكية - جمعية بناء وتنمية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background-color: #f3f4f6;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
+        :root {
+            --c-green: #84BD00;
+            --c-orange: #F05A28;
+            --c-grey: #9C9E9F;
+            --c-dark: #1e293b;
         }
-        .step-card {
-            break-inside: avoid;
+
+        body { font-family: 'Tajawal', sans-serif; background-color: #f1f5f9; user-select: none; overflow-x: hidden; }
+
+        /* منطقة العمل */
+        .canvas-area {
+            width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;
+            overflow: auto; padding: 40px; background-color: #e5e7eb;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px;
+            border-radius: 20px; position: relative;
         }
-        /* إخفاء عناصر التحكم عند الطباعة */
-        @media print {
-            body { background-color: white; padding: 0; }
-            .no-print { display: none !important; }
-            .print-container { 
-                box-shadow: none; 
-                border: none;
-                width: 100%;
-                max-width: 100%;
-                margin: 0;
-                padding: 10px !important;
-            }
-            /* تصغير الهوامش في الطباعة لتسع الصفحة الواحدة */
-            h1 { font-size: 24px !important; }
-            .step-card { padding: 8px !important; margin-bottom: 8px !important; }
-            .step-img { height: 80px !important; width: 120px !important; }
-            .arrow-icon { height: 20px !important; }
-            
-            /* إجبار الخلفيات على الظهور */
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
+
+        /* حاوية البطاقة */
+        .card-wrapper {
+            width: 340px; height: 535px; position: relative;
+            background: white; overflow: hidden; border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2); 
+            transition: width 0.3s, height 0.3s, transform 0.2s ease; transform-origin: center top;
         }
         
-        /* تنسيق منطقة رفع الصور */
-        .image-upload-area {
-            transition: all 0.3s ease;
+        .bg-shape { position: absolute; z-index: 0; transition: all 0.4s ease; }
+        .card-wrapper .bottom-bar { position: absolute; bottom: 0; width: 100%; height: 10px; background: var(--c-green); z-index: 1; }
+
+        /* --- الأنماط (12 قالب) --- */
+        /* (نفس الأنماط السابقة للتوافق) */
+        .t-official .bg-1 { top: -20%; left: -20%; width: 140%; height: 50%; background: var(--c-green); border-radius: 0 0 50% 50%; }
+        .t-official .bg-2 { top: -22%; left: -10%; width: 120%; height: 50%; background: var(--c-orange); border-radius: 0 0 50% 50%; }
+
+        .t-geo .bg-1 { top: 0; left: 0; width: 100%; height: 40%; background: var(--c-green); clip-path: polygon(0 0, 100% 0, 100% 60%, 0 100%); }
+        .t-geo .bg-2 { top: 0; left: 0; width: 100%; height: 42%; background: var(--c-orange); clip-path: polygon(0 0, 100% 0, 100% 65%, 0 100%); opacity: 0.7; }
+
+        .t-side .bg-1 { top: 0; right: 0; width: 15%; height: 100%; background: linear-gradient(to bottom, var(--c-green), var(--c-green) 50%, var(--c-orange) 50%); }
+        .t-side .bottom-bar { display: none; }
+        .t-side .info-container { padding-right: 15%; }
+
+        .t-diag .bg-1 { top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(115deg, var(--c-green) 0%, var(--c-green) 35%, transparent 35.1%); }
+        .t-diag .bottom-bar { display: none; }
+        
+        .t-corp .bg-1 { top: 0; left: 0; width: 100%; height: 3%; background: var(--c-orange); }
+        .t-corp .bg-2 { top: 3%; left: 0; width: 100%; height: 18%; background: var(--c-green); border-radius: 0 0 40px 0; }
+        .t-corp .bottom-bar { height: 5%; background: var(--c-grey); }
+
+        .t-circ .bg-1 { top: -15%; right: -25%; width: 80%; padding-top: 80%; background: var(--c-green); border-radius: 50%; opacity: 0.1; }
+        .t-circ .bg-2 { bottom: -10%; left: -15%; width: 60%; padding-top: 60%; background: var(--c-orange); border-radius: 50%; opacity: 0.1; }
+        .t-circ .bg-3 { top: 5%; left: 50%; transform: translateX(-50%); width: 80%; height: 1%; background: var(--c-green); border-radius: 10px; }
+
+        .t-min .bg-1 { top: 5%; left: 5%; right: 5%; bottom: 5%; border: 2px solid var(--c-green); border-radius: 16px; pointer-events: none; }
+        .t-min .bottom-bar { display: none; }
+
+        .t-cont .bg-1 { bottom: 0; left: 0; width: 100%; height: 35%; background: var(--c-green); clip-path: polygon(0 20%, 100% 0, 100% 100%, 0% 100%); }
+        .t-cont .bottom-bar { display: none; }
+
+        .t-wave .bg-1 { top: -10%; left: -50%; width: 200%; height: 40%; background: var(--c-green); border-radius: 0 0 50% 50%; transform: rotate(-10deg); }
+        .t-wave .bg-2 { top: -15%; left: -50%; width: 200%; height: 40%; background: var(--c-orange); border-radius: 0 0 50% 50%; transform: rotate(-5deg); opacity: 0.8; }
+
+        .t-top .bg-1 { top: 0; left: 0; width: 100%; height: 15%; background: var(--c-green); }
+        .t-top .bg-2 { top: 15%; left: 0; width: 100%; height: 2%; background: var(--c-orange); }
+        .t-top .bottom-bar { display: none; }
+
+        .t-ultra .bg-1 { top: 0; right: 0; width: 60%; height: 100%; background: #f8fafc; clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%); z-index: -1; }
+        .t-ultra .bg-2 { top: 0; left: 0; width: 10px; height: 100%; background: var(--c-green); }
+        .t-ultra .bottom-bar { display: none; }
+
+        .t-grad .bg-1 { top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, white 60%, #eefbf0 100%); z-index: -2; }
+        .t-grad .bg-2 { bottom: 0; right: 0; width: 150px; height: 150px; background: var(--c-green); border-radius: 100% 0 0 0; opacity: 0.1; }
+        .t-grad .bottom-bar { width: 100%; height: 5px; background: linear-gradient(to right, var(--c-green), var(--c-orange)); }
+
+
+        /* --- العناصر المتحركة --- */
+        .draggable { position: absolute; z-index: 10; cursor: move; display: flex; justify-content: center; align-items: center; }
+        .draggable:hover { outline: 1px dashed rgba(0,0,0,0.3); }
+
+        .logo-box { left: 50%; transform: translateX(-50%); top: 8%; width: 45%; }
+        .logo-img { width: 100%; height: auto; pointer-events: none; display: block; }
+        .logo-box.is-circle { width: 35%; aspect-ratio: 1/1; background: white; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden; padding: 3%; }
+        .logo-box.is-circle .logo-img { width: 100%; height: 100%; object-fit: contain; }
+
+        .profile-box { left: 50%; transform: translateX(-50%); top: 28%; width: 40%; aspect-ratio: 1/1; border-radius: 50%; border: 5px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.1); background: #f1f5f9; overflow: hidden; }
+        .profile-img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+
+        .qr-box { bottom: 6%; left: 50%; transform: translateX(-50%); width: 22%; aspect-ratio: 1/1; background: white; border-radius: 8px; padding: 1.5%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .qr-img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+
+        .info-container { position: absolute; bottom: 22%; width: 100%; text-align: center; z-index: 5; pointer-events: none; }
+        .name-text { font-size: 26px; font-weight: 800; color: var(--c-dark); margin-bottom: 1%; }
+        .role-badge { display: inline-block; background: var(--c-orange); color: white; padding: 1% 6%; border-radius: 50px; font-weight: 700; font-size: 14px; margin-bottom: 2%; }
+        .org-text { font-size: 14px; color: var(--c-grey); font-weight: 600; line-height: 1.5; }
+        
+        .slogan-text { 
+            margin-top: 5px; font-size: 11px; color: var(--c-green); font-weight: 700; font-style: italic; 
+            display: none; padding: 2px 8px; border-radius: 4px; background: rgba(132, 189, 0, 0.1);
         }
-        .image-upload-area:hover {
-            opacity: 0.9;
-            border-color: #10b981;
+        
+        /* تنسيق معلومات الاتصال */
+        .contact-info { 
+            margin-top: 8px; font-size: 12px; color: #64748b; font-weight: 500;
+            display: flex; flex-direction: column; gap: 4px; align-items: center;
         }
+        .contact-item { display: flex; align-items: center; gap: 6px; }
+        .contact-icon { color: var(--c-green); font-size: 14px; }
+
+        /* التحكم */
+        .float-ctrl { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); background: #333; padding: 2px 6px; border-radius: 20px; display: flex; gap: 4px; opacity: 0; transition: 0.2s; pointer-events: auto; }
+        .draggable:hover .float-ctrl, .draggable:active .float-ctrl { opacity: 1; }
+        .mini-btn { width: 20px; height: 20px; border-radius: 50%; border: 1px solid #555; background: #444; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; }
+        .mini-btn:hover { background: #555; }
+        
+        .theme-btn { @apply border rounded-xl p-2 hover:bg-green-50 transition flex flex-col items-center gap-1 text-[10px] font-bold text-gray-600; }
+        .theme-btn.active { @apply ring-2 ring-green-500 bg-green-50; }
+        .theme-preview { width: 100%; height: 35px; background: #f3f4f6; border-radius: 6px; position: relative; overflow: hidden; }
+        
+        .zoom-slider-container {
+            position: absolute; bottom: 20px; right: 20px;
+            background: white; padding: 10px; border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 50;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        /* --- أنماط الذكاء الاصطناعي --- */
+        .ai-btn {
+            @apply flex items-center justify-center gap-1 text-[10px] font-bold text-white bg-gradient-to-r from-purple-500 to-indigo-600 px-3 py-1 rounded-full shadow hover:from-purple-600 hover:to-indigo-700 transition cursor-pointer;
+        }
+        .ai-suggestion {
+            @apply bg-indigo-50 border border-indigo-200 text-indigo-700 px-2 py-1 rounded text-[10px] cursor-pointer hover:bg-indigo-100 transition;
+        }
+        .suggestions-box { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
     </style>
-    <script>
-        function previewImage(input, imgId, labelId) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    document.getElementById(imgId).src = e.target.result;
-                    document.getElementById(imgId).classList.remove('hidden');
-                    if(labelId) {
-                        document.getElementById(labelId).style.opacity = '0';
-                    }
-                }
-                
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-    </script>
 </head>
-<body class="p-4 md:p-8 flex flex-col items-center min-h-screen">
+<body class="p-4 md:p-8 h-screen flex flex-col">
 
-    <!-- Print Instructions & Button -->
-    <div class="no-print mb-6 text-center space-y-4">
-        <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg text-blue-800 max-w-lg mx-auto">
-            <p class="font-bold">📝 ملاحظة:</p>
-            <p class="text-sm">تم تصغير حجم الصور قليلاً لضمان ظهور الـ 6 خطوات في ورقة واحدة عند الطباعة.</p>
-        </div>
-        <button onclick="window.print()" class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-bold shadow-lg hover:bg-emerald-700 transition flex items-center gap-2 mx-auto">
-            <span>🖨️</span>
-            <span>طباعة اللوحة</span>
-        </button>
-    </div>
-
-    <!-- Poster Container -->
-    <div class="print-container bg-white w-full max-w-[800px] p-6 rounded-xl shadow-2xl border border-gray-200">
+    <div class="max-w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
         
-        <!-- Header -->
-        <div class="text-center border-b-4 border-emerald-500 pb-4 mb-6">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-2">تقديم في موقع الجمعية بناء وتنمية</h1>
-            <p class="text-lg text-emerald-600 font-bold">خطوات التسجيل والتقديم الإلكتروني</p>
+        <!-- لوحة التحكم -->
+        <div class="lg:col-span-3 bg-white p-5 rounded-3xl shadow-lg flex flex-col gap-4 overflow-y-auto h-full">
+            <div class="border-b pb-3">
+                <h1 class="text-xl font-black text-gray-800">إعدادات الهوية</h1>
+                <p class="text-xs text-indigo-600 font-bold flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                    مدعوم بالذكاء الاصطناعي
+                </p>
+            </div>
+
+            <!-- مقاس البطاقة -->
+            <div>
+                <label class="block text-xs font-bold text-gray-700 mb-2">مقاس البطاقة:</label>
+                <select id="cardSizeSelect" onchange="changeCardSize()" class="w-full p-2 text-xs border rounded-lg bg-gray-50">
+                    <option value="id1">قياسي (ID-1) - 5.4cm x 8.6cm</option>
+                    <option value="biz">بزنس كارد - 9cm x 5cm</option>
+                    <option value="sq">مربع (انستقرام) - 10cm x 10cm</option>
+                </select>
+            </div>
+
+            <!-- القوالب (12 قالب) -->
+            <div class="flex-1 overflow-y-auto max-h-[250px]">
+                <label class="block text-xs font-bold text-gray-700 mb-2">اختر التصميم:</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="setTheme('t-official', this)" class="theme-btn active"><div class="theme-preview"><div class="absolute top-0 left-0 w-full h-4 bg-[#84BD00] rounded-b-full"></div></div>رسمي</button>
+                    <button onclick="setTheme('t-geo', this)" class="theme-btn"><div class="theme-preview"><div class="absolute top-0 left-0 w-full h-full bg-[#84BD00]" style="clip-path: polygon(0 0, 100% 0, 0 100%)"></div></div>هندسي</button>
+                    <button onclick="setTheme('t-side', this)" class="theme-btn"><div class="theme-preview"><div class="absolute right-0 h-full w-2 bg-[#84BD00]"></div></div>جانبي</button>
+                    <button onclick="setTheme('t-diag', this)" class="theme-btn"><div class="theme-preview"><div class="absolute top-0 left-0 h-full w-1/2 bg-[#84BD00] -skew-x-12"></div></div>مائل</button>
+                    <button onclick="setTheme('t-corp', this)" class="theme-btn"><div class="theme-preview"><div class="absolute top-0 w-full h-2 bg-[#84BD00]"></div><div class="absolute top-0 w-full h-1 bg-[#F05A28]"></div></div>شركات</button>
+                    <button onclick="setTheme('t-circ', this)" class="theme-btn"><div class="theme-preview"><div class="absolute -top-2 -right-2 w-6 h-6 bg-[#84BD00] rounded-full opacity-50"></div></div>دوائر</button>
+                    <button onclick="setTheme('t-min', this)" class="theme-btn"><div class="theme-preview border border-[#84BD00] m-1 rounded"></div>إطار</button>
+                    <button onclick="setTheme('t-cont', this)" class="theme-btn"><div class="theme-preview"><div class="absolute bottom-0 w-full h-3 bg-[#84BD00]"></div></div>تباين</button>
+                    <button onclick="setTheme('t-wave', this)" class="theme-btn"><div class="theme-preview"><div class="absolute top-[-50%] left-[-50%] w-[200%] h-[100%] bg-[#84BD00] rounded-b-full transform rotate-[-10deg]"></div></div>تموج</button>
+                    <button onclick="setTheme('t-top', this)" class="theme-btn"><div class="theme-preview"><div class="absolute top-0 w-full h-4 bg-[#84BD00]"></div></div>علوي</button>
+                    <button onclick="setTheme('t-ultra', this)" class="theme-btn"><div class="theme-preview"><div class="absolute left-0 w-1 h-full bg-[#84BD00]"></div></div>مودرن+</button>
+                    <button onclick="setTheme('t-grad', this)" class="theme-btn"><div class="theme-preview bg-gradient-to-br from-white to-green-100"></div>تدرج</button>
+                </div>
+            </div>
+
+            <!-- الملفات -->
+            <div class="border-t pt-3">
+                <div class="grid grid-cols-2 gap-2 mb-2">
+                    <button onclick="get('uplLogo').click()" class="py-2 border rounded-lg text-[10px] font-bold hover:bg-gray-50">🏢 الشعار</button>
+                    <button onclick="get('uplPhoto').click()" class="py-2 border rounded-lg text-[10px] font-bold hover:bg-gray-50">👤 الصورة</button>
+                </div>
+                <button onclick="toggleLogoShape()" class="w-full py-1 text-[10px] text-green-600 font-bold hover:underline mb-2">🔄 تغيير شكل الشعار (دائري/حر)</button>
+                
+                <div class="flex gap-2 items-center bg-gray-50 p-2 rounded-lg border mb-2">
+                    <input type="text" id="qrText" class="flex-1 bg-transparent text-[10px] outline-none" placeholder="رابط الباركود">
+                    <button onclick="get('uplQR').click()" class="text-[10px] font-bold text-blue-600 hover:text-blue-800">📷 صورة</button>
+                </div>
+            </div>
+
+            <!-- البيانات -->
+            <div class="space-y-3 border-t pt-3">
+                <!-- الاسم -->
+                <div class="space-y-1">
+                    <label class="block text-xs font-bold text-gray-700">الاسم:</label>
+                    <input type="text" id="inpName" value="أحمد محمد" class="w-full p-2 border rounded-lg text-xs" placeholder="الاسم">
+                </div>
+
+                <!-- المسمى الوظيفي + AI -->
+                <div class="space-y-1">
+                    <div class="flex justify-between items-center">
+                        <label class="block text-xs font-bold text-gray-700">المسمى الوظيفي:</label>
+                        <button onclick="suggestTitles()" id="btnSuggest" class="ai-btn">✨ اقتراح مسميات</button>
+                    </div>
+                    <input type="text" id="inpRole" value="المدير العام" class="w-full p-2 border rounded-lg text-xs" placeholder="المسمى">
+                    <div id="aiSuggestions" class="suggestions-box"></div>
+                </div>
+
+                <!-- الشعار المهني + AI -->
+                <div class="space-y-1">
+                    <div class="flex justify-between items-center">
+                        <label class="block text-xs font-bold text-gray-700">شعار مهني (Slogan):</label>
+                        <button onclick="generateSlogan()" id="btnSlogan" class="ai-btn">✨ تأليف شعار</button>
+                    </div>
+                    <input type="text" id="inpSlogan" class="w-full p-2 border rounded-lg text-xs" placeholder="عبارة قصيرة تظهر في البطاقة">
+                </div>
+                
+                <!-- التواصل -->
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" id="inpPhone" value="0500000000" class="w-full p-2 border rounded-lg text-xs" placeholder="الجوال">
+                    <input type="text" id="inpEmail" value="info@bena.sa" class="w-full p-2 border rounded-lg text-xs" placeholder="الإيميل">
+                </div>
+            </div>
+
+            <div class="flex gap-2 mt-auto pt-2">
+                <button onclick="downloadCard('png')" class="flex-1 bg-[#84BD00] hover:bg-[#73a500] text-white font-bold py-3 rounded-xl shadow-lg text-sm">
+                    💾 PNG
+                </button>
+                <button onclick="downloadCard('pdf')" class="flex-1 bg-gray-700 hover:bg-gray-900 text-white font-bold py-3 rounded-xl shadow-lg text-sm">
+                    📄 PDF
+                </button>
+            </div>
+
+            <input type="file" id="uplLogo" accept="image/*" class="hidden">
+            <input type="file" id="uplPhoto" accept="image/*" class="hidden">
+            <input type="file" id="uplQR" accept="image/*" class="hidden">
         </div>
 
-        <!-- Steps Container -->
-        <div class="space-y-3">
+        <!-- منطقة العمل (Canvas) -->
+        <div class="lg:col-span-9 h-full relative">
+            <div class="canvas-area">
+                
+                <div id="cardCanvas" class="card-wrapper t-official">
+                    <!-- الخلفية -->
+                    <div class="bg-shape bg-1"></div>
+                    <div class="bg-shape bg-2"></div>
+                    <div class="bg-shape bg-3"></div>
+                    <div class="bottom-bar"></div>
 
-            <!-- Step 1 -->
-            <div class="step-card flex flex-row items-center bg-emerald-50 p-3 rounded-xl border border-emerald-100">
-                <div class="flex-shrink-0 bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ml-4 shadow-md">1</div>
-                <div class="flex-1 text-right">
-                    <h3 class="font-bold text-lg text-gray-800">الدخول إلى الموقع</h3>
-                    <p class="text-gray-600 text-sm">ادخل عبر الرابط أو امسح الباركود.</p>
-                </div>
-                <div class="step-img w-32 h-24 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
-                    <input type="file" id="upload-1" accept="image/*" class="hidden" onchange="previewImage(this, 'img-1', 'label-1')">
-                    <label for="upload-1" id="label-1" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 p-1 text-center cursor-pointer z-10">
-                        <span class="text-xs font-bold">صورة 1</span>
-                    </label>
-                    <img id="img-1" src="" class="hidden w-full h-full object-cover absolute inset-0 z-0">
-                </div>
-            </div>
+                    <!-- العناصر -->
+                    <div id="boxLogo" class="draggable logo-box">
+                        <div class="float-ctrl"><div class="mini-btn" onclick="resize('boxLogo', 5)">+</div><div class="mini-btn" onclick="resize('boxLogo', -5)">-</div></div>
+                        <div id="logoPlace" class="w-full h-full min-h-[50px] border-2 border-dashed border-gray-300 rounded flex items-center justify-center text-[10px] text-gray-400 bg-white/80">الشعار</div>
+                        <img id="imgLogo" src="" class="logo-img hidden">
+                    </div>
 
-            <!-- Arrow -->
-            <div class="flex justify-center -my-1">
-                <svg class="arrow-icon w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-            </div>
+                    <div id="boxProfile" class="draggable profile-box">
+                        <div class="float-ctrl"><div class="mini-btn" onclick="resize('boxProfile', 5)">+</div><div class="mini-btn" onclick="resize('boxProfile', -5)">-</div></div>
+                        <img id="imgProfile" src="https://ui-avatars.com/api/?name=%D8%A3+%D9%85&background=f1f5f9&color=94a3b8&size=256&font-size=0.4" class="profile-img">
+                    </div>
 
-            <!-- Step 2 -->
-            <div class="step-card flex flex-row items-center bg-white p-3 rounded-xl border border-gray-200">
-                <div class="flex-shrink-0 bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ml-4 shadow-md">2</div>
-                <div class="flex-1 text-right">
-                    <h3 class="font-bold text-lg text-gray-800">الخدمات الإلكترونية</h3>
-                    <p class="text-gray-600 text-sm">اختر "الخدمات الإلكترونية" من القائمة.</p>
-                </div>
-                <div class="step-img w-32 h-24 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
-                    <input type="file" id="upload-2" accept="image/*" class="hidden" onchange="previewImage(this, 'img-2', 'label-2')">
-                    <label for="upload-2" id="label-2" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 p-1 text-center cursor-pointer z-10">
-                        <span class="text-xs font-bold">صورة 2</span>
-                    </label>
-                    <img id="img-2" src="" class="hidden w-full h-full object-cover absolute inset-0 z-0">
-                </div>
-            </div>
+                    <div class="info-container">
+                        <h2 class="name-text" id="txtName">أحمد محمد</h2>
+                        <span class="role-badge" id="txtRole">المدير العام</span>
+                        <div class="org-text"><div>جمعية بناء وتنمية مساكن</div><div>بمنطقة جازان</div></div>
+                        
+                        <!-- الشعار المهني -->
+                        <div id="txtSlogan" class="slogan-text"></div>
 
-            <!-- Arrow -->
-            <div class="flex justify-center -my-1">
-                 <svg class="arrow-icon w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-            </div>
-
-            <!-- Step 3 -->
-            <div class="step-card flex flex-row items-center bg-emerald-50 p-3 rounded-xl border border-emerald-100">
-                <div class="flex-shrink-0 bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ml-4 shadow-md">3</div>
-                <div class="flex-1 text-right">
-                    <h3 class="font-bold text-lg text-gray-800">تسجيل المستفيدين</h3>
-                    <p class="text-gray-600 text-sm">الدخول لبوابة المستفيد.</p>
-                </div>
-                <div class="step-img w-32 h-24 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
-                    <input type="file" id="upload-3" accept="image/*" class="hidden" onchange="previewImage(this, 'img-3', 'label-3')">
-                    <label for="upload-3" id="label-3" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 p-1 text-center cursor-pointer z-10">
-                        <span class="text-xs font-bold">صورة 3</span>
-                    </label>
-                    <img id="img-3" src="" class="hidden w-full h-full object-cover absolute inset-0 z-0">
-                </div>
-            </div>
-
-            <!-- Arrow -->
-            <div class="flex justify-center -my-1">
-                 <svg class="arrow-icon w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-            </div>
-
-            <!-- Step 4 -->
-            <div class="step-card flex flex-row items-center bg-white p-3 rounded-xl border border-gray-200">
-                <div class="flex-shrink-0 bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ml-4 shadow-md">4</div>
-                <div class="flex-1 text-right">
-                    <h3 class="font-bold text-lg text-gray-800">تسجيل حساب أو دخول</h3>
-                    <p class="text-gray-600 text-sm">سجل دخولك أو أنشئ حساباً جديداً.</p>
-                </div>
-                <div class="step-img w-32 h-24 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
-                    <input type="file" id="upload-4" accept="image/*" class="hidden" onchange="previewImage(this, 'img-4', 'label-4')">
-                    <label for="upload-4" id="label-4" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 p-1 text-center cursor-pointer z-10">
-                        <span class="text-xs font-bold">صورة 4</span>
-                    </label>
-                    <img id="img-4" src="" class="hidden w-full h-full object-cover absolute inset-0 z-0">
-                </div>
-            </div>
-
-            <!-- Arrow -->
-            <div class="flex justify-center -my-1">
-                 <svg class="arrow-icon w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-            </div>
-
-            <!-- Step 5 -->
-            <div class="step-card flex flex-row items-center bg-emerald-50 p-3 rounded-xl border border-emerald-100">
-                <div class="flex-shrink-0 bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ml-4 shadow-md">5</div>
-                <div class="flex-1 text-right">
-                    <h3 class="font-bold text-lg text-gray-800">البيانات والمرفقات</h3>
-                    <p class="text-gray-600 text-sm">أدخل بياناتك وأرفق المستندات المطلوبة.</p>
-                </div>
-                <div class="step-img w-32 h-24 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
-                    <input type="file" id="upload-5" accept="image/*" class="hidden" onchange="previewImage(this, 'img-5', 'label-5')">
-                    <label for="upload-5" id="label-5" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 p-1 text-center cursor-pointer z-10">
-                        <span class="text-xs font-bold">صورة 5</span>
-                    </label>
-                    <img id="img-5" src="" class="hidden w-full h-full object-cover absolute inset-0 z-0">
-                </div>
-            </div>
-
-             <!-- Arrow -->
-            <div class="flex justify-center -my-1">
-                 <svg class="arrow-icon w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-            </div>
-
-            <!-- Step 6 -->
-            <div class="step-card flex flex-row items-center bg-white p-3 rounded-xl border border-gray-200">
-                <div class="flex-shrink-0 bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ml-4 shadow-md">6</div>
-                <div class="flex-1 text-right">
-                    <h3 class="font-bold text-lg text-gray-800">تقديم الطلب</h3>
-                    <p class="text-gray-600 text-sm">اضغط على زر "تقديم" بعد اكتمال المرفقات.</p>
-                </div>
-                <div class="step-img w-32 h-24 relative bg-gray-200 rounded-lg border-2 border-dashed border-gray-400 overflow-hidden cursor-pointer image-upload-area shadow-inner group">
-                    <input type="file" id="upload-6" accept="image/*" class="hidden" onchange="previewImage(this, 'img-6', 'label-6')">
-                    <label for="upload-6" id="label-6" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 hover:text-emerald-600 p-1 text-center cursor-pointer z-10">
-                        <span class="text-xs font-bold">صورة 6</span>
-                    </label>
-                    <img id="img-6" src="" class="hidden w-full h-full object-cover absolute inset-0 z-0">
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Footer / QR Area -->
-        <div class="mt-4 bg-gray-800 text-white p-4 rounded-xl flex flex-row items-center justify-between">
-            <div class="text-right">
-                <p class="text-md font-bold">جمعية بناء وتنمية</p>
-                <p class="text-gray-300 text-xs">امسح الكود لزيارة الموقع</p>
-            </div>
-            
-            <div class="bg-white p-1 rounded-lg cursor-pointer image-upload-area" title="اضغط لتغيير الباركود">
-                <input type="file" id="upload-qr" accept="image/*" class="hidden" onchange="previewImage(this, 'img-qr', 'label-qr')">
-                <label for="upload-qr" id="label-qr" class="hidden">تغيير</label>
-                <img id="img-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Example" alt="QR Code" class="w-16 h-16 object-contain">
-            </div>
-        </div>
-
-    </div>
-
-</body>
-</html>
+                        <!-- معلومات الاتصال -->
+                        <div class="contact-info">
+                            <div id="txtPhone" class="contact-item">
+                                <span class="contact-icon">📞</span> <span>0500000000</span>
+                            </div>
+                            <div id="txtEmail" class="contact-item">
+                                <span class="contact-icon">✉️</spa
