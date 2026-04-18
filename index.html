@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -44,7 +43,6 @@
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid #f58220; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* تنسيق الـ iframe لملفات PDF */
         #modalFileViewer iframe {
             width: 100%;
             height: 100%;
@@ -65,7 +63,6 @@
     <!-- نافذة عرض الملفات وتنزيلها (Modal) -->
     <div id="fileViewerModal" class="hide fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col h-[90vh]">
-            <!-- الهيدر -->
             <div class="p-4 border-b flex justify-between items-center bg-gray-50">
                 <div class="flex items-center">
                     <i class="fas fa-file-alt text-brand-orange text-xl ml-3"></i>
@@ -83,7 +80,6 @@
                     </button>
                 </div>
             </div>
-            <!-- مساحة العرض -->
             <div class="flex-1 bg-gray-200 flex flex-col items-center justify-center p-4 overflow-hidden relative">
                 <div id="modalContentContainer" class="w-full h-full flex items-center justify-center bg-white rounded-lg shadow-inner">
                     <!-- سيتم تعبئة الصور أو ملفات PDF هنا -->
@@ -92,7 +88,7 @@
         </div>
     </div>
 
-    <!-- شريط الرأس (Header) -->
+    <!-- شريط الرأس -->
     <header id="appHeader" class="hide bg-white shadow-md border-b relative z-10 border-brand-green">
         <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
             <div class="flex items-center gap-4">
@@ -118,7 +114,7 @@
     <!-- المحتوى الرئيسي -->
     <main class="flex-1 w-full mx-auto flex flex-col" id="mainContainer">
         
-        <!-- === 1. شاشات الدخول والتسجيل === -->
+        <!-- === شاشات الدخول والتسجيل === -->
         <section id="authView" class="flex-1 flex items-center justify-center p-4">
             <div id="authBox" class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border-t-8 border-brand-green relative overflow-hidden transition-colors duration-300">
                 <div class="flex flex-col items-center mb-6">
@@ -127,7 +123,6 @@
                     <p class="text-gray-500 text-sm mt-1">بوابة الخدمات الإلكترونية</p>
                 </div>
 
-                <!-- تبويبات الدخول -->
                 <div id="loginTabsContainer" class="flex mb-6 bg-gray-100 p-1 rounded-lg">
                     <button id="tabBeneficiary" onclick="switchLoginTab('beneficiary')" class="flex-1 py-2 text-sm font-bold rounded-md transition-all tab-active-beneficiary">
                         <i class="fas fa-users text-brand-green ml-1"></i> بوابة المستفيدين
@@ -137,24 +132,23 @@
                     </button>
                 </div>
 
-                <!-- نموذج تسجيل الدخول -->
                 <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">البريد الإلكتروني</label>
                         <div class="relative">
                             <i class="fas fa-envelope absolute right-3 top-4 text-gray-400"></i>
-                            <input id="loginEmail" type="email" required class="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:outline-none bg-gray-50 focus:bg-white transition-colors" placeholder="example@domain.com">
+                            <input id="loginEmail" type="email" required class="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:outline-none bg-gray-50 focus:bg-white transition-colors" placeholder="example@domain.com">
                         </div>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">كلمة المرور</label>
                         <div class="relative">
                             <i class="fas fa-lock absolute right-3 top-4 text-gray-400"></i>
-                            <input id="loginPassword" type="password" required class="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:outline-none bg-gray-50 focus:bg-white transition-colors" placeholder="••••••••">
+                            <input id="loginPassword" type="password" required class="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:outline-none bg-gray-50 focus:bg-white transition-colors" placeholder="••••••••">
                         </div>
                     </div>
                     <button id="btnLoginSubmit" type="submit" class="w-full text-white font-bold py-3.5 rounded-lg transition-transform active:scale-95 shadow-md bg-brand-green">
-                        دخول المستفيد
+                        تسجيل الدخول
                     </button>
                     
                     <p id="registerPrompt" class="text-center text-sm text-gray-600 mt-4 pt-4 border-t">
@@ -162,39 +156,38 @@
                     </p>
                 </form>
 
-                <!-- نموذج التسجيل -->
                 <form id="registerForm" onsubmit="handleRegister(event)" class="hide space-y-4">
                     <h3 class="text-center font-bold text-brand-green mb-4 border-b pb-2">تسجيل مستفيد جديد</h3>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">الاسم الرباعي</label>
                         <div class="relative">
                             <i class="fas fa-user absolute right-3 top-3 text-gray-400"></i>
-                            <input id="regName" type="text" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-green focus:outline-none" placeholder="الاسم الكامل">
+                            <input id="regName" type="text" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:outline-none focus:ring-brand-green" placeholder="الاسم الكامل">
                         </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">رقم الجوال</label>
                         <div class="relative">
                             <i class="fas fa-phone absolute right-3 top-3 text-gray-400"></i>
-                            <input id="regPhone" type="tel" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-green focus:outline-none" placeholder="05XXXXXXXX">
+                            <input id="regPhone" type="tel" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:outline-none focus:ring-brand-green" placeholder="05XXXXXXXX">
                         </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
                         <div class="relative">
                             <i class="fas fa-envelope absolute right-3 top-3 text-gray-400"></i>
-                            <input id="regEmail" type="email" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-green focus:outline-none" placeholder="example@domain.com">
+                            <input id="regEmail" type="email" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:outline-none focus:ring-brand-green" placeholder="example@domain.com">
                         </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور</label>
                         <div class="relative">
                             <i class="fas fa-lock absolute right-3 top-3 text-gray-400"></i>
-                            <input id="regPassword" type="password" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-green focus:outline-none" placeholder="••••••••">
+                            <input id="regPassword" type="password" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:outline-none focus:ring-brand-green" placeholder="••••••••">
                         </div>
                     </div>
                     <button type="submit" class="w-full text-white font-bold py-3 rounded-lg transition-transform active:scale-95 shadow-md mt-2 bg-brand-green">
-                        إنشاء حساب المستفيد
+                        إنشاء الحساب
                     </button>
                     <button type="button" onclick="showLoginForm()" class="w-full py-2 text-sm text-gray-500 hover:text-gray-700 font-medium">
                         العودة لتسجيل الدخول
@@ -208,7 +201,7 @@
             </div>
         </section>
 
-        <!-- === 2. لوحة تحكم المستفيد === -->
+        <!-- === لوحة تحكم المستفيد === -->
         <section id="beneficiaryView" class="hide w-full max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 gap-4">
                 <div>
@@ -221,13 +214,13 @@
                 </button>
             </div>
 
-            <!-- نموذج تقديم طلب جديد -->
+            <!-- نموذج الطلب -->
             <div id="newRequestFormContainer" class="hide bg-white p-4 sm:p-8 rounded-xl shadow-sm border border-gray-100">
                 <h3 class="text-xl font-bold mb-6 flex items-center border-r-4 pr-3 border-brand-green text-gray-700">نموذج طلب مساعدة جديد</h3>
                 <form onsubmit="submitNewRequest(event)" class="space-y-8">
                     <div>
                         <label class="block font-bold text-gray-700 mb-4 text-lg">نوع الطلب <span class="text-red-500">*</span></label>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="requestTypesContainer">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <label class="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-all req-type-label">
                                 <input type="radio" name="reqType" value="بناء" required class="sr-only req-type-input">
                                 <i class="fas fa-building text-4xl mb-3 text-gray-400 req-type-icon"></i>
@@ -268,9 +261,7 @@
                         <!-- قائمة الملفات المرفوعة -->
                         <div id="selectedFilesContainer" class="hide mt-6 bg-green-50 p-4 rounded-xl border border-green-100">
                             <h4 class="text-sm font-bold text-green-800 mb-3">الملفات المرفقة (جاهزة للرفع):</h4>
-                            <ul id="selectedFilesList" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <!-- سيتم تعبئتها بواسطة JS -->
-                            </ul>
+                            <ul id="selectedFilesList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></ul>
                         </div>
                     </div>
 
@@ -283,7 +274,7 @@
                 </form>
             </div>
 
-            <!-- جدول طلباتي -->
+            <!-- جدول الطلبات -->
             <div id="myRequestsContainer" class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
                 <div id="emptyRequests" class="hide p-16 text-center text-gray-500">
                     <div class="bg-gray-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border">
@@ -303,14 +294,13 @@
                                 <th class="p-4 sm:p-5 font-bold whitespace-nowrap">حالة الطلب</th>
                             </tr>
                         </thead>
-                        <tbody id="myRequestsTableBody" class="divide-y divide-gray-100">
-                        </tbody>
+                        <tbody id="myRequestsTableBody" class="divide-y divide-gray-100"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- === 3. لوحة تحكم الموظف / المشرف === -->
+        <!-- === لوحة تحكم الموظف === -->
         <section id="employeeView" class="hide w-full max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-2">
                 <div class="border-r-4 pr-4 border-brand-orange">
@@ -319,7 +309,6 @@
                 </div>
             </div>
             
-            <!-- إحصائيات سريعة -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8">
                 <div class="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
                     <div>
@@ -351,7 +340,6 @@
                 </div>
             </div>
 
-            <!-- جدول كل الطلبات -->
             <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
                 <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b flex justify-between items-center">
                     <h3 class="font-bold text-lg text-gray-700">قائمة الطلبات الواردة</h3>
@@ -375,8 +363,7 @@
                                 <th class="p-4 sm:p-5 font-bold text-center">الإجراء</th>
                             </tr>
                         </thead>
-                        <tbody id="employeeRequestsTableBody" class="divide-y divide-gray-100">
-                        </tbody>
+                        <tbody id="employeeRequestsTableBody" class="divide-y divide-gray-100"></tbody>
                     </table>
                 </div>
             </div>
@@ -384,7 +371,6 @@
 
     </main>
     
-    <!-- التذييل (Footer) -->
     <footer class="bg-white border-t mt-auto py-6">
         <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 font-medium gap-4">
             <div class="flex items-center gap-3">
@@ -404,7 +390,6 @@
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // إعدادات البيئة
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'bena-html-app';
         
@@ -415,16 +400,13 @@
             db = getFirestore(app);
         }
 
-        // State Variables
         let currentTab = 'beneficiary'; 
         let currentUser = null; 
         let isShowingNewForm = false;
-        let uploadedFilesArray = []; // يحتوي على {name, type, data}
-        
+        let uploadedFilesArray = []; 
         let allUsers = [];
         let allRequests = [];
 
-        // UI Helpers
         const el = (id) => document.getElementById(id);
         const hide = (e) => { if(e) e.classList.add('hide'); }
         const show = (e) => { if(e) e.classList.remove('hide'); }
@@ -454,7 +436,6 @@
             return '';
         };
 
-        // UI Tabs & Views
         window.switchLoginTab = (tab) => {
             currentTab = tab;
             hideAlert();
@@ -546,14 +527,13 @@
             });
         });
 
-        // خوارزمية قراءة وتحويل الملفات إلى Base64
+        // قراءة الملفات وضغط الصور
         const processFile = (file) => {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = (event) => {
                     const dataUrl = event.target.result;
-                    // إذا كان الملف صورة، نقوم بضغطه
                     if (file.type.startsWith('image/')) {
                         const img = new Image();
                         img.src = dataUrl;
@@ -561,7 +541,7 @@
                             const canvas = document.createElement('canvas');
                             let width = img.width;
                             let height = img.height;
-                            const max_size = 1200; // أقصى أبعاد للصورة
+                            const max_size = 1200; 
                             if (width > max_size || height > max_size) {
                                 if (width > height) {
                                     height *= max_size / width;
@@ -575,12 +555,10 @@
                             canvas.height = height;
                             const ctx = canvas.getContext('2d');
                             ctx.drawImage(img, 0, 0, width, height);
-                            // ضغط بجودة 0.6 لتصغير الحجم جداً
                             const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
                             resolve({ name: file.name, type: file.type, data: compressedDataUrl });
                         };
                     } else {
-                        // التحقق من حجم الـ PDF (يجب ألا يتجاوز 1 ميجابايت تفادياً لمشاكل الذاكرة)
                         if (file.size > 1048576) {
                             reject(`ملف ${file.name} كبير جداً (أكثر من 1 ميجا).`);
                         } else {
@@ -595,9 +573,7 @@
         window.handleFileSelection = async (e) => {
             const files = Array.from(e.target.files);
             if (files.length === 0) return;
-            
             show(el('fileUploadProgress'));
-            
             try {
                 for (let i = 0; i < files.length; i++) {
                     const processed = await processFile(files[i]);
@@ -607,7 +583,6 @@
             } catch (err) {
                 showAlert(err);
             }
-            
             hide(el('fileUploadProgress'));
             el('fileUpload').value = '';
         };
@@ -641,45 +616,46 @@
             renderSelectedFiles();
         };
 
-        // عرض الملفات (Modal للموظفين) لتنزيلها ورؤيتها
+        // عرض وتنزيل المرفقات
         window.openFileViewer = (docId, fileIndex) => {
             const req = allRequests.find(r => r.docId === docId);
             if(!req || !req.files || !req.files[fileIndex]) return;
-            
             const fileObj = req.files[fileIndex];
             
             el('viewingFileName').innerText = fileObj.name;
             el('viewingFileType').innerText = fileObj.type.startsWith('image/') ? 'مستند مصور' : 'مستند نصي PDF';
             
-            // تهيئة زر التحميل
             const downloadBtn = el('btnDownloadFile');
             downloadBtn.href = fileObj.data;
             downloadBtn.download = fileObj.name;
 
             const container = el('modalContentContainer');
-            container.innerHTML = ''; // مسح المحتوى القديم
-
             if(fileObj.type.startsWith('image/')) {
                 container.innerHTML = `<img src="${fileObj.data}" alt="${fileObj.name}" class="max-w-full max-h-full object-contain rounded-lg">`;
             } else {
-                // لملفات الـ PDF 
                 container.innerHTML = `<iframe src="${fileObj.data}" frameborder="0"></iframe>`;
             }
-
             show(el('fileViewerModal'));
         };
 
         window.closeFileViewer = () => {
             hide(el('fileViewerModal'));
-            el('modalContentContainer').innerHTML = ''; // تحرير الذاكرة
+            el('modalContentContainer').innerHTML = ''; 
         };
 
-        // Auth & Login
+        // تسجيل الدخول بثبات وقوة
         window.handleLogin = (e) => {
             e.preventDefault();
             hideAlert();
             const email = el('loginEmail').value.trim();
             const password = el('loginPassword').value.trim();
+
+            // الدخول الصارم للمشرف حتى لو تأخرت قاعدة البيانات
+            if(email === 'admin@bena.sa' && password === 'admin' && currentTab === 'employee') {
+                currentUser = { email: 'admin@bena.sa', name: 'مشرف النظام', role: 'employee' };
+                updateMainLayout();
+                return;
+            }
 
             const user = allUsers.find(u => u.email === email && u.password === password);
             if(user) {
@@ -726,12 +702,10 @@
                     currentUser = { docId: docRef.id, ...newUser };
                 } catch(error) {
                     showAlert('حدث خطأ أثناء الإنشاء.');
-                    console.error(error);
                 }
             } else {
                 currentUser = { docId: 'temp_id', ...newUser };
             }
-            
             hide(el('authLoading'));
             updateMainLayout();
         };
@@ -747,24 +721,14 @@
             switchLoginTab('beneficiary');
         };
 
-        // إرسال وتحديث الطلبات
+        // إرسال الطلبات للسحابة
         window.submitNewRequest = async (e) => {
             e.preventDefault();
-            
             const selectedType = document.querySelector('input[name="reqType"]:checked');
-            if(!selectedType) {
-                showAlert("يرجى اختيار نوع الطلب");
-                return;
-            }
-            
-            if(uploadedFilesArray.length === 0) {
-                showAlert("يرجى إرفاق المستندات المطلوبة (صورة أو PDF)");
-                return;
-            }
+            if(!selectedType) { showAlert("يرجى اختيار نوع الطلب"); return; }
+            if(uploadedFilesArray.length === 0) { showAlert("يرجى إرفاق المستندات المطلوبة"); return; }
 
             const requestCode = Math.floor(10000 + Math.random() * 90000).toString();
-            
-            // سنرسل البيانات (Base64) للسحابة
             const newRequest = {
                 reqNumber: requestCode,
                 userId: currentUser.email,
@@ -777,21 +741,18 @@
 
             const btn = el('btnSubmitRequest');
             const originalContent = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i> جاري رفع الأوراق للمراجعة...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i> جاري الرفع...';
             btn.disabled = true;
 
             if (db) {
                 try {
                     await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'requests'), newRequest);
                 } catch(err) {
-                    console.error("Error adding doc: ", err);
-                    showAlert("الملفات كبيرة جداً على الذاكرة السحابية، الرجاء تقليل حجمها.");
+                    showAlert("الملفات كبيرة جداً، يرجى تقليل حجمها أو عددها.");
                 }
             }
-            
             btn.innerHTML = originalContent;
             btn.disabled = false;
-            
             toggleNewRequestForm();
         };
 
@@ -801,33 +762,23 @@
                 const reqDoc = doc(db, 'artifacts', appId, 'public', 'data', 'requests', docId);
                 await updateDoc(reqDoc, { status: newStatus });
             } catch (err) {
-                console.error("Error updating doc", err);
                 showAlert("لم نتمكن من تحديث الحالة.");
             }
         };
 
-        // رسم الواجهات
         const renderBeneficiaryDashboard = () => {
             const myRequests = allRequests.filter(r => r.userId === currentUser.email);
             const tBody = el('myRequestsTableBody');
             tBody.innerHTML = '';
-
             if(myRequests.length === 0) {
-                show(el('emptyRequests'));
-                hide(el('requestsTableContainer'));
+                show(el('emptyRequests')); hide(el('requestsTableContainer'));
             } else {
-                hide(el('emptyRequests'));
-                show(el('requestsTableContainer'));
-                
+                hide(el('emptyRequests')); show(el('requestsTableContainer'));
                 myRequests.forEach(req => {
                     tBody.innerHTML += `
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="p-4 sm:p-5 font-bold text-gray-800 text-lg">#${req.reqNumber}</td>
-                            <td class="p-4 sm:p-5">
-                                <span class="bg-gray-100 px-4 py-1.5 rounded-md text-sm text-gray-800 font-bold border">
-                                    ${req.type}
-                                </span>
-                            </td>
+                            <td class="p-4 sm:p-5"><span class="bg-gray-100 px-4 py-1.5 rounded-md text-sm text-gray-800 font-bold border">${req.type}</span></td>
                             <td class="p-4 sm:p-5 text-gray-500 font-medium whitespace-nowrap">${req.date}</td>
                             <td class="p-4 sm:p-5">${getStatusBadgeHtml(req.status)}</td>
                         </tr>
@@ -846,61 +797,31 @@
             tBody.innerHTML = '';
 
             if(allRequests.length === 0) {
-                show(el('emptyEmployeeRequests'));
-                hide(el('employeeTableContainer'));
+                show(el('emptyEmployeeRequests')); hide(el('employeeTableContainer'));
             } else {
-                hide(el('emptyEmployeeRequests'));
-                show(el('employeeTableContainer'));
-
+                hide(el('emptyEmployeeRequests')); show(el('employeeTableContainer'));
                 allRequests.forEach(req => {
-                    // أزرار عرض الأوراق
                     let filesHtml = req.files && req.files.length > 0 ? req.files.map((f, idx) => {
                         let iconClass = f.type.startsWith('image/') ? 'fa-image text-brand-orange' : 'fa-file-pdf text-red-500';
                         return `
-                        <button onclick="openFileViewer('${req.docId}', ${idx})" class="flex items-center text-xs bg-white hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-md truncate transition-all border shadow-sm group-hover:border-orange-200 w-full mb-2" title="عرض وتنزيل">
+                        <button onclick="openFileViewer('${req.docId}', ${idx})" class="flex items-center text-xs bg-white hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-md truncate transition-all border shadow-sm group-hover:border-orange-200 w-full mb-2">
                             <i class="fas ${iconClass} ml-2 flex-shrink-0"></i>
                             <span class="truncate font-medium">${f.name}</span>
-                        </button>
-                    `}).join('') : '<span class="text-xs text-gray-400">لا توجد مرفقات</span>';
+                        </button>`
+                    }).join('') : '<span class="text-xs text-gray-400">لا توجد مرفقات</span>';
 
-                    let actionsHtml = '';
-                    if(req.status === 'pending') {
-                        actionsHtml = `
-                            <div class="flex gap-2 justify-center">
-                                <button onclick="updateRequestStatus('${req.docId}', 'accepted')" class="flex items-center px-4 py-2 bg-green-500 text-white text-sm font-bold rounded-lg hover:bg-green-600 transition-all shadow hover:shadow-md transform active:scale-95 whitespace-nowrap">
-                                    <i class="fas fa-check ml-1"></i> قبول
-                                </button>
-                                <button onclick="updateRequestStatus('${req.docId}', 'rejected')" class="flex items-center px-4 py-2 bg-red-500 text-white text-sm font-bold rounded-lg hover:bg-red-600 transition-all shadow hover:shadow-md transform active:scale-95 whitespace-nowrap">
-                                    <i class="fas fa-times ml-1"></i> رفض
-                                </button>
-                            </div>
-                        `;
-                    } else {
-                        actionsHtml = `<div class="text-center text-gray-400 text-sm font-medium bg-gray-50 py-2 rounded border">تم اتخاذ الإجراء</div>`;
-                    }
+                    let actionsHtml = req.status === 'pending' ? `
+                        <div class="flex gap-2 justify-center">
+                            <button onclick="updateRequestStatus('${req.docId}', 'accepted')" class="flex items-center px-4 py-2 bg-green-500 text-white text-sm font-bold rounded-lg hover:bg-green-600 transition-all shadow hover:shadow-md transform active:scale-95 whitespace-nowrap"><i class="fas fa-check ml-1"></i> قبول</button>
+                            <button onclick="updateRequestStatus('${req.docId}', 'rejected')" class="flex items-center px-4 py-2 bg-red-500 text-white text-sm font-bold rounded-lg hover:bg-red-600 transition-all shadow hover:shadow-md transform active:scale-95 whitespace-nowrap"><i class="fas fa-times ml-1"></i> رفض</button>
+                        </div>` : `<div class="text-center text-gray-400 text-sm font-medium bg-gray-50 py-2 rounded border">تم اتخاذ الإجراء</div>`;
 
                     tBody.innerHTML += `
                         <tr class="hover:bg-orange-50/30 transition-colors group border-b border-gray-50">
-                            <td class="p-4 sm:p-5">
-                                <span class="font-black text-lg text-brand-orange">#${req.reqNumber}</span>
-                                <div class="text-xs text-gray-400 mt-1">${req.date}</div>
-                            </td>
-                            <td class="p-4 sm:p-5">
-                                <div class="font-bold text-gray-800 text-base">${req.userName}</div>
-                                <div class="text-sm text-gray-500 flex items-center mt-1">
-                                    <i class="fas fa-envelope ml-1"></i> <span dir="ltr">${req.userId}</span>
-                                </div>
-                            </td>
-                            <td class="p-4 sm:p-5">
-                                <span class="bg-gray-100 px-3 py-1.5 rounded-md text-sm text-gray-800 font-bold border border-gray-200 shadow-sm whitespace-nowrap">
-                                    ${req.type}
-                                </span>
-                            </td>
-                            <td class="p-4 sm:p-5">
-                                <div class="flex flex-col max-w-[220px]">
-                                    ${filesHtml}
-                                </div>
-                            </td>
+                            <td class="p-4 sm:p-5"><span class="font-black text-lg text-brand-orange">#${req.reqNumber}</span><div class="text-xs text-gray-400 mt-1">${req.date}</div></td>
+                            <td class="p-4 sm:p-5"><div class="font-bold text-gray-800 text-base">${req.userName}</div><div class="text-sm text-gray-500 flex items-center mt-1"><i class="fas fa-envelope ml-1"></i> <span dir="ltr">${req.userId}</span></div></td>
+                            <td class="p-4 sm:p-5"><span class="bg-gray-100 px-3 py-1.5 rounded-md text-sm text-gray-800 font-bold border border-gray-200 shadow-sm whitespace-nowrap">${req.type}</span></td>
+                            <td class="p-4 sm:p-5"><div class="flex flex-col max-w-[220px]">${filesHtml}</div></td>
                             <td class="p-4 sm:p-5">${getStatusBadgeHtml(req.status)}</td>
                             <td class="p-4 sm:p-5">${actionsHtml}</td>
                         </tr>
@@ -909,59 +830,39 @@
             }
         };
 
-        // Firebase Init Setup
+        // اتصال بقاعدة البيانات بشكل دائم
         window.addEventListener('DOMContentLoaded', async () => {
             if(!auth || !db) return;
-
             const initAuth = async () => {
                 try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                } catch(err) {
-                    console.error("Auth init error:", err);
-                }
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
+                    else await signInAnonymously(auth);
+                } catch(err) { console.error("Auth init error"); }
             };
-            
             await initAuth();
 
             onAuthStateChanged(auth, (user) => {
                 if(!user) return; 
-
                 const usersRef = collection(db, 'artifacts', appId, 'public', 'data', 'app_users');
                 const reqRef = collection(db, 'artifacts', appId, 'public', 'data', 'requests');
 
                 onSnapshot(usersRef, (snap) => {
-                    const usersData = snap.docs.map(d => ({ docId: d.id, ...d.data() }));
-                    allUsers = usersData;
-                    
-                    // توليد الموظف الافتراضي سرياً إذا لم يكن موجوداً
-                    if (usersData.length > 0 && !usersData.find(u => u.email === 'admin@bena.sa')) {
-                        addDoc(usersRef, { 
-                            email: 'admin@bena.sa', 
-                            password: 'admin', 
-                            name: 'مشرف النظام', 
-                            phone: '0500000000', 
-                            role: 'employee' 
-                        }).catch(console.error);
+                    allUsers = snap.docs.map(d => ({ docId: d.id, ...d.data() }));
+                    // توليد المشرف تلقائياً في قاعدة البيانات إذا لم يتواجد
+                    if (!allUsers.find(u => u.email === 'admin@bena.sa')) {
+                        addDoc(usersRef, { email: 'admin@bena.sa', password: 'admin', name: 'مشرف النظام', phone: '0500000000', role: 'employee' }).catch(()=>{});
                     }
-                }, (error) => console.error("Users sync error"));
+                }, () => {});
 
                 onSnapshot(reqRef, (snap) => {
                     allRequests = snap.docs.map(d => ({ docId: d.id, ...d.data() })).reverse();
-                    
                     if(currentUser) {
                         if(currentUser.role === 'employee') renderEmployeeDashboard();
                         else renderBeneficiaryDashboard();
                     }
-                }, (error) => console.error("Requests sync error"));
+                }, () => {});
             });
         });
     </script>
 </body>
 </html>
-
-
-```
