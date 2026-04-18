@@ -1,288 +1,967 @@
+```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بطاقة هوية ذكية - جمعية بناء وتنمية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <title>بوابة جمعية بناء وتنمية</title>
+    
+    <!-- خطوط جوجل -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- أيقونات FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- إعدادات Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            orange: '#f58220',
+                            green: '#8dc63f',
+                            gray: '#9b9b9b',
+                            light: '#f3f4f6'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
-        :root {
-            --c-green: #84BD00;
-            --c-orange: #F05A28;
-            --c-grey: #9C9E9F;
-            --c-dark: #1e293b;
-        }
-
-        body { font-family: 'Tajawal', sans-serif; background-color: #f1f5f9; user-select: none; overflow-x: hidden; }
-
-        /* منطقة العمل */
-        .canvas-area {
-            width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;
-            overflow: auto; padding: 40px; background-color: #e5e7eb;
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px;
-            border-radius: 20px; position: relative;
-        }
-
-        /* حاوية البطاقة */
-        .card-wrapper {
-            width: 340px; height: 535px; position: relative;
-            background: white; overflow: hidden; border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2); 
-            transition: width 0.3s, height 0.3s, transform 0.2s ease; transform-origin: center top;
-        }
+        body { font-family: 'Tajawal', 'Cairo', sans-serif; background-color: #f9fafb; display: flex; flex-direction: column; min-height: 100vh; }
+        .tab-active-beneficiary { background-color: white; color: #1f2937; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .tab-active-employee { background-color: white; color: #1f2937; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .tab-inactive { color: #6b7280; }
+        .hide { display: none !important; }
         
-        .bg-shape { position: absolute; z-index: 0; transition: all 0.4s ease; }
-        .card-wrapper .bottom-bar { position: absolute; bottom: 0; width: 100%; height: 10px; background: var(--c-green); z-index: 1; }
-
-        /* --- الأنماط (12 قالب) --- */
-        /* (نفس الأنماط السابقة للتوافق) */
-        .t-official .bg-1 { top: -20%; left: -20%; width: 140%; height: 50%; background: var(--c-green); border-radius: 0 0 50% 50%; }
-        .t-official .bg-2 { top: -22%; left: -10%; width: 120%; height: 50%; background: var(--c-orange); border-radius: 0 0 50% 50%; }
-
-        .t-geo .bg-1 { top: 0; left: 0; width: 100%; height: 40%; background: var(--c-green); clip-path: polygon(0 0, 100% 0, 100% 60%, 0 100%); }
-        .t-geo .bg-2 { top: 0; left: 0; width: 100%; height: 42%; background: var(--c-orange); clip-path: polygon(0 0, 100% 0, 100% 65%, 0 100%); opacity: 0.7; }
-
-        .t-side .bg-1 { top: 0; right: 0; width: 15%; height: 100%; background: linear-gradient(to bottom, var(--c-green), var(--c-green) 50%, var(--c-orange) 50%); }
-        .t-side .bottom-bar { display: none; }
-        .t-side .info-container { padding-right: 15%; }
-
-        .t-diag .bg-1 { top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(115deg, var(--c-green) 0%, var(--c-green) 35%, transparent 35.1%); }
-        .t-diag .bottom-bar { display: none; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #f58220; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .t-corp .bg-1 { top: 0; left: 0; width: 100%; height: 3%; background: var(--c-orange); }
-        .t-corp .bg-2 { top: 3%; left: 0; width: 100%; height: 18%; background: var(--c-green); border-radius: 0 0 40px 0; }
-        .t-corp .bottom-bar { height: 5%; background: var(--c-grey); }
-
-        .t-circ .bg-1 { top: -15%; right: -25%; width: 80%; padding-top: 80%; background: var(--c-green); border-radius: 50%; opacity: 0.1; }
-        .t-circ .bg-2 { bottom: -10%; left: -15%; width: 60%; padding-top: 60%; background: var(--c-orange); border-radius: 50%; opacity: 0.1; }
-        .t-circ .bg-3 { top: 5%; left: 50%; transform: translateX(-50%); width: 80%; height: 1%; background: var(--c-green); border-radius: 10px; }
-
-        .t-min .bg-1 { top: 5%; left: 5%; right: 5%; bottom: 5%; border: 2px solid var(--c-green); border-radius: 16px; pointer-events: none; }
-        .t-min .bottom-bar { display: none; }
-
-        .t-cont .bg-1 { bottom: 0; left: 0; width: 100%; height: 35%; background: var(--c-green); clip-path: polygon(0 20%, 100% 0, 100% 100%, 0% 100%); }
-        .t-cont .bottom-bar { display: none; }
-
-        .t-wave .bg-1 { top: -10%; left: -50%; width: 200%; height: 40%; background: var(--c-green); border-radius: 0 0 50% 50%; transform: rotate(-10deg); }
-        .t-wave .bg-2 { top: -15%; left: -50%; width: 200%; height: 40%; background: var(--c-orange); border-radius: 0 0 50% 50%; transform: rotate(-5deg); opacity: 0.8; }
-
-        .t-top .bg-1 { top: 0; left: 0; width: 100%; height: 15%; background: var(--c-green); }
-        .t-top .bg-2 { top: 15%; left: 0; width: 100%; height: 2%; background: var(--c-orange); }
-        .t-top .bottom-bar { display: none; }
-
-        .t-ultra .bg-1 { top: 0; right: 0; width: 60%; height: 100%; background: #f8fafc; clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%); z-index: -1; }
-        .t-ultra .bg-2 { top: 0; left: 0; width: 10px; height: 100%; background: var(--c-green); }
-        .t-ultra .bottom-bar { display: none; }
-
-        .t-grad .bg-1 { top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, white 60%, #eefbf0 100%); z-index: -2; }
-        .t-grad .bg-2 { bottom: 0; right: 0; width: 150px; height: 150px; background: var(--c-green); border-radius: 100% 0 0 0; opacity: 0.1; }
-        .t-grad .bottom-bar { width: 100%; height: 5px; background: linear-gradient(to right, var(--c-green), var(--c-orange)); }
-
-
-        /* --- العناصر المتحركة --- */
-        .draggable { position: absolute; z-index: 10; cursor: move; display: flex; justify-content: center; align-items: center; }
-        .draggable:hover { outline: 1px dashed rgba(0,0,0,0.3); }
-
-        .logo-box { left: 50%; transform: translateX(-50%); top: 8%; width: 45%; }
-        .logo-img { width: 100%; height: auto; pointer-events: none; display: block; }
-        .logo-box.is-circle { width: 35%; aspect-ratio: 1/1; background: white; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden; padding: 3%; }
-        .logo-box.is-circle .logo-img { width: 100%; height: 100%; object-fit: contain; }
-
-        .profile-box { left: 50%; transform: translateX(-50%); top: 28%; width: 40%; aspect-ratio: 1/1; border-radius: 50%; border: 5px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.1); background: #f1f5f9; overflow: hidden; }
-        .profile-img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-
-        .qr-box { bottom: 6%; left: 50%; transform: translateX(-50%); width: 22%; aspect-ratio: 1/1; background: white; border-radius: 8px; padding: 1.5%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .qr-img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-
-        .info-container { position: absolute; bottom: 22%; width: 100%; text-align: center; z-index: 5; pointer-events: none; }
-        .name-text { font-size: 26px; font-weight: 800; color: var(--c-dark); margin-bottom: 1%; }
-        .role-badge { display: inline-block; background: var(--c-orange); color: white; padding: 1% 6%; border-radius: 50px; font-weight: 700; font-size: 14px; margin-bottom: 2%; }
-        .org-text { font-size: 14px; color: var(--c-grey); font-weight: 600; line-height: 1.5; }
-        
-        .slogan-text { 
-            margin-top: 5px; font-size: 11px; color: var(--c-green); font-weight: 700; font-style: italic; 
-            display: none; padding: 2px 8px; border-radius: 4px; background: rgba(132, 189, 0, 0.1);
+        /* تنسيق الـ iframe لملفات PDF */
+        #modalFileViewer iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 0.5rem;
         }
-        
-        /* تنسيق معلومات الاتصال */
-        .contact-info { 
-            margin-top: 8px; font-size: 12px; color: #64748b; font-weight: 500;
-            display: flex; flex-direction: column; gap: 4px; align-items: center;
-        }
-        .contact-item { display: flex; align-items: center; gap: 6px; }
-        .contact-icon { color: var(--c-green); font-size: 14px; }
-
-        /* التحكم */
-        .float-ctrl { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); background: #333; padding: 2px 6px; border-radius: 20px; display: flex; gap: 4px; opacity: 0; transition: 0.2s; pointer-events: auto; }
-        .draggable:hover .float-ctrl, .draggable:active .float-ctrl { opacity: 1; }
-        .mini-btn { width: 20px; height: 20px; border-radius: 50%; border: 1px solid #555; background: #444; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; }
-        .mini-btn:hover { background: #555; }
-        
-        .theme-btn { @apply border rounded-xl p-2 hover:bg-green-50 transition flex flex-col items-center gap-1 text-[10px] font-bold text-gray-600; }
-        .theme-btn.active { @apply ring-2 ring-green-500 bg-green-50; }
-        .theme-preview { width: 100%; height: 35px; background: #f3f4f6; border-radius: 6px; position: relative; overflow: hidden; }
-        
-        .zoom-slider-container {
-            position: absolute; bottom: 20px; right: 20px;
-            background: white; padding: 10px; border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 50;
-            display: flex; align-items: center; gap: 10px;
-        }
-
-        /* --- أنماط الذكاء الاصطناعي --- */
-        .ai-btn {
-            @apply flex items-center justify-center gap-1 text-[10px] font-bold text-white bg-gradient-to-r from-purple-500 to-indigo-600 px-3 py-1 rounded-full shadow hover:from-purple-600 hover:to-indigo-700 transition cursor-pointer;
-        }
-        .ai-suggestion {
-            @apply bg-indigo-50 border border-indigo-200 text-indigo-700 px-2 py-1 rounded text-[10px] cursor-pointer hover:bg-indigo-100 transition;
-        }
-        .suggestions-box { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
     </style>
 </head>
-<body class="p-4 md:p-8 h-screen flex flex-col">
+<body class="bg-gray-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDBMOCA4Wk04IDBMMCA4WiIgc3Ryb2tlPSIjZjNmNGY2IiBzdHJva2Utd2lkdGg9IjEiPjwvcGF0aD4KPC9zdmc+')] bg-repeat">
 
-    <div class="max-w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
-        
-        <!-- لوحة التحكم -->
-        <div class="lg:col-span-3 bg-white p-5 rounded-3xl shadow-lg flex flex-col gap-4 overflow-y-auto h-full">
-            <div class="border-b pb-3">
-                <h1 class="text-xl font-black text-gray-800">إعدادات الهوية</h1>
-                <p class="text-xs text-indigo-600 font-bold flex items-center gap-1">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
-                    مدعوم بالذكاء الاصطناعي
-                </p>
-            </div>
+    <!-- رسائل التنبيه -->
+    <div id="alertBanner" class="hide fixed top-5 left-1/2 transform -translate-x-1/2 z-50 bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded-lg shadow-lg flex items-center transition-all">
+        <i class="fas fa-exclamation-circle ml-2"></i>
+        <span id="alertMessage">رسالة الخطأ</span>
+        <button onclick="hideAlert()" class="mr-4 text-red-500 hover:text-red-800"><i class="fas fa-times"></i></button>
+    </div>
 
-            <!-- مقاس البطاقة -->
-            <div>
-                <label class="block text-xs font-bold text-gray-700 mb-2">مقاس البطاقة:</label>
-                <select id="cardSizeSelect" onchange="changeCardSize()" class="w-full p-2 text-xs border rounded-lg bg-gray-50">
-                    <option value="id1">قياسي (ID-1) - 5.4cm x 8.6cm</option>
-                    <option value="biz">بزنس كارد - 9cm x 5cm</option>
-                    <option value="sq">مربع (انستقرام) - 10cm x 10cm</option>
-                </select>
-            </div>
-
-            <!-- القوالب (12 قالب) -->
-            <div class="flex-1 overflow-y-auto max-h-[250px]">
-                <label class="block text-xs font-bold text-gray-700 mb-2">اختر التصميم:</label>
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="setTheme('t-official', this)" class="theme-btn active"><div class="theme-preview"><div class="absolute top-0 left-0 w-full h-4 bg-[#84BD00] rounded-b-full"></div></div>رسمي</button>
-                    <button onclick="setTheme('t-geo', this)" class="theme-btn"><div class="theme-preview"><div class="absolute top-0 left-0 w-full h-full bg-[#84BD00]" style="clip-path: polygon(0 0, 100% 0, 0 100%)"></div></div>هندسي</button>
-                    <button onclick="setTheme('t-side', this)" class="theme-btn"><div class="theme-preview"><div class="absolute right-0 h-full w-2 bg-[#84BD00]"></div></div>جانبي</button>
-                    <button onclick="setTheme('t-diag', this)" class="theme-btn"><div class="theme-preview"><div class="absolute top-0 left-0 h-full w-1/2 bg-[#84BD00] -skew-x-12"></div></div>مائل</button>
-                    <button onclick="setTheme('t-corp', this)" class="theme-btn"><div class="theme-preview"><div class="absolute top-0 w-full h-2 bg-[#84BD00]"></div><div class="absolute top-0 w-full h-1 bg-[#F05A28]"></div></div>شركات</button>
-                    <button onclick="setTheme('t-circ', this)" class="theme-btn"><div class="theme-preview"><div class="absolute -top-2 -right-2 w-6 h-6 bg-[#84BD00] rounded-full opacity-50"></div></div>دوائر</button>
-                    <button onclick="setTheme('t-min', this)" class="theme-btn"><div class="theme-preview border border-[#84BD00] m-1 rounded"></div>إطار</button>
-                    <button onclick="setTheme('t-cont', this)" class="theme-btn"><div class="theme-preview"><div class="absolute bottom-0 w-full h-3 bg-[#84BD00]"></div></div>تباين</button>
-                    <button onclick="setTheme('t-wave', this)" class="theme-btn"><div class="theme-preview"><div class="absolute top-[-50%] left-[-50%] w-[200%] h-[100%] bg-[#84BD00] rounded-b-full transform rotate-[-10deg]"></div></div>تموج</button>
-                    <button onclick="setTheme('t-top', this)" class="theme-btn"><div class="theme-preview"><div class="absolute top-0 w-full h-4 bg-[#84BD00]"></div></div>علوي</button>
-                    <button onclick="setTheme('t-ultra', this)" class="theme-btn"><div class="theme-preview"><div class="absolute left-0 w-1 h-full bg-[#84BD00]"></div></div>مودرن+</button>
-                    <button onclick="setTheme('t-grad', this)" class="theme-btn"><div class="theme-preview bg-gradient-to-br from-white to-green-100"></div>تدرج</button>
-                </div>
-            </div>
-
-            <!-- الملفات -->
-            <div class="border-t pt-3">
-                <div class="grid grid-cols-2 gap-2 mb-2">
-                    <button onclick="get('uplLogo').click()" class="py-2 border rounded-lg text-[10px] font-bold hover:bg-gray-50">🏢 الشعار</button>
-                    <button onclick="get('uplPhoto').click()" class="py-2 border rounded-lg text-[10px] font-bold hover:bg-gray-50">👤 الصورة</button>
-                </div>
-                <button onclick="toggleLogoShape()" class="w-full py-1 text-[10px] text-green-600 font-bold hover:underline mb-2">🔄 تغيير شكل الشعار (دائري/حر)</button>
-                
-                <div class="flex gap-2 items-center bg-gray-50 p-2 rounded-lg border mb-2">
-                    <input type="text" id="qrText" class="flex-1 bg-transparent text-[10px] outline-none" placeholder="رابط الباركود">
-                    <button onclick="get('uplQR').click()" class="text-[10px] font-bold text-blue-600 hover:text-blue-800">📷 صورة</button>
-                </div>
-            </div>
-
-            <!-- البيانات -->
-            <div class="space-y-3 border-t pt-3">
-                <!-- الاسم -->
-                <div class="space-y-1">
-                    <label class="block text-xs font-bold text-gray-700">الاسم:</label>
-                    <input type="text" id="inpName" value="أحمد محمد" class="w-full p-2 border rounded-lg text-xs" placeholder="الاسم">
-                </div>
-
-                <!-- المسمى الوظيفي + AI -->
-                <div class="space-y-1">
-                    <div class="flex justify-between items-center">
-                        <label class="block text-xs font-bold text-gray-700">المسمى الوظيفي:</label>
-                        <button onclick="suggestTitles()" id="btnSuggest" class="ai-btn">✨ اقتراح مسميات</button>
+    <!-- نافذة عرض الملفات وتنزيلها (Modal) -->
+    <div id="fileViewerModal" class="hide fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col h-[90vh]">
+            <!-- الهيدر -->
+            <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+                <div class="flex items-center">
+                    <i class="fas fa-file-alt text-brand-orange text-xl ml-3"></i>
+                    <div>
+                        <h3 class="font-bold text-gray-800 text-lg line-clamp-1" id="viewingFileName">اسم الملف</h3>
+                        <p class="text-xs text-gray-500" id="viewingFileType">نوع الملف</p>
                     </div>
-                    <input type="text" id="inpRole" value="المدير العام" class="w-full p-2 border rounded-lg text-xs" placeholder="المسمى">
-                    <div id="aiSuggestions" class="suggestions-box"></div>
                 </div>
-
-                <!-- الشعار المهني + AI -->
-                <div class="space-y-1">
-                    <div class="flex justify-between items-center">
-                        <label class="block text-xs font-bold text-gray-700">شعار مهني (Slogan):</label>
-                        <button onclick="generateSlogan()" id="btnSlogan" class="ai-btn">✨ تأليف شعار</button>
-                    </div>
-                    <input type="text" id="inpSlogan" class="w-full p-2 border rounded-lg text-xs" placeholder="عبارة قصيرة تظهر في البطاقة">
-                </div>
-                
-                <!-- التواصل -->
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="text" id="inpPhone" value="0500000000" class="w-full p-2 border rounded-lg text-xs" placeholder="الجوال">
-                    <input type="text" id="inpEmail" value="info@bena.sa" class="w-full p-2 border rounded-lg text-xs" placeholder="الإيميل">
+                <div class="flex items-center gap-3">
+                    <a id="btnDownloadFile" href="#" download class="flex items-center px-4 py-2 bg-brand-green text-white text-sm font-bold rounded-lg hover:bg-green-600 transition-colors">
+                        <i class="fas fa-download ml-2"></i> تنزيل الملف
+                    </a>
+                    <button onclick="closeFileViewer()" class="text-gray-500 hover:text-red-500 bg-gray-200 hover:bg-red-100 w-10 h-10 rounded-full flex items-center justify-center transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
                 </div>
             </div>
-
-            <div class="flex gap-2 mt-auto pt-2">
-                <button onclick="downloadCard('png')" class="flex-1 bg-[#84BD00] hover:bg-[#73a500] text-white font-bold py-3 rounded-xl shadow-lg text-sm">
-                    💾 PNG
-                </button>
-                <button onclick="downloadCard('pdf')" class="flex-1 bg-gray-700 hover:bg-gray-900 text-white font-bold py-3 rounded-xl shadow-lg text-sm">
-                    📄 PDF
-                </button>
+            <!-- مساحة العرض -->
+            <div class="flex-1 bg-gray-200 flex flex-col items-center justify-center p-4 overflow-hidden relative">
+                <div id="modalContentContainer" class="w-full h-full flex items-center justify-center bg-white rounded-lg shadow-inner">
+                    <!-- سيتم تعبئة الصور أو ملفات PDF هنا -->
+                </div>
             </div>
-
-            <input type="file" id="uplLogo" accept="image/*" class="hidden">
-            <input type="file" id="uplPhoto" accept="image/*" class="hidden">
-            <input type="file" id="uplQR" accept="image/*" class="hidden">
         </div>
+    </div>
 
-        <!-- منطقة العمل (Canvas) -->
-        <div class="lg:col-span-9 h-full relative">
-            <div class="canvas-area">
-                
-                <div id="cardCanvas" class="card-wrapper t-official">
-                    <!-- الخلفية -->
-                    <div class="bg-shape bg-1"></div>
-                    <div class="bg-shape bg-2"></div>
-                    <div class="bg-shape bg-3"></div>
-                    <div class="bottom-bar"></div>
+    <!-- شريط الرأس (Header) -->
+    <header id="appHeader" class="hide bg-white shadow-md border-b relative z-10 border-brand-green">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="header-logo"></div>
+                <div>
+                    <h1 class="font-black text-xl text-gray-800">جمعية بناء وتنمية</h1>
+                    <p id="headerPortalType" class="text-xs font-bold text-gray-500">بوابة الخدمات الإلكترونية</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4 sm:gap-6">
+                <div class="hidden sm:flex items-center gap-3 text-sm text-gray-700 bg-gray-50 px-4 py-2 rounded-full border border-gray-200 shadow-inner">
+                    <i class="fas fa-user text-gray-400"></i>
+                    <span>مرحباً، <strong id="headerUserName" class="text-brand-green">المستخدم</strong></span>
+                    <span id="headerUserRole" class="text-xs px-3 py-1 rounded-full font-bold text-white shadow-sm bg-brand-green">مستفيد</span>
+                </div>
+                <button onclick="handleLogout()" class="flex items-center text-gray-500 hover:text-red-600 font-bold transition-colors bg-white hover:bg-red-50 px-3 sm:px-4 py-2 rounded-lg border border-transparent hover:border-red-100">
+                    <i class="fas fa-sign-out-alt ml-1 sm:ml-2"></i> <span class="hidden sm:inline">خروج</span>
+                </button>
+            </div>
+        </div>
+    </header>
 
-                    <!-- العناصر -->
-                    <div id="boxLogo" class="draggable logo-box">
-                        <div class="float-ctrl"><div class="mini-btn" onclick="resize('boxLogo', 5)">+</div><div class="mini-btn" onclick="resize('boxLogo', -5)">-</div></div>
-                        <div id="logoPlace" class="w-full h-full min-h-[50px] border-2 border-dashed border-gray-300 rounded flex items-center justify-center text-[10px] text-gray-400 bg-white/80">الشعار</div>
-                        <img id="imgLogo" src="" class="logo-img hidden">
+    <!-- المحتوى الرئيسي -->
+    <main class="flex-1 w-full mx-auto flex flex-col" id="mainContainer">
+        
+        <!-- === 1. شاشات الدخول والتسجيل === -->
+        <section id="authView" class="flex-1 flex items-center justify-center p-4">
+            <div id="authBox" class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border-t-8 border-brand-green relative overflow-hidden transition-colors duration-300">
+                <div class="flex flex-col items-center mb-6">
+                    <div class="auth-logo"></div>
+                    <h1 class="text-2xl font-bold mt-4 text-gray-800">جمعية بناء وتنمية</h1>
+                    <p class="text-gray-500 text-sm mt-1">بوابة الخدمات الإلكترونية</p>
+                </div>
+
+                <!-- تبويبات الدخول -->
+                <div id="loginTabsContainer" class="flex mb-6 bg-gray-100 p-1 rounded-lg">
+                    <button id="tabBeneficiary" onclick="switchLoginTab('beneficiary')" class="flex-1 py-2 text-sm font-bold rounded-md transition-all tab-active-beneficiary">
+                        <i class="fas fa-users text-brand-green ml-1"></i> بوابة المستفيدين
+                    </button>
+                    <button id="tabEmployee" onclick="switchLoginTab('employee')" class="flex-1 py-2 text-sm font-bold rounded-md transition-all tab-inactive">
+                        <i class="fas fa-briefcase ml-1" id="iconEmployeeTab"></i> بوابة الموظفين
+                    </button>
+                </div>
+
+                <!-- نموذج تسجيل الدخول -->
+                <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">البريد الإلكتروني</label>
+                        <div class="relative">
+                            <i class="fas fa-envelope absolute right-3 top-4 text-gray-400"></i>
+                            <input id="loginEmail" type="email" required class="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:outline-none bg-gray-50 focus:bg-white transition-colors" placeholder="example@domain.com">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">كلمة المرور</label>
+                        <div class="relative">
+                            <i class="fas fa-lock absolute right-3 top-4 text-gray-400"></i>
+                            <input id="loginPassword" type="password" required class="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green focus:outline-none bg-gray-50 focus:bg-white transition-colors" placeholder="••••••••">
+                        </div>
+                    </div>
+                    <button id="btnLoginSubmit" type="submit" class="w-full text-white font-bold py-3.5 rounded-lg transition-transform active:scale-95 shadow-md bg-brand-green">
+                        دخول المستفيد
+                    </button>
+                    
+                    <p id="registerPrompt" class="text-center text-sm text-gray-600 mt-4 pt-4 border-t">
+                        ليس لديك حساب؟ <button type="button" onclick="showRegisterForm()" class="text-brand-green font-bold hover:underline">إنشاء حساب جديد</button>
+                    </p>
+                </form>
+
+                <!-- نموذج التسجيل -->
+                <form id="registerForm" onsubmit="handleRegister(event)" class="hide space-y-4">
+                    <h3 class="text-center font-bold text-brand-green mb-4 border-b pb-2">تسجيل مستفيد جديد</h3>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">الاسم الرباعي</label>
+                        <div class="relative">
+                            <i class="fas fa-user absolute right-3 top-3 text-gray-400"></i>
+                            <input id="regName" type="text" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-green focus:outline-none" placeholder="الاسم الكامل">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">رقم الجوال</label>
+                        <div class="relative">
+                            <i class="fas fa-phone absolute right-3 top-3 text-gray-400"></i>
+                            <input id="regPhone" type="tel" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-green focus:outline-none" placeholder="05XXXXXXXX">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
+                        <div class="relative">
+                            <i class="fas fa-envelope absolute right-3 top-3 text-gray-400"></i>
+                            <input id="regEmail" type="email" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-green focus:outline-none" placeholder="example@domain.com">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور</label>
+                        <div class="relative">
+                            <i class="fas fa-lock absolute right-3 top-3 text-gray-400"></i>
+                            <input id="regPassword" type="password" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-green focus:outline-none" placeholder="••••••••">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full text-white font-bold py-3 rounded-lg transition-transform active:scale-95 shadow-md mt-2 bg-brand-green">
+                        إنشاء حساب المستفيد
+                    </button>
+                    <button type="button" onclick="showLoginForm()" class="w-full py-2 text-sm text-gray-500 hover:text-gray-700 font-medium">
+                        العودة لتسجيل الدخول
+                    </button>
+                </form>
+
+                <div id="authLoading" class="hide py-10 flex flex-col items-center justify-center">
+                    <div class="loader mb-4"></div>
+                    <p class="text-gray-500 font-medium">جاري معالجة الطلب...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- === 2. لوحة تحكم المستفيد === -->
+        <section id="beneficiaryView" class="hide w-full max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">طلبات المستفيد</h2>
+                    <p class="text-sm text-gray-500 mt-1">تابع حالة طلباتك أو قم برفع أوراق طلب جديد</p>
+                </div>
+                <button id="btnToggleNewRequest" onclick="toggleNewRequestForm()" class="flex items-center px-4 sm:px-6 py-2 sm:py-3 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all bg-brand-green w-full sm:w-auto justify-center">
+                    <i id="iconToggleNewReq" class="fas fa-plus ml-2"></i>
+                    <span id="textToggleNewReq">تقديم طلب جديد</span>
+                </button>
+            </div>
+
+            <!-- نموذج تقديم طلب جديد -->
+            <div id="newRequestFormContainer" class="hide bg-white p-4 sm:p-8 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold mb-6 flex items-center border-r-4 pr-3 border-brand-green text-gray-700">نموذج طلب مساعدة جديد</h3>
+                <form onsubmit="submitNewRequest(event)" class="space-y-8">
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-4 text-lg">نوع الطلب <span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="requestTypesContainer">
+                            <label class="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-all req-type-label">
+                                <input type="radio" name="reqType" value="بناء" required class="sr-only req-type-input">
+                                <i class="fas fa-building text-4xl mb-3 text-gray-400 req-type-icon"></i>
+                                <span class="font-bold text-gray-700 text-lg">بناء</span>
+                            </label>
+                            <label class="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-all req-type-label">
+                                <input type="radio" name="reqType" value="إكمال بناء" class="sr-only req-type-input">
+                                <i class="fas fa-home text-4xl mb-3 text-gray-400 req-type-icon"></i>
+                                <span class="font-bold text-gray-700 text-lg">إكمال بناء</span>
+                            </label>
+                            <label class="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-all req-type-label">
+                                <input type="radio" name="reqType" value="ترميم" class="sr-only req-type-input">
+                                <i class="fas fa-tools text-4xl mb-3 text-gray-400 req-type-icon"></i>
+                                <span class="font-bold text-gray-700 text-lg">ترميم</span>
+                            </label>
+                        </div>
                     </div>
 
-                    <div id="boxProfile" class="draggable profile-box">
-                        <div class="float-ctrl"><div class="mini-btn" onclick="resize('boxProfile', 5)">+</div><div class="mini-btn" onclick="resize('boxProfile', -5)">-</div></div>
-                        <img id="imgProfile" src="https://ui-avatars.com/api/?name=%D8%A3+%D9%85&background=f1f5f9&color=94a3b8&size=256&font-size=0.4" class="profile-img">
-                    </div>
-
-                    <div class="info-container">
-                        <h2 class="name-text" id="txtName">أحمد محمد</h2>
-                        <span class="role-badge" id="txtRole">المدير العام</span>
-                        <div class="org-text"><div>جمعية بناء وتنمية مساكن</div><div>بمنطقة جازان</div></div>
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-2 text-lg">رفع الأوراق والمستندات <span class="text-red-500">*</span></label>
+                        <p class="text-sm text-gray-500 mb-4">الرجاء إرفاق كافة الأوراق المطلوبة (صك الملكية، الهوية، التقرير الهندسي).</p>
                         
-                        <!-- الشعار المهني -->
-                        <div id="txtSlogan" class="slogan-text"></div>
+                        <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 sm:p-10 text-center bg-gray-50 hover:bg-gray-100 transition-colors">
+                            <input type="file" id="fileUpload" multiple required accept="image/*,application/pdf" class="hidden" onchange="handleFileSelection(event)">
+                            <label for="fileUpload" class="cursor-pointer flex flex-col items-center w-full h-full">
+                                <div class="p-4 bg-white rounded-full shadow-md mb-4 border">
+                                    <i class="fas fa-cloud-upload-alt text-2xl text-brand-green"></i>
+                                </div>
+                                <span class="font-bold text-gray-700 text-lg">اضغط هنا لاختيار الملفات وصور الأوراق</span>
+                                <span class="text-sm text-gray-400 mt-2">صيغ مدعومة: PDF, JPG, PNG (أقصى حجم للـ PDF هو 1 ميجابايت، الصور سيتم ضغطها آلياً)</span>
+                            </label>
+                        </div>
+                        
+                        <div id="fileUploadProgress" class="hide mt-4 text-center text-sm font-bold text-brand-orange">
+                            <i class="fas fa-spinner fa-spin mr-2"></i> جاري معالجة وقراءة الملفات...
+                        </div>
 
-                        <!-- معلومات الاتصال -->
-                        <div class="contact-info">
-                            <div id="txtPhone" class="contact-item">
-                                <span class="contact-icon">📞</span> <span>0500000000</span>
+                        <!-- قائمة الملفات المرفوعة -->
+                        <div id="selectedFilesContainer" class="hide mt-6 bg-green-50 p-4 rounded-xl border border-green-100">
+                            <h4 class="text-sm font-bold text-green-800 mb-3">الملفات المرفقة (جاهزة للرفع):</h4>
+                            <ul id="selectedFilesList" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <!-- سيتم تعبئتها بواسطة JS -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="pt-6 border-t border-gray-100">
+                        <button id="btnSubmitRequest" type="submit" class="w-full py-4 text-white font-bold text-lg rounded-xl shadow-lg hover:opacity-90 transition-opacity flex justify-center items-center bg-brand-green">
+                            <i class="fas fa-check-circle ml-2"></i>
+                            إرسال الطلب واعتماده
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- جدول طلباتي -->
+            <div id="myRequestsContainer" class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+                <div id="emptyRequests" class="hide p-16 text-center text-gray-500">
+                    <div class="bg-gray-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border">
+                        <i class="fas fa-file-alt text-4xl text-gray-300"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-700 mb-2">لا توجد طلبات سابقة</h3>
+                    <p>قم بتقديم طلب جديد لتبدأ الإجراءات مع الجمعية.</p>
+                </div>
+
+                <div id="requestsTableContainer" class="overflow-x-auto hide">
+                    <table class="w-full text-right">
+                        <thead class="bg-gray-50 text-gray-700 border-b border-gray-200">
+                            <tr>
+                                <th class="p-4 sm:p-5 font-bold whitespace-nowrap">رقم الطلب</th>
+                                <th class="p-4 sm:p-5 font-bold whitespace-nowrap">نوع الطلب</th>
+                                <th class="p-4 sm:p-5 font-bold whitespace-nowrap">تاريخ التقديم</th>
+                                <th class="p-4 sm:p-5 font-bold whitespace-nowrap">حالة الطلب</th>
+                            </tr>
+                        </thead>
+                        <tbody id="myRequestsTableBody" class="divide-y divide-gray-100">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- === 3. لوحة تحكم الموظف / المشرف === -->
+        <section id="employeeView" class="hide w-full max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-2">
+                <div class="border-r-4 pr-4 border-brand-orange">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">بوابة الموظفين</h2>
+                    <p class="text-gray-500 mt-2 font-medium">لوحة التحكم والمراجعة لطلبات المستفيدين</p>
+                </div>
+            </div>
+            
+            <!-- إحصائيات سريعة -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8">
+                <div class="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs sm:text-sm text-gray-500 font-bold mb-1">إجمالي الطلبات</p>
+                        <h3 id="statTotal" class="text-2xl sm:text-3xl font-black text-gray-800">0</h3>
+                    </div>
+                    <div class="p-2 sm:p-3 bg-blue-50 rounded-lg text-blue-500"><i class="fas fa-layer-group text-xl sm:text-2xl"></i></div>
+                </div>
+                <div class="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs sm:text-sm text-yellow-600 font-bold mb-1">قيد المراجعة</p>
+                        <h3 id="statPending" class="text-2xl sm:text-3xl font-black text-yellow-600">0</h3>
+                    </div>
+                    <div class="p-2 sm:p-3 bg-yellow-50 rounded-lg text-yellow-500"><i class="fas fa-clock text-xl sm:text-2xl"></i></div>
+                </div>
+                <div class="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs sm:text-sm text-green-600 font-bold mb-1">المقبولة</p>
+                        <h3 id="statAccepted" class="text-2xl sm:text-3xl font-black text-green-600">0</h3>
+                    </div>
+                    <div class="p-2 sm:p-3 bg-green-50 rounded-lg text-green-500"><i class="fas fa-check-circle text-xl sm:text-2xl"></i></div>
+                </div>
+                <div class="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs sm:text-sm text-red-600 font-bold mb-1">المرفوضة</p>
+                        <h3 id="statRejected" class="text-2xl sm:text-3xl font-black text-red-600">0</h3>
+                    </div>
+                    <div class="p-2 sm:p-3 bg-red-50 rounded-lg text-red-500"><i class="fas fa-times-circle text-xl sm:text-2xl"></i></div>
+                </div>
+            </div>
+
+            <!-- جدول كل الطلبات -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
+                <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b flex justify-between items-center">
+                    <h3 class="font-bold text-lg text-gray-700">قائمة الطلبات الواردة</h3>
+                    <span class="bg-white border px-3 py-1 rounded text-xs font-bold text-gray-500">أحدث الطلبات أولاً</span>
+                </div>
+                
+                <div id="emptyEmployeeRequests" class="hide p-16 flex flex-col items-center justify-center text-gray-500">
+                    <i class="fas fa-folder-open text-6xl text-gray-200 mb-4"></i>
+                    <p class="font-bold text-lg">لا توجد طلبات مقدمة للمراجعة حالياً.</p>
+                </div>
+
+                <div id="employeeTableContainer" class="overflow-x-auto hide">
+                    <table class="w-full text-right whitespace-nowrap">
+                        <thead class="bg-white text-gray-500 border-b-2 border-gray-100">
+                            <tr>
+                                <th class="p-4 sm:p-5 font-bold">رقم الطلب</th>
+                                <th class="p-4 sm:p-5 font-bold">بيانات المستفيد</th>
+                                <th class="p-4 sm:p-5 font-bold">نوع الطلب</th>
+                                <th class="p-4 sm:p-5 font-bold">المرفقات والصور (اضغط للعرض)</th>
+                                <th class="p-4 sm:p-5 font-bold">الحالة الحالية</th>
+                                <th class="p-4 sm:p-5 font-bold text-center">الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeeRequestsTableBody" class="divide-y divide-gray-100">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <!-- التذييل (Footer) -->
+    <footer class="bg-white border-t mt-auto py-6">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 font-medium gap-4">
+            <div class="flex items-center gap-3">
+                <div class="footer-logo"></div>
+                <p>جميع الحقوق محفوظة &copy; جمعية بناء وتنمية مساكن بمنطقة جازان</p>
+            </div>
+            <div class="flex gap-6 sm:gap-8 flex-wrap justify-center">
+                <span class="flex items-center hover:text-gray-800 cursor-pointer transition-colors" dir="ltr"><i class="fas fa-phone mr-2 text-gray-400"></i> 0551056560</span>
+                <span class="flex items-center hover:text-gray-800 cursor-pointer transition-colors"><i class="fas fa-globe ml-2 text-gray-400"></i> www.bena-jazan.sa</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- سكربت المنطق وربط Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // إعدادات البيئة
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'bena-html-app';
+        
+        let app, auth, db;
+        if (firebaseConfig) {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        }
+
+        // State Variables
+        let currentTab = 'beneficiary'; 
+        let currentUser = null; 
+        let isShowingNewForm = false;
+        let uploadedFilesArray = []; // يحتوي على {name, type, data}
+        
+        let allUsers = [];
+        let allRequests = [];
+
+        // UI Helpers
+        const el = (id) => document.getElementById(id);
+        const hide = (e) => { if(e) e.classList.add('hide'); }
+        const show = (e) => { if(e) e.classList.remove('hide'); }
+        
+        window.showAlert = (msg) => {
+            el('alertMessage').innerText = msg;
+            show(el('alertBanner'));
+            setTimeout(() => hide(el('alertBanner')), 5000);
+        }
+        window.hideAlert = () => hide(el('alertBanner'));
+
+        const logoSVG = `
+        <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 20 40 L 40 45 L 40 80 L 20 80 Z" fill="#9b9b9b" />
+            <path d="M 60 45 L 80 40 L 80 80 L 60 80 Z" fill="#9b9b9b" />
+            <path d="M 35 20 L 50 10 L 65 20 L 65 80 L 35 80 Z" fill="#f58220" />
+            <path d="M 10 50 Q 30 90 50 100 Q 70 90 90 50 Q 75 75 50 85 Q 25 75 10 50 Z" fill="#8dc63f" />
+        </svg>`;
+        document.querySelectorAll('.header-logo, .auth-logo, .footer-logo').forEach(container => {
+            if(container) container.innerHTML = logoSVG;
+        });
+
+        const getStatusBadgeHtml = (status) => {
+            if(status === 'pending') return `<span class="flex items-center w-max px-3 py-1 text-sm rounded-full bg-yellow-100 text-yellow-700 font-bold border border-yellow-200"><i class="fas fa-clock ml-1"></i> قيد المراجعة</span>`;
+            if(status === 'accepted') return `<span class="flex items-center w-max px-3 py-1 text-sm rounded-full bg-green-100 text-green-700 font-bold border border-green-200"><i class="fas fa-check-circle ml-1"></i> مقبول</span>`;
+            if(status === 'rejected') return `<span class="flex items-center w-max px-3 py-1 text-sm rounded-full bg-red-100 text-red-700 font-bold border border-red-200"><i class="fas fa-times-circle ml-1"></i> مرفوض</span>`;
+            return '';
+        };
+
+        // UI Tabs & Views
+        window.switchLoginTab = (tab) => {
+            currentTab = tab;
+            hideAlert();
+            if(tab === 'beneficiary') {
+                el('tabBeneficiary').className = 'flex-1 py-2 text-sm font-bold rounded-md transition-all tab-active-beneficiary';
+                el('tabEmployee').className = 'flex-1 py-2 text-sm font-bold rounded-md transition-all tab-inactive';
+                el('authBox').style.borderColor = '#8dc63f';
+                el('btnLoginSubmit').style.backgroundColor = '#8dc63f';
+                el('btnLoginSubmit').innerText = 'دخول المستفيد';
+                el('loginEmail').style.setProperty('--tw-ring-color', '#8dc63f');
+                el('loginPassword').style.setProperty('--tw-ring-color', '#8dc63f');
+                show(el('registerPrompt'));
+            } else {
+                el('tabEmployee').className = 'flex-1 py-2 text-sm font-bold rounded-md transition-all tab-active-employee';
+                el('iconEmployeeTab').style.color = '#f58220';
+                el('tabBeneficiary').className = 'flex-1 py-2 text-sm font-bold rounded-md transition-all tab-inactive';
+                el('authBox').style.borderColor = '#f58220';
+                el('btnLoginSubmit').style.backgroundColor = '#f58220';
+                el('btnLoginSubmit').innerText = 'دخول الموظف';
+                el('loginEmail').style.setProperty('--tw-ring-color', '#f58220');
+                el('loginPassword').style.setProperty('--tw-ring-color', '#f58220');
+                hide(el('registerPrompt'));
+                showLoginForm();
+            }
+        };
+
+        window.showLoginForm = () => { hideAlert(); hide(el('registerForm')); show(el('loginForm')); };
+        window.showRegisterForm = () => { hideAlert(); hide(el('loginForm')); show(el('registerForm')); };
+
+        const updateMainLayout = () => {
+            hide(el('authView'));
+            hide(el('beneficiaryView'));
+            hide(el('employeeView'));
+            show(el('appHeader'));
+
+            el('headerUserName').innerText = currentUser.name;
+            el('headerUserName').className = currentUser.role === 'employee' ? 'text-brand-orange' : 'text-brand-green';
+            el('appHeader').style.borderColor = currentUser.role === 'employee' ? '#f58220' : '#8dc63f';
+            
+            let roleBadge = el('headerUserRole');
+            if(currentUser.role === 'employee') {
+                roleBadge.innerText = 'موظف / مشرف';
+                roleBadge.className = 'text-xs px-3 py-1 rounded-full font-bold text-white shadow-sm bg-brand-orange';
+                el('headerPortalType').innerText = 'بوابة الموظفين والمشرفين';
+                el('headerPortalType').className = 'text-xs font-bold text-brand-orange';
+                show(el('employeeView'));
+                renderEmployeeDashboard();
+            } else {
+                roleBadge.innerText = 'مستفيد';
+                roleBadge.className = 'text-xs px-3 py-1 rounded-full font-bold text-white shadow-sm bg-brand-green';
+                el('headerPortalType').innerText = 'بوابة الخدمات الإلكترونية';
+                el('headerPortalType').className = 'text-xs font-bold text-gray-500';
+                show(el('beneficiaryView'));
+                renderBeneficiaryDashboard();
+            }
+        };
+
+        window.toggleNewRequestForm = () => {
+            isShowingNewForm = !isShowingNewForm;
+            if(isShowingNewForm) {
+                show(el('newRequestFormContainer'));
+                hide(el('myRequestsContainer'));
+                el('iconToggleNewReq').className = 'fas fa-chevron-right ml-2';
+                el('textToggleNewReq').innerText = 'العودة للقائمة';
+            } else {
+                hide(el('newRequestFormContainer'));
+                show(el('myRequestsContainer'));
+                el('iconToggleNewReq').className = 'fas fa-plus ml-2';
+                el('textToggleNewReq').innerText = 'تقديم طلب جديد';
+                uploadedFilesArray = []; 
+                renderSelectedFiles();
+                el('fileUpload').value = ''; 
+            }
+        };
+
+        document.querySelectorAll('.req-type-input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                document.querySelectorAll('.req-type-label').forEach(lbl => {
+                    lbl.classList.remove('border-brand-green', 'bg-green-50');
+                    lbl.classList.add('border-gray-200');
+                    lbl.querySelector('.req-type-icon').classList.remove('text-brand-green');
+                    lbl.querySelector('.req-type-icon').classList.add('text-gray-400');
+                });
+                const selectedLabel = e.target.closest('label');
+                selectedLabel.classList.remove('border-gray-200');
+                selectedLabel.classList.add('border-brand-green', 'bg-green-50');
+                selectedLabel.querySelector('.req-type-icon').classList.remove('text-gray-400');
+                selectedLabel.querySelector('.req-type-icon').classList.add('text-brand-green');
+            });
+        });
+
+        // خوارزمية قراءة وتحويل الملفات إلى Base64
+        const processFile = (file) => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const dataUrl = event.target.result;
+                    // إذا كان الملف صورة، نقوم بضغطه
+                    if (file.type.startsWith('image/')) {
+                        const img = new Image();
+                        img.src = dataUrl;
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+                            const max_size = 1200; // أقصى أبعاد للصورة
+                            if (width > max_size || height > max_size) {
+                                if (width > height) {
+                                    height *= max_size / width;
+                                    width = max_size;
+                                } else {
+                                    width *= max_size / height;
+                                    height = max_size;
+                                }
+                            }
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            // ضغط بجودة 0.6 لتصغير الحجم جداً
+                            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                            resolve({ name: file.name, type: file.type, data: compressedDataUrl });
+                        };
+                    } else {
+                        // التحقق من حجم الـ PDF (يجب ألا يتجاوز 1 ميجابايت تفادياً لمشاكل الذاكرة)
+                        if (file.size > 1048576) {
+                            reject(`ملف ${file.name} كبير جداً (أكثر من 1 ميجا).`);
+                        } else {
+                            resolve({ name: file.name, type: file.type, data: dataUrl });
+                        }
+                    }
+                };
+                reader.onerror = error => reject(error);
+            });
+        };
+
+        window.handleFileSelection = async (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+            
+            show(el('fileUploadProgress'));
+            
+            try {
+                for (let i = 0; i < files.length; i++) {
+                    const processed = await processFile(files[i]);
+                    uploadedFilesArray.push(processed);
+                }
+                renderSelectedFiles();
+            } catch (err) {
+                showAlert(err);
+            }
+            
+            hide(el('fileUploadProgress'));
+            el('fileUpload').value = '';
+        };
+
+        const renderSelectedFiles = () => {
+            const list = el('selectedFilesList');
+            list.innerHTML = '';
+            if(uploadedFilesArray.length > 0) {
+                show(el('selectedFilesContainer'));
+                uploadedFilesArray.forEach((fileObj, i) => {
+                    let icon = fileObj.type.startsWith('image/') ? 'fa-image' : 'fa-file-pdf';
+                    list.innerHTML += `
+                        <li class="flex items-center justify-between text-sm font-medium text-gray-700 bg-white border border-gray-200 p-3 rounded-lg shadow-sm">
+                            <div class="flex items-center overflow-hidden">
+                                <i class="fas ${icon} ml-2 text-brand-green"></i>
+                                <span class="truncate">${fileObj.name}</span>
                             </div>
-                            <div id="txtEmail" class="contact-item">
-                                <span class="contact-icon">✉️</spa
+                            <button type="button" onclick="removeFile(${i})" class="text-red-500 hover:bg-red-50 p-1 rounded">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </li>
+                    `;
+                });
+            } else {
+                hide(el('selectedFilesContainer'));
+            }
+        };
+
+        window.removeFile = (index) => {
+            uploadedFilesArray.splice(index, 1);
+            renderSelectedFiles();
+        };
+
+        // عرض الملفات (Modal للموظفين) لتنزيلها ورؤيتها
+        window.openFileViewer = (docId, fileIndex) => {
+            const req = allRequests.find(r => r.docId === docId);
+            if(!req || !req.files || !req.files[fileIndex]) return;
+            
+            const fileObj = req.files[fileIndex];
+            
+            el('viewingFileName').innerText = fileObj.name;
+            el('viewingFileType').innerText = fileObj.type.startsWith('image/') ? 'مستند مصور' : 'مستند نصي PDF';
+            
+            // تهيئة زر التحميل
+            const downloadBtn = el('btnDownloadFile');
+            downloadBtn.href = fileObj.data;
+            downloadBtn.download = fileObj.name;
+
+            const container = el('modalContentContainer');
+            container.innerHTML = ''; // مسح المحتوى القديم
+
+            if(fileObj.type.startsWith('image/')) {
+                container.innerHTML = `<img src="${fileObj.data}" alt="${fileObj.name}" class="max-w-full max-h-full object-contain rounded-lg">`;
+            } else {
+                // لملفات الـ PDF 
+                container.innerHTML = `<iframe src="${fileObj.data}" frameborder="0"></iframe>`;
+            }
+
+            show(el('fileViewerModal'));
+        };
+
+        window.closeFileViewer = () => {
+            hide(el('fileViewerModal'));
+            el('modalContentContainer').innerHTML = ''; // تحرير الذاكرة
+        };
+
+        // Auth & Login
+        window.handleLogin = (e) => {
+            e.preventDefault();
+            hideAlert();
+            const email = el('loginEmail').value.trim();
+            const password = el('loginPassword').value.trim();
+
+            const user = allUsers.find(u => u.email === email && u.password === password);
+            if(user) {
+                if (currentTab === 'employee' && user.role !== 'employee') {
+                    showAlert('هذا الحساب لا يملك صلاحيات موظف.');
+                    return;
+                }
+                if (currentTab === 'beneficiary' && user.role === 'employee') {
+                    showAlert('يرجى الدخول عبر بوابة الموظفين.');
+                    return;
+                }
+                currentUser = user;
+                updateMainLayout();
+            } else {
+                showAlert('البريد الإلكتروني أو كلمة المرور غير صحيحة.');
+            }
+        };
+
+        window.handleRegister = async (e) => {
+            e.preventDefault();
+            hideAlert();
+            const email = el('regEmail').value.trim();
+            
+            if (allUsers.find(u => u.email === email)) {
+                showAlert('البريد الإلكتروني مسجل مسبقاً.');
+                return;
+            }
+
+            const newUser = {
+                name: el('regName').value.trim(),
+                email: email,
+                phone: el('regPhone').value.trim(),
+                password: el('regPassword').value,
+                role: 'beneficiary',
+                createdAt: new Date().toISOString()
+            };
+
+            show(el('authLoading'));
+            hide(el('registerForm'));
+
+            if(db) {
+                try {
+                    const docRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'app_users'), newUser);
+                    currentUser = { docId: docRef.id, ...newUser };
+                } catch(error) {
+                    showAlert('حدث خطأ أثناء الإنشاء.');
+                    console.error(error);
+                }
+            } else {
+                currentUser = { docId: 'temp_id', ...newUser };
+            }
+            
+            hide(el('authLoading'));
+            updateMainLayout();
+        };
+
+        window.handleLogout = () => {
+            currentUser = null;
+            hide(el('appHeader'));
+            hide(el('beneficiaryView'));
+            hide(el('employeeView'));
+            show(el('authView'));
+            el('loginForm').reset();
+            el('registerForm').reset();
+            switchLoginTab('beneficiary');
+        };
+
+        // إرسال وتحديث الطلبات
+        window.submitNewRequest = async (e) => {
+            e.preventDefault();
+            
+            const selectedType = document.querySelector('input[name="reqType"]:checked');
+            if(!selectedType) {
+                showAlert("يرجى اختيار نوع الطلب");
+                return;
+            }
+            
+            if(uploadedFilesArray.length === 0) {
+                showAlert("يرجى إرفاق المستندات المطلوبة (صورة أو PDF)");
+                return;
+            }
+
+            const requestCode = Math.floor(10000 + Math.random() * 90000).toString();
+            
+            // سنرسل البيانات (Base64) للسحابة
+            const newRequest = {
+                reqNumber: requestCode,
+                userId: currentUser.email,
+                userName: currentUser.name,
+                type: selectedType.value,
+                status: 'pending',
+                date: new Date().toISOString().split('T')[0],
+                files: uploadedFilesArray 
+            };
+
+            const btn = el('btnSubmitRequest');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i> جاري رفع الأوراق للمراجعة...';
+            btn.disabled = true;
+
+            if (db) {
+                try {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'requests'), newRequest);
+                } catch(err) {
+                    console.error("Error adding doc: ", err);
+                    showAlert("الملفات كبيرة جداً على الذاكرة السحابية، الرجاء تقليل حجمها.");
+                }
+            }
+            
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+            
+            toggleNewRequestForm();
+        };
+
+        window.updateRequestStatus = async (docId, newStatus) => {
+            if(!db || !docId) return;
+            try {
+                const reqDoc = doc(db, 'artifacts', appId, 'public', 'data', 'requests', docId);
+                await updateDoc(reqDoc, { status: newStatus });
+            } catch (err) {
+                console.error("Error updating doc", err);
+                showAlert("لم نتمكن من تحديث الحالة.");
+            }
+        };
+
+        // رسم الواجهات
+        const renderBeneficiaryDashboard = () => {
+            const myRequests = allRequests.filter(r => r.userId === currentUser.email);
+            const tBody = el('myRequestsTableBody');
+            tBody.innerHTML = '';
+
+            if(myRequests.length === 0) {
+                show(el('emptyRequests'));
+                hide(el('requestsTableContainer'));
+            } else {
+                hide(el('emptyRequests'));
+                show(el('requestsTableContainer'));
+                
+                myRequests.forEach(req => {
+                    tBody.innerHTML += `
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="p-4 sm:p-5 font-bold text-gray-800 text-lg">#${req.reqNumber}</td>
+                            <td class="p-4 sm:p-5">
+                                <span class="bg-gray-100 px-4 py-1.5 rounded-md text-sm text-gray-800 font-bold border">
+                                    ${req.type}
+                                </span>
+                            </td>
+                            <td class="p-4 sm:p-5 text-gray-500 font-medium whitespace-nowrap">${req.date}</td>
+                            <td class="p-4 sm:p-5">${getStatusBadgeHtml(req.status)}</td>
+                        </tr>
+                    `;
+                });
+            }
+        };
+
+        const renderEmployeeDashboard = () => {
+            el('statTotal').innerText = allRequests.length;
+            el('statPending').innerText = allRequests.filter(r => r.status === 'pending').length;
+            el('statAccepted').innerText = allRequests.filter(r => r.status === 'accepted').length;
+            el('statRejected').innerText = allRequests.filter(r => r.status === 'rejected').length;
+
+            const tBody = el('employeeRequestsTableBody');
+            tBody.innerHTML = '';
+
+            if(allRequests.length === 0) {
+                show(el('emptyEmployeeRequests'));
+                hide(el('employeeTableContainer'));
+            } else {
+                hide(el('emptyEmployeeRequests'));
+                show(el('employeeTableContainer'));
+
+                allRequests.forEach(req => {
+                    // أزرار عرض الأوراق
+                    let filesHtml = req.files && req.files.length > 0 ? req.files.map((f, idx) => {
+                        let iconClass = f.type.startsWith('image/') ? 'fa-image text-brand-orange' : 'fa-file-pdf text-red-500';
+                        return `
+                        <button onclick="openFileViewer('${req.docId}', ${idx})" class="flex items-center text-xs bg-white hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-md truncate transition-all border shadow-sm group-hover:border-orange-200 w-full mb-2" title="عرض وتنزيل">
+                            <i class="fas ${iconClass} ml-2 flex-shrink-0"></i>
+                            <span class="truncate font-medium">${f.name}</span>
+                        </button>
+                    `}).join('') : '<span class="text-xs text-gray-400">لا توجد مرفقات</span>';
+
+                    let actionsHtml = '';
+                    if(req.status === 'pending') {
+                        actionsHtml = `
+                            <div class="flex gap-2 justify-center">
+                                <button onclick="updateRequestStatus('${req.docId}', 'accepted')" class="flex items-center px-4 py-2 bg-green-500 text-white text-sm font-bold rounded-lg hover:bg-green-600 transition-all shadow hover:shadow-md transform active:scale-95 whitespace-nowrap">
+                                    <i class="fas fa-check ml-1"></i> قبول
+                                </button>
+                                <button onclick="updateRequestStatus('${req.docId}', 'rejected')" class="flex items-center px-4 py-2 bg-red-500 text-white text-sm font-bold rounded-lg hover:bg-red-600 transition-all shadow hover:shadow-md transform active:scale-95 whitespace-nowrap">
+                                    <i class="fas fa-times ml-1"></i> رفض
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        actionsHtml = `<div class="text-center text-gray-400 text-sm font-medium bg-gray-50 py-2 rounded border">تم اتخاذ الإجراء</div>`;
+                    }
+
+                    tBody.innerHTML += `
+                        <tr class="hover:bg-orange-50/30 transition-colors group border-b border-gray-50">
+                            <td class="p-4 sm:p-5">
+                                <span class="font-black text-lg text-brand-orange">#${req.reqNumber}</span>
+                                <div class="text-xs text-gray-400 mt-1">${req.date}</div>
+                            </td>
+                            <td class="p-4 sm:p-5">
+                                <div class="font-bold text-gray-800 text-base">${req.userName}</div>
+                                <div class="text-sm text-gray-500 flex items-center mt-1">
+                                    <i class="fas fa-envelope ml-1"></i> <span dir="ltr">${req.userId}</span>
+                                </div>
+                            </td>
+                            <td class="p-4 sm:p-5">
+                                <span class="bg-gray-100 px-3 py-1.5 rounded-md text-sm text-gray-800 font-bold border border-gray-200 shadow-sm whitespace-nowrap">
+                                    ${req.type}
+                                </span>
+                            </td>
+                            <td class="p-4 sm:p-5">
+                                <div class="flex flex-col max-w-[220px]">
+                                    ${filesHtml}
+                                </div>
+                            </td>
+                            <td class="p-4 sm:p-5">${getStatusBadgeHtml(req.status)}</td>
+                            <td class="p-4 sm:p-5">${actionsHtml}</td>
+                        </tr>
+                    `;
+                });
+            }
+        };
+
+        // Firebase Init Setup
+        window.addEventListener('DOMContentLoaded', async () => {
+            if(!auth || !db) return;
+
+            const initAuth = async () => {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch(err) {
+                    console.error("Auth init error:", err);
+                }
+            };
+            
+            await initAuth();
+
+            onAuthStateChanged(auth, (user) => {
+                if(!user) return; 
+
+                const usersRef = collection(db, 'artifacts', appId, 'public', 'data', 'app_users');
+                const reqRef = collection(db, 'artifacts', appId, 'public', 'data', 'requests');
+
+                onSnapshot(usersRef, (snap) => {
+                    const usersData = snap.docs.map(d => ({ docId: d.id, ...d.data() }));
+                    allUsers = usersData;
+                    
+                    // توليد الموظف الافتراضي سرياً إذا لم يكن موجوداً
+                    if (usersData.length > 0 && !usersData.find(u => u.email === 'admin@bena.sa')) {
+                        addDoc(usersRef, { 
+                            email: 'admin@bena.sa', 
+                            password: 'admin', 
+                            name: 'مشرف النظام', 
+                            phone: '0500000000', 
+                            role: 'employee' 
+                        }).catch(console.error);
+                    }
+                }, (error) => console.error("Users sync error"));
+
+                onSnapshot(reqRef, (snap) => {
+                    allRequests = snap.docs.map(d => ({ docId: d.id, ...d.data() })).reverse();
+                    
+                    if(currentUser) {
+                        if(currentUser.role === 'employee') renderEmployeeDashboard();
+                        else renderBeneficiaryDashboard();
+                    }
+                }, (error) => console.error("Requests sync error"));
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+```
