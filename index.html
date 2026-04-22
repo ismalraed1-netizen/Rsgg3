@@ -1,903 +1,457 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة جمعية بناء وتنمية</title>
-    
-    <!-- خطوط جوجل -->
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- أيقونات FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+import React, { useState, useEffect } from 'react';
+import { 
+  Users, Send, CheckCircle, FileText, UserPlus, Phone, Building, 
+  AlertCircle, MessageCircle, LogOut, Trash2, ShieldCheck, Loader2
+} from 'lucide-react';
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'firebase/auth';
+import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query } from 'firebase/firestore';
 
-    <!-- إعدادات Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Tajawal', 'Cairo', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            orange: '#f58220',
-                            green: '#8dc63f',
-                            gray: '#9b9b9b',
-                            light: '#f3f4f6'
-                        }
-                    }
-                }
-            }
+// ==========================================
+// 🔴 إعدادات قاعدة البيانات (Firebase Config) 🔴
+// عند رفع الموقع على GitHub، قم بإنشاء مشروع في Firebase
+// واستبدل القيم الموجودة في الأسفل ببيانات مشروعك الحقيقية
+// ==========================================
+const myFirebaseConfig = {
+  apiKey: "ضع_الـ_API_KEY_هنا",
+  authDomain: "ضع_الـ_AUTH_DOMAIN_هنا",
+  projectId: "ضع_الـ_PROJECT_ID_هنا",
+  storageBucket: "ضع_الـ_STORAGE_BUCKET_هنا",
+  messagingSenderId: "ضع_الـ_SENDER_ID_هنا",
+  appId: "ضع_الـ_APP_ID_هنا"
+};
+
+// هذا السطر ليجعل الكود يعمل هنا للتجربة ويعمل في GitHub ببياناتك
+const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : myFirebaseConfig;
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'binaa-tanmia-app-production';
+
+
+// ألوان الهوية البصرية للجمعية
+const BRAND = {
+  orange: '#ee7818',
+  green: '#80ba3c',
+  gray: '#9ea1a2'
+};
+
+// شعار الجمعية
+const BrandLogo = ({ className = "w-24 h-24" }) => (
+  <svg viewBox="0 0 200 200" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M 45 70 L 80 85 L 80 135 L 45 135 Z" fill={BRAND.gray} opacity="0.8" />
+    <path d="M 120 85 L 155 70 L 155 135 L 120 135 Z" fill={BRAND.gray} opacity="0.8" />
+    <path d="M 85 30 L 115 30 L 115 135 L 85 135 Z" fill={BRAND.orange} />
+    <path d="M 25 125 Q 100 160 100 180 Q 100 160 175 125 Q 190 100 185 140 Q 100 195 15 140 Q 10 100 25 125 Z" fill={BRAND.green} />
+  </svg>
+);
+
+export default function App() {
+  const [isUiAuthenticated, setIsUiAuthenticated] = useState(false);
+  const [loginUsername, setLoginUsername] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [firebaseUser, setFirebaseUser] = useState(null);
+  const [dbConnectionError, setDbConnectionError] = useState(false);
+  
+  const [beneficiaries, setBeneficiaries] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [formData, setFormData] = useState({ name: '', phone: '', targetAssoc: 'جمعية سكني الجميل' });
+  const [notification, setNotification] = useState('');
+
+  // تهيئة تسجيل الدخول الآمن للسحابة
+  useEffect(() => {
+    const initAuth = async () => {
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
         }
-    </script>
+      } catch (error) {
+        console.error("Auth Error:", error);
+        setDbConnectionError(true);
+      }
+    };
+    initAuth();
 
-    <style>
-        body { font-family: 'Tajawal', 'Cairo', sans-serif; background-color: #f9fafb; display: flex; flex-direction: column; min-height: 100vh; }
-        .tab-active-beneficiary { background-color: white; color: #1f2937; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .tab-active-employee { background-color: white; color: #1f2937; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .tab-inactive { color: #6b7280; }
-        .hide { display: none !important; }
-        
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #f58220; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        #modalFileViewer iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 0.5rem;
-        }
-    </style>
-</head>
-<body class="bg-gray-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDBMOCA4Wk04IDBMMCA4WiIgc3Ryb2tlPSIjZjNmNGY2IiBzdHJva2Utd2lkdGg9IjEiPjwvcGF0aD4KPC9zdmc+')] bg-repeat">
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setFirebaseUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
 
-    <!-- رسائل التنبيه -->
-    <div id="alertBanner" class="hide fixed top-5 left-1/2 transform -translate-x-1/2 z-50 bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded-lg shadow-lg flex items-center transition-all">
-        <i class="fas fa-exclamation-circle ml-2"></i>
-        <span id="alertMessage">رسالة الخطأ</span>
-        <button onclick="hideAlert()" class="mr-4 text-red-500 hover:text-red-800"><i class="fas fa-times"></i></button>
-    </div>
+  // جلب البيانات ومزامنتها على جميع الأجهزة
+  useEffect(() => {
+    if (!firebaseUser || !isUiAuthenticated) return;
 
-    <!-- نافذة عرض الملفات وتنزيلها (Modal) -->
-    <div id="fileViewerModal" class="hide fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col h-[90vh]">
-            <div class="p-4 border-b flex justify-between items-center bg-gray-50">
-                <div class="flex items-center">
-                    <i class="fas fa-file-alt text-brand-orange text-xl ml-3"></i>
-                    <div>
-                        <h3 class="font-bold text-gray-800 text-lg line-clamp-1" id="viewingFileName">اسم الملف</h3>
-                        <p class="text-xs text-gray-500" id="viewingFileType">نوع الملف</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <a id="btnDownloadFile" href="#" download class="flex items-center px-4 py-2 bg-brand-green text-white text-sm font-bold rounded-lg hover:bg-green-600 transition-colors">
-                        <i class="fas fa-download ml-2"></i> تنزيل
-                    </a>
-                    <button onclick="closeFileViewer()" class="text-gray-500 hover:text-red-500 bg-gray-200 hover:bg-red-100 w-10 h-10 rounded-full flex items-center justify-center transition-colors">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
+    setIsLoading(true);
+    const dataRef = collection(db, 'artifacts', appId, 'public', 'data', 'beneficiaries');
+    const q = query(dataRef);
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      data.sort((a, b) => b.createdAt - a.createdAt);
+      setBeneficiaries(data);
+      setIsLoading(false);
+      setDbConnectionError(false);
+    }, (error) => {
+      console.error("Firestore error:", error);
+      setDbConnectionError(true);
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [firebaseUser, isUiAuthenticated]);
+
+  const showNotification = (msg) => {
+    setNotification(msg);
+    setTimeout(() => setNotification(''), 3000);
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (loginUsername.toLowerCase() === 'admin' && loginPassword === 'binaa2024') {
+      setIsUiAuthenticated(true);
+      setLoginError('');
+    } else {
+      setLoginError('اسم المستخدم أو كلمة المرور غير صحيحة');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsUiAuthenticated(false);
+    setLoginUsername('');
+    setLoginPassword('');
+  };
+
+  const formatPhoneNumber = (phone) => {
+    let cleaned = phone.replace(/\D/g, ''); 
+    if (cleaned.startsWith('966')) return cleaned;
+    else if (cleaned.startsWith('05')) return '966' + cleaned.substring(1);
+    else if (cleaned.startsWith('5')) return '966' + cleaned;
+    return cleaned;
+  };
+
+  const generateMessage = (name, target) => {
+    return `السلام عليكم ورحمة الله وبركاته،
+
+نفيدكم بأنه سبق استلام ملفكم لدى جمعية بناء وتنمية مساكن، وقد تم نقل ملفكم إلى ${target} لاستكمال إجراءات الطلب ومتابعته من قبلهم.
+
+لأي استفسار، نأمل التواصل مع الجمعية المذكورة مباشرة.
+
+شاكرين لكم تعاونكم، مع خالص تمنياتنا بالتوفيق.`;
+  };
+
+  const handleAddBeneficiary = async (e) => {
+    e.preventDefault();
+    if (!formData.name || !formData.phone || !formData.targetAssoc || !firebaseUser) return;
+
+    try {
+      const dataRef = collection(db, 'artifacts', appId, 'public', 'data', 'beneficiaries');
+      await addDoc(dataRef, {
+        name: formData.name,
+        phone: formData.phone, 
+        targetAssoc: formData.targetAssoc,
+        status: 'pending',
+        createdAt: Date.now()
+      });
+      setFormData({ name: '', phone: '', targetAssoc: 'جمعية سكني الجميل' });
+      showNotification('تم إضافة المستفيد بنجاح للحفظ السحابي');
+    } catch (error) {
+      console.error("Error adding doc:", error);
+      showNotification('حدث خطأ أثناء الإضافة');
+    }
+  };
+
+  const handleSendWhatsApp = async (beneficiary) => {
+    if (!firebaseUser) return;
+
+    const formattedPhone = formatPhoneNumber(beneficiary.phone);
+    const message = encodeURIComponent(generateMessage(beneficiary.name, beneficiary.targetAssoc));
+    
+    // فتح الواتساب
+    window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank');
+
+    // تحديث الحالة في قاعدة البيانات لتظهر عند جميع الأجهزة
+    try {
+      const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'beneficiaries', beneficiary.id);
+      await updateDoc(docRef, {
+        status: 'sent',
+        sentAt: Date.now()
+      });
+    } catch (error) {
+      console.error("Error updating doc:", error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!firebaseUser) return;
+    if (window.confirm('هل أنت متأكد من حذف هذا المستفيد من قاعدة البيانات بشكل نهائي؟')) {
+      try {
+        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'beneficiaries', id);
+        await deleteDoc(docRef);
+        showNotification('تم الحذف بنجاح');
+      } catch (error) {
+        console.error("Error deleting doc:", error);
+      }
+    }
+  };
+
+  // واجهة تسجيل الدخول
+  if (!isUiAuthenticated) {
+    return (
+      <div dir="rtl" className="min-h-screen flex items-center justify-center bg-gray-50 font-sans p-4">
+        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border-t-4" style={{ borderColor: BRAND.orange }}>
+          <div className="flex flex-col items-center mb-8">
+            <BrandLogo className="w-28 h-28 mb-2" />
+            <h1 className="text-2xl font-bold text-gray-800 text-center">جمعية بناء وتنمية</h1>
+            <p className="text-sm mt-1 font-medium" style={{ color: BRAND.green }}>النظام السحابي لإشعارات المستفيدين</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-5">
+            {loginError && (
+              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center flex items-center justify-center">
+                <AlertCircle className="w-4 h-4 ml-2" />
+                {loginError}
+              </div>
+            )}
+            
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">اسم المستخدم</label>
+              <input 
+                type="text" 
+                value={loginUsername}
+                onChange={(e) => setLoginUsername(e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:outline-none transition-all"
+                style={{ focusRing: BRAND.orange }}
+                placeholder="أدخل اسم المستخدم"
+                required
+                dir="ltr"
+              />
             </div>
-            <div class="flex-1 bg-gray-200 flex flex-col items-center justify-center p-4 overflow-hidden relative">
-                <div id="modalContentContainer" class="w-full h-full flex items-center justify-center bg-white rounded-lg shadow-inner">
-                    <!-- سيتم تعبئة الصور أو ملفات PDF هنا -->
-                </div>
+            
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">كلمة المرور</label>
+              <input 
+                type="password" 
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:outline-none transition-all"
+                placeholder="••••••••"
+                required
+                dir="ltr"
+              />
             </div>
+
+            <button 
+              type="submit"
+              className="w-full text-white font-bold py-3 rounded-lg transition-all hover:opacity-90 flex items-center justify-center"
+              style={{ backgroundColor: BRAND.orange }}
+            >
+              <ShieldCheck className="w-5 h-5 ml-2" />
+              دخول للنظام
+            </button>
+          </form>
+          
+          <div className="mt-8 text-center text-xs text-gray-400">
+            بياناتك محفوظة سحابياً لتتمكن من إدارتها من أي جهاز
+          </div>
         </div>
-    </div>
+      </div>
+    );
+  }
 
-    <!-- شريط الرأس -->
-    <header id="appHeader" class="hide bg-white shadow-md border-b relative z-10 border-brand-green">
-        <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="header-logo"></div>
-                <div>
-                    <h1 class="font-black text-xl text-gray-800">جمعية بناء وتنمية</h1>
-                    <p id="headerPortalType" class="text-xs font-bold text-gray-500">بوابة الخدمات الإلكترونية</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-4 sm:gap-6">
-                <div class="hidden sm:flex items-center gap-3 text-sm text-gray-700 bg-gray-50 px-4 py-2 rounded-full border border-gray-200 shadow-inner">
-                    <i class="fas fa-user text-gray-400"></i>
-                    <span>مرحباً، <strong id="headerUserName" class="text-brand-green">المستخدم</strong></span>
-                    <span id="headerUserRole" class="text-xs px-3 py-1 rounded-full font-bold text-white shadow-sm bg-brand-green">مستفيد</span>
-                </div>
-                <button onclick="handleLogout()" class="flex items-center text-gray-500 hover:text-red-600 font-bold transition-colors bg-white hover:bg-red-50 px-3 sm:px-4 py-2 rounded-lg border border-transparent hover:border-red-100">
-                    <i class="fas fa-sign-out-alt ml-1 sm:ml-2"></i> <span class="hidden sm:inline">خروج</span>
-                </button>
-            </div>
+  const stats = {
+    total: beneficiaries.length,
+    sent: beneficiaries.filter(b => b.status === 'sent').length,
+    pending: beneficiaries.filter(b => b.status === 'pending').length,
+  };
+
+  return (
+    <div dir="rtl" className="min-h-screen bg-gray-50 font-sans text-gray-800 pb-12">
+      
+      {notification && (
+        <div className="fixed bottom-4 left-4 right-4 md:right-auto md:w-80 bg-gray-800 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center z-50 animate-bounce">
+          <CheckCircle className="w-5 h-5 ml-3 text-green-400" />
+          {notification}
         </div>
-    </header>
+      )}
 
-    <!-- المحتوى الرئيسي -->
-    <main class="flex-1 w-full mx-auto flex flex-col" id="mainContainer">
+      <header className="bg-white shadow-sm border-b" style={{ borderColor: BRAND.orange, borderBottomWidth: '4px' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-4 space-x-reverse">
+            <BrandLogo className="w-16 h-16" />
+            <div>
+              <h1 className="text-xl font-bold" style={{ color: BRAND.gray }}>بوابة إشعار النقل</h1>
+              <p className="text-sm font-semibold flex items-center mt-1" style={{ color: BRAND.green }}>
+                جمعية بناء وتنمية مساكن بمنطقة جازان
+                {!dbConnectionError && <span className="mr-2 flex h-2 w-2 relative"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span>}
+              </p>
+            </div>
+          </div>
+          
+          <button 
+            onClick={handleLogout}
+            className="flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+          >
+            <LogOut className="w-4 h-4 ml-2" />
+            تسجيل خروج
+          </button>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <!-- === شاشات الدخول والتسجيل === -->
-        <section id="authView" class="flex-1 flex items-center justify-center p-4">
-            <div id="authBox" class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border-t-8 border-brand-green relative overflow-hidden transition-colors duration-300">
-                
-                <div id="authInitializing" class="py-10 flex flex-col items-center justify-center">
-                    <div class="loader mb-4"></div>
-                    <p class="text-gray-500 font-medium">جاري التحقق من الحساب...</p>
-                </div>
+        {dbConnectionError && (
+          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center">
+            <AlertCircle className="w-5 h-5 ml-2" />
+            تنبيه: أنت الآن تستخدم الموقع على GitHub دون وضع بيانات الـ Firebase. يرجى مراجعة الكود وإضافة مفاتيح قاعدة البيانات ليتم حفظ البيانات.
+          </div>
+        )}
 
-                <div id="authContent" class="hide">
-                    <div class="flex flex-col items-center mb-6">
-                        <div class="auth-logo"></div>
-                        <h1 class="text-2xl font-bold mt-4 text-gray-800">جمعية بناء وتنمية</h1>
-                        <p class="text-gray-500 text-sm mt-1">بوابة الخدمات الإلكترونية</p>
-                    </div>
-
-                    <div id="loginTabsContainer" class="flex mb-6 bg-gray-100 p-1 rounded-lg">
-                        <button id="tabBeneficiary" onclick="switchLoginTab('beneficiary')" class="flex-1 py-2 text-sm font-bold rounded-md transition-all tab-active-beneficiary">
-                            <i class="fas fa-users text-brand-green ml-1"></i> بوابة المستفيدين
-                        </button>
-                        <button id="tabEmployee" onclick="switchLoginTab('employee')" class="flex-1 py-2 text-sm font-bold rounded-md transition-all tab-inactive">
-                            <i class="fas fa-briefcase ml-1" id="iconEmployeeTab"></i> بوابة الموظفين
-                        </button>
-                    </div>
-
-                    <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">البريد الإلكتروني</label>
-                            <div class="relative">
-                                <i class="fas fa-envelope absolute right-3 top-4 text-gray-400"></i>
-                                <input id="loginEmail" type="email" required class="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:outline-none bg-gray-50 focus:bg-white transition-colors" placeholder="example@domain.com">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">كلمة المرور</label>
-                            <div class="relative">
-                                <i class="fas fa-lock absolute right-3 top-4 text-gray-400"></i>
-                                <input id="loginPassword" type="password" required class="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:outline-none bg-gray-50 focus:bg-white transition-colors" placeholder="••••••••">
-                            </div>
-                        </div>
-                        <button id="btnLoginSubmit" type="submit" class="w-full text-white font-bold py-3.5 rounded-lg transition-transform active:scale-95 shadow-md bg-brand-green">
-                            تسجيل الدخول
-                        </button>
-                        
-                        <p id="registerPrompt" class="text-center text-sm text-gray-600 mt-4 pt-4 border-t">
-                            ليس لديك حساب؟ <button type="button" onclick="showRegisterForm()" class="text-brand-green font-bold hover:underline">إنشاء حساب جديد</button>
-                        </p>
-                    </form>
-
-                    <form id="registerForm" onsubmit="handleRegister(event)" class="hide space-y-4">
-                        <h3 class="text-center font-bold text-brand-green mb-4 border-b pb-2">تسجيل مستفيد جديد</h3>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">الاسم الرباعي</label>
-                            <div class="relative">
-                                <i class="fas fa-user absolute right-3 top-3 text-gray-400"></i>
-                                <input id="regName" type="text" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:outline-none focus:ring-brand-green" placeholder="الاسم الكامل">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">رقم الجوال</label>
-                            <div class="relative">
-                                <i class="fas fa-phone absolute right-3 top-3 text-gray-400"></i>
-                                <input id="regPhone" type="tel" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:outline-none focus:ring-brand-green" placeholder="05XXXXXXXX">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
-                            <div class="relative">
-                                <i class="fas fa-envelope absolute right-3 top-3 text-gray-400"></i>
-                                <input id="regEmail" type="email" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:outline-none focus:ring-brand-green" placeholder="example@domain.com">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور</label>
-                            <div class="relative">
-                                <i class="fas fa-lock absolute right-3 top-3 text-gray-400"></i>
-                                <input id="regPassword" type="password" required class="w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:outline-none focus:ring-brand-green" placeholder="••••••••">
-                            </div>
-                        </div>
-                        <button type="submit" class="w-full text-white font-bold py-3 rounded-lg transition-transform active:scale-95 shadow-md mt-2 bg-brand-green">
-                            إنشاء الحساب الدائم
-                        </button>
-                        <button type="button" onclick="showLoginForm()" class="w-full py-2 text-sm text-gray-500 hover:text-gray-700 font-medium">
-                            العودة لتسجيل الدخول
-                        </button>
-                    </form>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white rounded-xl shadow-sm p-6 border-r-4" style={{ borderColor: BRAND.gray }}>
+            <div className="flex items-center space-x-4 space-x-reverse">
+              <div className="p-3 rounded-lg" style={{ backgroundColor: `${BRAND.gray}20` }}>
+                <FileText className="w-6 h-6" style={{ color: BRAND.gray }} />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500 font-bold">إجمالي المستفيدين</p>
+                <p className="text-3xl font-bold text-gray-900 mt-1">{stats.total}</p>
+              </div>
             </div>
-        </section>
-
-        <!-- === لوحة تحكم المستفيد === -->
-        <section id="beneficiaryView" class="hide w-full max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 gap-4">
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800">طلبات المستفيد</h2>
-                    <p class="text-sm text-gray-500 mt-1">تابع حالة طلباتك أو قم برفع أوراق طلب جديد</p>
-                </div>
-                <button id="btnToggleNewRequest" onclick="toggleNewRequestForm()" class="flex items-center px-4 sm:px-6 py-2 sm:py-3 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all bg-brand-green w-full sm:w-auto justify-center">
-                    <i id="iconToggleNewReq" class="fas fa-plus ml-2"></i>
-                    <span id="textToggleNewReq">تقديم طلب جديد</span>
-                </button>
+          </div>
+          
+          <div className="bg-white rounded-xl shadow-sm p-6 border-r-4" style={{ borderColor: BRAND.green }}>
+            <div className="flex items-center space-x-4 space-x-reverse">
+              <div className="p-3 rounded-lg" style={{ backgroundColor: `${BRAND.green}20` }}>
+                <CheckCircle className="w-6 h-6" style={{ color: BRAND.green }} />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500 font-bold">تم إرسال الواتساب</p>
+                <p className="text-3xl font-bold text-gray-900 mt-1">{stats.sent}</p>
+              </div>
             </div>
+          </div>
 
-            <!-- نموذج الطلب -->
-            <div id="newRequestFormContainer" class="hide bg-white p-4 sm:p-8 rounded-xl shadow-sm border border-gray-100">
-                <h3 class="text-xl font-bold mb-6 flex items-center border-r-4 pr-3 border-brand-green text-gray-700">نموذج طلب مساعدة جديد</h3>
-                <form onsubmit="submitNewRequest(event)" class="space-y-8">
-                    <div>
-                        <label class="block font-bold text-gray-700 mb-4 text-lg">نوع الطلب <span class="text-red-500">*</span></label>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <label class="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-all req-type-label">
-                                <input type="radio" name="reqType" value="بناء" required class="sr-only req-type-input">
-                                <i class="fas fa-building text-4xl mb-3 text-gray-400 req-type-icon"></i>
-                                <span class="font-bold text-gray-700 text-lg">بناء</span>
-                            </label>
-                            <label class="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-all req-type-label">
-                                <input type="radio" name="reqType" value="إكمال بناء" class="sr-only req-type-input">
-                                <i class="fas fa-home text-4xl mb-3 text-gray-400 req-type-icon"></i>
-                                <span class="font-bold text-gray-700 text-lg">إكمال بناء</span>
-                            </label>
-                            <label class="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-all req-type-label">
-                                <input type="radio" name="reqType" value="ترميم" class="sr-only req-type-input">
-                                <i class="fas fa-tools text-4xl mb-3 text-gray-400 req-type-icon"></i>
-                                <span class="font-bold text-gray-700 text-lg">ترميم</span>
-                            </label>
-                        </div>
+          <div className="bg-white rounded-xl shadow-sm p-6 border-r-4" style={{ borderColor: BRAND.orange }}>
+            <div className="flex items-center space-x-4 space-x-reverse">
+              <div className="p-3 rounded-lg" style={{ backgroundColor: `${BRAND.orange}20` }}>
+                <MessageCircle className="w-6 h-6" style={{ color: BRAND.orange }} />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500 font-bold">بانتظار الإرسال</p>
+                <p className="text-3xl font-bold text-gray-900 mt-1">{stats.pending}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden sticky top-6">
+              <div className="px-6 py-5 border-b border-gray-100" style={{ backgroundColor: `${BRAND.green}10` }}>
+                <h2 className="text-lg font-bold flex items-center" style={{ color: BRAND.green }}>
+                  <UserPlus className="w-5 h-5 ml-2" />
+                  إضافة مستفيد للنقل
+                </h2>
+              </div>
+              <div className="p-6">
+                <form onSubmit={handleAddBeneficiary} className="space-y-5">
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">اسم المستفيد</label>
+                    <div className="relative">
+                      <input 
+                        type="text" 
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        className="w-full pl-3 pr-10 py-2.5 border border-gray-200 rounded-lg focus:ring-2 outline-none transition-all"
+                        placeholder="الاسم الرباعي"
+                      />
+                      <Users className="w-5 h-5 text-gray-400 absolute top-3 right-3" />
                     </div>
+                  </div>
 
-                    <div>
-                        <label class="block font-bold text-gray-700 mb-2 text-lg">رفع الأوراق والمستندات <span class="text-red-500">*</span></label>
-                        <p class="text-sm text-gray-500 mb-4">الرجاء إرفاق كافة الأوراق المطلوبة (صك الملكية، الهوية، التقرير الهندسي).</p>
-                        
-                        <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 sm:p-10 text-center bg-gray-50 hover:bg-gray-100 transition-colors">
-                            <!-- الملاحظة: تمت إزالة required من هنا لمنع المتصفح من حجب الإرسال الصامت -->
-                            <input type="file" id="fileUpload" multiple accept="image/*,application/pdf" class="hidden" onchange="handleFileSelection(event)">
-                            <label for="fileUpload" class="cursor-pointer flex flex-col items-center w-full h-full">
-                                <div class="p-4 bg-white rounded-full shadow-md mb-4 border">
-                                    <i class="fas fa-cloud-upload-alt text-2xl text-brand-green"></i>
-                                </div>
-                                <span class="font-bold text-gray-700 text-lg">اضغط هنا لاختيار الملفات والصور</span>
-                                <span class="text-sm text-gray-400 mt-2">صيغ مدعومة: PDF, JPG, PNG (سيتم ضغط الصور تلقائياً)</span>
-                            </label>
-                        </div>
-                        
-                        <div id="fileUploadProgress" class="hide mt-4 text-center text-sm font-bold text-brand-orange">
-                            <i class="fas fa-spinner fa-spin mr-2"></i> جاري معالجة الملفات...
-                        </div>
-
-                        <!-- قائمة الملفات المرفوعة -->
-                        <div id="selectedFilesContainer" class="hide mt-6 bg-green-50 p-4 rounded-xl border border-green-100">
-                            <h4 class="text-sm font-bold text-green-800 mb-3">الملفات المرفقة (جاهزة للرفع):</h4>
-                            <ul id="selectedFilesList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></ul>
-                        </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">رقم الجوال (حقيقي)</label>
+                    <div className="relative">
+                      <input 
+                        type="tel" 
+                        required
+                        value={formData.phone}
+                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                        className="w-full pl-3 pr-10 py-2.5 border border-gray-200 rounded-lg focus:ring-2 outline-none transition-all text-left"
+                        placeholder="05XXXXXXXX"
+                        dir="ltr"
+                      />
+                      <Phone className="w-5 h-5 text-gray-400 absolute top-3 right-3" />
                     </div>
+                  </div>
 
-                    <div class="pt-6 border-t border-gray-100">
-                        <button id="btnSubmitRequest" type="submit" class="w-full py-4 text-white font-bold text-lg rounded-xl shadow-lg hover:opacity-90 transition-opacity flex justify-center items-center bg-brand-green">
-                            <i class="fas fa-check-circle ml-2"></i>
-                            إرسال الطلب واعتماده
-                        </button>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">اسم الجمعية المنقول إليها</label>
+                    <div className="relative">
+                      <input 
+                        type="text" 
+                        required
+                        value={formData.targetAssoc}
+                        onChange={(e) => setFormData({...formData, targetAssoc: e.target.value})}
+                        className="w-full pl-3 pr-10 py-2.5 border border-gray-200 rounded-lg focus:ring-2 outline-none transition-all"
+                        placeholder="الجمعية التي سيتم النقل إليها"
+                      />
+                      <Building className="w-5 h-5 text-gray-400 absolute top-3 right-3" />
                     </div>
+                  </div>
+
+                  <button 
+                    type="submit"
+                    className="w-full text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center mt-6 shadow-md hover:opacity-90"
+                    style={{ backgroundColor: BRAND.green }}
+                  >
+                    <UserPlus className="w-5 h-5 ml-2" />
+                    حفظ سحابياً
+                  </button>
                 </form>
+              </div>
             </div>
+          </div>
 
-            <!-- جدول الطلبات -->
-            <div id="myRequestsContainer" class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
-                <div id="emptyRequests" class="hide p-16 text-center text-gray-500">
-                    <div class="bg-gray-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border">
-                        <i class="fas fa-file-alt text-4xl text-gray-300"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-700 mb-2">لا توجد طلبات سابقة</h3>
-                    <p>قم بتقديم طلب جديد لتبدأ الإجراءات مع الجمعية.</p>
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                <h2 className="text-lg font-bold text-gray-800">قائمة المستفيدين المزامنة</h2>
+                <div className="text-xs font-semibold text-gray-500 bg-white px-3 py-1 rounded-full border">
+                  يظهر في جميع الأجهزة
                 </div>
-
-                <div id="requestsTableContainer" class="overflow-x-auto hide">
-                    <table class="w-full text-right">
-                        <thead class="bg-gray-50 text-gray-700 border-b border-gray-200">
-                            <tr>
-                                <th class="p-4 sm:p-5 font-bold whitespace-nowrap">رقم الطلب</th>
-                                <th class="p-4 sm:p-5 font-bold whitespace-nowrap">نوع الطلب</th>
-                                <th class="p-4 sm:p-5 font-bold whitespace-nowrap">تاريخ التقديم</th>
-                                <th class="p-4 sm:p-5 font-bold whitespace-nowrap">حالة الطلب</th>
-                            </tr>
-                        </thead>
-                        <tbody id="myRequestsTableBody" class="divide-y divide-gray-100"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- === لوحة تحكم الموظف === -->
-        <section id="employeeView" class="hide w-full max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-2">
-                <div class="border-r-4 pr-4 border-brand-orange">
-                    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">بوابة الموظفين</h2>
-                    <p class="text-gray-500 mt-2 font-medium">لوحة التحكم والمراجعة لطلبات المستفيدين</p>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8">
-                <div class="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs sm:text-sm text-gray-500 font-bold mb-1">إجمالي الطلبات</p>
-                        <h3 id="statTotal" class="text-2xl sm:text-3xl font-black text-gray-800">0</h3>
-                    </div>
-                    <div class="p-2 sm:p-3 bg-blue-50 rounded-lg text-blue-500"><i class="fas fa-layer-group text-xl sm:text-2xl"></i></div>
-                </div>
-                <div class="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs sm:text-sm text-yellow-600 font-bold mb-1">قيد المراجعة</p>
-                        <h3 id="statPending" class="text-2xl sm:text-3xl font-black text-yellow-600">0</h3>
-                    </div>
-                    <div class="p-2 sm:p-3 bg-yellow-50 rounded-lg text-yellow-500"><i class="fas fa-clock text-xl sm:text-2xl"></i></div>
-                </div>
-                <div class="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs sm:text-sm text-green-600 font-bold mb-1">المقبولة</p>
-                        <h3 id="statAccepted" class="text-2xl sm:text-3xl font-black text-green-600">0</h3>
-                    </div>
-                    <div class="p-2 sm:p-3 bg-green-50 rounded-lg text-green-500"><i class="fas fa-check-circle text-xl sm:text-2xl"></i></div>
-                </div>
-                <div class="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs sm:text-sm text-red-600 font-bold mb-1">المرفوضة</p>
-                        <h3 id="statRejected" class="text-2xl sm:text-3xl font-black text-red-600">0</h3>
-                    </div>
-                    <div class="p-2 sm:p-3 bg-red-50 rounded-lg text-red-500"><i class="fas fa-times-circle text-xl sm:text-2xl"></i></div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
-                <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b flex justify-between items-center">
-                    <h3 class="font-bold text-lg text-gray-700">قائمة الطلبات الواردة</h3>
-                    <span class="bg-white border px-3 py-1 rounded text-xs font-bold text-gray-500">أحدث الطلبات أولاً</span>
-                </div>
-                
-                <div id="emptyEmployeeRequests" class="hide p-16 flex flex-col items-center justify-center text-gray-500">
-                    <i class="fas fa-folder-open text-6xl text-gray-200 mb-4"></i>
-                    <p class="font-bold text-lg">لا توجد طلبات مقدمة للمراجعة حالياً.</p>
-                </div>
-
-                <div id="employeeTableContainer" class="overflow-x-auto hide">
-                    <table class="w-full text-right whitespace-nowrap">
-                        <thead class="bg-white text-gray-500 border-b-2 border-gray-100">
-                            <tr>
-                                <th class="p-4 sm:p-5 font-bold">رقم الطلب</th>
-                                <th class="p-4 sm:p-5 font-bold">بيانات المستفيد</th>
-                                <th class="p-4 sm:p-5 font-bold">نوع الطلب</th>
-                                <th class="p-4 sm:p-5 font-bold">المرفقات والصور (اضغط للعرض)</th>
-                                <th class="p-4 sm:p-5 font-bold">الحالة الحالية</th>
-                                <th class="p-4 sm:p-5 font-bold text-center">الإجراء</th>
-                            </tr>
-                        </thead>
-                        <tbody id="employeeRequestsTableBody" class="divide-y divide-gray-100"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-    </main>
-    
-    <footer class="bg-white border-t mt-auto py-6">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 font-medium gap-4">
-            <div class="flex items-center gap-3">
-                <div class="footer-logo"></div>
-                <p>جميع الحقوق محفوظة &copy; جمعية بناء وتنمية مساكن بمنطقة جازان</p>
-            </div>
-            <div class="flex gap-6 sm:gap-8 flex-wrap justify-center">
-                <span class="flex items-center hover:text-gray-800 cursor-pointer transition-colors" dir="ltr"><i class="fas fa-phone mr-2 text-gray-400"></i> 0551056560</span>
-                <span class="flex items-center hover:text-gray-800 cursor-pointer transition-colors"><i class="fas fa-globe ml-2 text-gray-400"></i> www.bena-jazan.sa</span>
-            </div>
-        </div>
-    </footer>
-
-    <!-- سكربت المنطق وربط Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'bena-html-app';
-        
-        let app, auth, db;
-        if (firebaseConfig) {
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-        }
-
-        let currentTab = 'beneficiary'; 
-        let currentUser = null; 
-        let isShowingNewForm = false;
-        let uploadedFilesArray = []; 
-        let allUsers = [];
-        let allRequests = [];
-
-        const el = (id) => document.getElementById(id);
-        const hide = (e) => { if(e) e.classList.add('hide'); }
-        const show = (e) => { if(e) e.classList.remove('hide'); }
-        
-        window.showAlert = (msg) => {
-            el('alertMessage').innerText = msg;
-            show(el('alertBanner'));
-            setTimeout(() => hide(el('alertBanner')), 5000);
-        }
-        window.hideAlert = () => hide(el('alertBanner'));
-
-        const logoSVG = `
-        <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 20 40 L 40 45 L 40 80 L 20 80 Z" fill="#9b9b9b" />
-            <path d="M 60 45 L 80 40 L 80 80 L 60 80 Z" fill="#9b9b9b" />
-            <path d="M 35 20 L 50 10 L 65 20 L 65 80 L 35 80 Z" fill="#f58220" />
-            <path d="M 10 50 Q 30 90 50 100 Q 70 90 90 50 Q 75 75 50 85 Q 25 75 10 50 Z" fill="#8dc63f" />
-        </svg>`;
-        document.querySelectorAll('.header-logo, .auth-logo, .footer-logo').forEach(container => {
-            if(container) container.innerHTML = logoSVG;
-        });
-
-        const getStatusBadgeHtml = (status) => {
-            if(status === 'pending') return `<span class="flex items-center w-max px-3 py-1 text-sm rounded-full bg-yellow-100 text-yellow-700 font-bold border border-yellow-200"><i class="fas fa-clock ml-1"></i> قيد المراجعة</span>`;
-            if(status === 'accepted') return `<span class="flex items-center w-max px-3 py-1 text-sm rounded-full bg-green-100 text-green-700 font-bold border border-green-200"><i class="fas fa-check-circle ml-1"></i> مقبول</span>`;
-            if(status === 'rejected') return `<span class="flex items-center w-max px-3 py-1 text-sm rounded-full bg-red-100 text-red-700 font-bold border border-red-200"><i class="fas fa-times-circle ml-1"></i> مرفوض</span>`;
-            return '';
-        };
-
-        window.switchLoginTab = (tab) => {
-            currentTab = tab;
-            hideAlert();
-            if(tab === 'beneficiary') {
-                el('tabBeneficiary').className = 'flex-1 py-2 text-sm font-bold rounded-md transition-all tab-active-beneficiary';
-                el('tabEmployee').className = 'flex-1 py-2 text-sm font-bold rounded-md transition-all tab-inactive';
-                el('authBox').style.borderColor = '#8dc63f';
-                el('btnLoginSubmit').style.backgroundColor = '#8dc63f';
-                el('btnLoginSubmit').innerText = 'تسجيل الدخول';
-                el('loginEmail').style.setProperty('--tw-ring-color', '#8dc63f');
-                el('loginPassword').style.setProperty('--tw-ring-color', '#8dc63f');
-                show(el('registerPrompt'));
-            } else {
-                el('tabEmployee').className = 'flex-1 py-2 text-sm font-bold rounded-md transition-all tab-active-employee';
-                el('iconEmployeeTab').style.color = '#f58220';
-                el('tabBeneficiary').className = 'flex-1 py-2 text-sm font-bold rounded-md transition-all tab-inactive';
-                el('authBox').style.borderColor = '#f58220';
-                el('btnLoginSubmit').style.backgroundColor = '#f58220';
-                el('btnLoginSubmit').innerText = 'دخول الموظف';
-                el('loginEmail').style.setProperty('--tw-ring-color', '#f58220');
-                el('loginPassword').style.setProperty('--tw-ring-color', '#f58220');
-                hide(el('registerPrompt'));
-                showLoginForm();
-            }
-        };
-
-        window.showLoginForm = () => { hideAlert(); hide(el('registerForm')); show(el('loginForm')); };
-        window.showRegisterForm = () => { hideAlert(); hide(el('loginForm')); show(el('registerForm')); };
-
-        const updateMainLayout = () => {
-            hide(el('authView'));
-            hide(el('beneficiaryView'));
-            hide(el('employeeView'));
-            show(el('appHeader'));
-
-            el('headerUserName').innerText = currentUser.name;
-            el('headerUserName').className = currentUser.role === 'employee' ? 'text-brand-orange' : 'text-brand-green';
-            el('appHeader').style.borderColor = currentUser.role === 'employee' ? '#f58220' : '#8dc63f';
-            
-            let roleBadge = el('headerUserRole');
-            if(currentUser.role === 'employee') {
-                roleBadge.innerText = 'موظف / مشرف';
-                roleBadge.className = 'text-xs px-3 py-1 rounded-full font-bold text-white shadow-sm bg-brand-orange';
-                el('headerPortalType').innerText = 'بوابة الموظفين والمشرفين';
-                el('headerPortalType').className = 'text-xs font-bold text-brand-orange';
-                show(el('employeeView'));
-                renderEmployeeDashboard();
-            } else {
-                roleBadge.innerText = 'مستفيد';
-                roleBadge.className = 'text-xs px-3 py-1 rounded-full font-bold text-white shadow-sm bg-brand-green';
-                el('headerPortalType').innerText = 'بوابة الخدمات الإلكترونية';
-                el('headerPortalType').className = 'text-xs font-bold text-gray-500';
-                show(el('beneficiaryView'));
-                renderBeneficiaryDashboard();
-            }
-        };
-
-        window.toggleNewRequestForm = () => {
-            isShowingNewForm = !isShowingNewForm;
-            if(isShowingNewForm) {
-                show(el('newRequestFormContainer'));
-                hide(el('myRequestsContainer'));
-                el('iconToggleNewReq').className = 'fas fa-chevron-right ml-2';
-                el('textToggleNewReq').innerText = 'العودة للقائمة';
-            } else {
-                hide(el('newRequestFormContainer'));
-                show(el('myRequestsContainer'));
-                el('iconToggleNewReq').className = 'fas fa-plus ml-2';
-                el('textToggleNewReq').innerText = 'تقديم طلب جديد';
-                uploadedFilesArray = []; 
-                renderSelectedFiles();
-                el('fileUpload').value = ''; 
-            }
-        };
-
-        document.querySelectorAll('.req-type-input').forEach(input => {
-            input.addEventListener('change', (e) => {
-                document.querySelectorAll('.req-type-label').forEach(lbl => {
-                    lbl.classList.remove('border-brand-green', 'bg-green-50');
-                    lbl.classList.add('border-gray-200');
-                    lbl.querySelector('.req-type-icon').classList.remove('text-brand-green');
-                    lbl.querySelector('.req-type-icon').classList.add('text-gray-400');
-                });
-                const selectedLabel = e.target.closest('label');
-                selectedLabel.classList.remove('border-gray-200');
-                selectedLabel.classList.add('border-brand-green', 'bg-green-50');
-                selectedLabel.querySelector('.req-type-icon').classList.remove('text-gray-400');
-                selectedLabel.querySelector('.req-type-icon').classList.add('text-brand-green');
-            });
-        });
-
-        // قراءة الملفات وضغط الصور
-        const processFile = (file) => {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const dataUrl = event.target.result;
-                    if (file.type.startsWith('image/')) {
-                        const img = new Image();
-                        img.src = dataUrl;
-                        img.onload = () => {
-                            const canvas = document.createElement('canvas');
-                            let width = img.width;
-                            let height = img.height;
-                            const max_size = 800; // أقصى حجم
-                            if (width > max_size || height > max_size) {
-                                if (width > height) { height *= max_size / width; width = max_size; } 
-                                else { width *= max_size / height; height = max_size; }
-                            }
-                            canvas.width = width;
-                            canvas.height = height;
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(img, 0, 0, width, height);
-                            // ضغط قوي للصورة لضمان عدم حدوث خطأ عند الحفظ
-                            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.5);
-                            resolve({ name: file.name, type: file.type, data: compressedDataUrl });
-                        };
-                    } else {
-                        if (file.size > 524288) { // أكثر من 500 كيلوبايت يتم رفضه لحماية قاعدة البيانات
-                            reject(`ملف ${file.name} كبير جداً (يجب ألا يتجاوز 500 كيلوبايت).`);
-                        } else {
-                            resolve({ name: file.name, type: file.type, data: dataUrl });
-                        }
-                    }
-                };
-                reader.onerror = error => reject("حدث خطأ أثناء قراءة الملف");
-            });
-        };
-
-        window.handleFileSelection = async (e) => {
-            const files = Array.from(e.target.files);
-            if (files.length === 0) return;
-            show(el('fileUploadProgress'));
-            try {
-                for (let i = 0; i < files.length; i++) {
-                    const processed = await processFile(files[i]);
-                    uploadedFilesArray.push(processed);
-                }
-                renderSelectedFiles();
-            } catch (err) {
-                showAlert(err);
-            }
-            hide(el('fileUploadProgress'));
-            el('fileUpload').value = '';
-        };
-
-        const renderSelectedFiles = () => {
-            const list = el('selectedFilesList');
-            list.innerHTML = '';
-            if(uploadedFilesArray.length > 0) {
-                show(el('selectedFilesContainer'));
-                uploadedFilesArray.forEach((fileObj, i) => {
-                    let icon = fileObj.type.startsWith('image/') ? 'fa-image' : 'fa-file-pdf';
-                    list.innerHTML += `
-                        <li class="flex items-center justify-between text-sm font-medium text-gray-700 bg-white border border-gray-200 p-3 rounded-lg shadow-sm">
-                            <div class="flex items-center overflow-hidden">
-                                <i class="fas ${icon} ml-2 text-brand-green"></i>
-                                <span class="truncate">${fileObj.name}</span>
-                            </div>
-                            <button type="button" onclick="removeFile(${i})" class="text-red-500 hover:bg-red-50 p-1 rounded">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </li>
-                    `;
-                });
-            } else {
-                hide(el('selectedFilesContainer'));
-            }
-        };
-
-        window.removeFile = (index) => {
-            uploadedFilesArray.splice(index, 1);
-            renderSelectedFiles();
-        };
-
-        // عرض وتنزيل المرفقات
-        window.openFileViewer = (docId, fileIndex) => {
-            const req = allRequests.find(r => r.docId === docId);
-            if(!req || !req.files || !req.files[fileIndex]) return;
-            const fileObj = req.files[fileIndex];
-            
-            el('viewingFileName').innerText = fileObj.name;
-            el('viewingFileType').innerText = fileObj.type.startsWith('image/') ? 'مستند مصور' : 'مستند نصي PDF';
-            
-            const downloadBtn = el('btnDownloadFile');
-            downloadBtn.href = fileObj.data;
-            downloadBtn.download = fileObj.name;
-
-            const container = el('modalContentContainer');
-            if(fileObj.type.startsWith('image/')) {
-                container.innerHTML = `<img src="${fileObj.data}" alt="${fileObj.name}" class="max-w-full max-h-full object-contain rounded-lg">`;
-            } else {
-                container.innerHTML = `<iframe src="${fileObj.data}" frameborder="0"></iframe>`;
-            }
-            show(el('fileViewerModal'));
-        };
-
-        window.closeFileViewer = () => {
-            hide(el('fileViewerModal'));
-            el('modalContentContainer').innerHTML = ''; 
-        };
-
-        // تسجيل الدخول مع ربط الجلسة
-        window.handleLogin = async (e) => {
-            e.preventDefault();
-            hideAlert();
-            const email = el('loginEmail').value.trim();
-            const password = el('loginPassword').value.trim();
-
-            if(email === 'admin@bena.sa' && password === 'admin' && currentTab === 'employee') {
-                currentUser = { email: 'admin@bena.sa', name: 'مشرف النظام', role: 'employee' };
-                updateMainLayout();
-                return;
-            }
-
-            const user = allUsers.find(u => u.email === email && u.password === password);
-            if(user) {
-                if (currentTab === 'employee' && user.role !== 'employee') {
-                    showAlert('هذا الحساب لا يملك صلاحيات موظف.');
-                    return;
-                }
-                if (currentTab === 'beneficiary' && user.role === 'employee') {
-                    showAlert('يرجى الدخول عبر بوابة الموظفين.');
-                    return;
-                }
-                
-                currentUser = user;
-                
-                // حفظ الجلسة حتى لا تنمسح عند تحديث الصفحة
-                if(db && auth.currentUser) {
-                    try {
-                        const userDoc = doc(db, 'artifacts', appId, 'public', 'data', 'app_users', user.docId);
-                        await updateDoc(userDoc, { firebaseUid: auth.currentUser.uid });
-                    } catch(err) { console.error(err); }
-                }
-
-                updateMainLayout();
-            } else {
-                showAlert('البريد الإلكتروني أو كلمة المرور غير صحيحة.');
-            }
-        };
-
-        window.handleRegister = async (e) => {
-            e.preventDefault();
-            hideAlert();
-            const email = el('regEmail').value.trim();
-            
-            if (allUsers.find(u => u.email === email)) {
-                showAlert('البريد الإلكتروني مسجل مسبقاً.');
-                return;
-            }
-
-            const newUser = {
-                name: el('regName').value.trim(),
-                email: email,
-                phone: el('regPhone').value.trim(),
-                password: el('regPassword').value,
-                role: 'beneficiary',
-                createdAt: new Date().toISOString(),
-                // ربط الحساب الجديد فوراً بالجلسة الحالية
-                firebaseUid: auth.currentUser ? auth.currentUser.uid : null 
-            };
-
-            show(el('authLoading'));
-            hide(el('registerForm'));
-
-            if(db) {
-                try {
-                    const docRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'app_users'), newUser);
-                    currentUser = { docId: docRef.id, ...newUser };
-                } catch(error) {
-                    showAlert('حدث خطأ أثناء الإنشاء.');
-                }
-            } else {
-                currentUser = { docId: 'temp_id', ...newUser };
-            }
-            hide(el('authLoading'));
-            updateMainLayout();
-        };
-
-        window.handleLogout = async () => {
-            // إزالة الجلسة عند الخروج
-            if (db && currentUser && currentUser.docId && auth.currentUser) {
-                try {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'app_users', currentUser.docId), { firebaseUid: null });
-                } catch(err) {}
-            }
-            currentUser = null;
-            hide(el('appHeader'));
-            hide(el('beneficiaryView'));
-            hide(el('employeeView'));
-            show(el('authView'));
-            el('loginForm').reset();
-            el('registerForm').reset();
-            switchLoginTab('beneficiary');
-        };
-
-        // إرسال الطلبات للسحابة
-        window.submitNewRequest = async (e) => {
-            e.preventDefault();
-            const selectedType = document.querySelector('input[name="reqType"]:checked');
-            if(!selectedType) { showAlert("يرجى اختيار نوع الطلب"); return; }
-            if(uploadedFilesArray.length === 0) { showAlert("يرجى إرفاق المستندات المطلوبة (اضغط على أيقونة الرفع للاختيار)"); return; }
-
-            const requestCode = Math.floor(10000 + Math.random() * 90000).toString();
-            const newRequest = {
-                reqNumber: requestCode,
-                userId: currentUser.email,
-                userName: currentUser.name,
-                type: selectedType.value,
-                status: 'pending',
-                date: new Date().toISOString().split('T')[0],
-                files: uploadedFilesArray 
-            };
-
-            const btn = el('btnSubmitRequest');
-            const originalContent = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i> جاري رفع الأوراق والطلب...';
-            btn.disabled = true;
-
-            if (db) {
-                try {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'requests'), newRequest);
-                } catch(err) {
-                    showAlert("تعذر إرسال الطلب: الملفات المرفقة كبيرة جداً، يرجى تقليل حجمها أو عددها.");
-                    btn.innerHTML = originalContent;
-                    btn.disabled = false;
-                    return; // إيقاف إغلاق النموذج ليتمكن المستخدم من تعديله
-                }
-            }
-            btn.innerHTML = originalContent;
-            btn.disabled = false;
-            toggleNewRequestForm();
-        };
-
-        window.updateRequestStatus = async (docId, newStatus) => {
-            if(!db || !docId) return;
-            try {
-                const reqDoc = doc(db, 'artifacts', appId, 'public', 'data', 'requests', docId);
-                await updateDoc(reqDoc, { status: newStatus });
-            } catch (err) {
-                showAlert("لم نتمكن من تحديث الحالة.");
-            }
-        };
-
-        const renderBeneficiaryDashboard = () => {
-            const myRequests = allRequests.filter(r => r.userId === currentUser.email);
-            const tBody = el('myRequestsTableBody');
-            tBody.innerHTML = '';
-            if(myRequests.length === 0) {
-                show(el('emptyRequests')); hide(el('requestsTableContainer'));
-            } else {
-                hide(el('emptyRequests')); show(el('requestsTableContainer'));
-                myRequests.forEach(req => {
-                    tBody.innerHTML += `
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="p-4 sm:p-5 font-bold text-gray-800 text-lg">#${req.reqNumber}</td>
-                            <td class="p-4 sm:p-5"><span class="bg-gray-100 px-4 py-1.5 rounded-md text-sm text-gray-800 font-bold border">${req.type}</span></td>
-                            <td class="p-4 sm:p-5 text-gray-500 font-medium whitespace-nowrap">${req.date}</td>
-                            <td class="p-4 sm:p-5">${getStatusBadgeHtml(req.status)}</td>
-                        </tr>
-                    `;
-                });
-            }
-        };
-
-        const renderEmployeeDashboard = () => {
-            el('statTotal').innerText = allRequests.length;
-            el('statPending').innerText = allRequests.filter(r => r.status === 'pending').length;
-            el('statAccepted').innerText = allRequests.filter(r => r.status === 'accepted').length;
-            el('statRejected').innerText = allRequests.filter(r => r.status === 'rejected').length;
-
-            const tBody = el('employeeRequestsTableBody');
-            tBody.innerHTML = '';
-
-            if(allRequests.length === 0) {
-                show(el('emptyEmployeeRequests')); hide(el('employeeTableContainer'));
-            } else {
-                hide(el('emptyEmployeeRequests')); show(el('employeeTableContainer'));
-                allRequests.forEach(req => {
-                    let filesHtml = req.files && req.files.length > 0 ? req.files.map((f, idx) => {
-                        let iconClass = f.type.startsWith('image/') ? 'fa-image text-brand-orange' : 'fa-file-pdf text-red-500';
-                        return `
-                        <button onclick="openFileViewer('${req.docId}', ${idx})" class="flex items-center text-xs bg-white hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-md truncate transition-all border shadow-sm group-hover:border-orange-200 w-full mb-2">
-                            <i class="fas ${iconClass} ml-2 flex-shrink-0"></i>
-                            <span class="truncate font-medium">${f.name}</span>
-                        </button>`
-                    }).join('') : '<span class="text-xs text-gray-400">لا توجد مرفقات</span>';
-
-                    let actionsHtml = req.status === 'pending' ? `
-                        <div class="flex gap-2 justify-center">
-                            <button onclick="updateRequestStatus('${req.docId}', 'accepted')" class="flex items-center px-4 py-2 bg-green-500 text-white text-sm font-bold rounded-lg hover:bg-green-600 transition-all shadow hover:shadow-md transform active:scale-95 whitespace-nowrap"><i class="fas fa-check ml-1"></i> قبول</button>
-                            <button onclick="updateRequestStatus('${req.docId}', 'rejected')" class="flex items-center px-4 py-2 bg-red-500 text-white text-sm font-bold rounded-lg hover:bg-red-600 transition-all shadow hover:shadow-md transform active:scale-95 whitespace-nowrap"><i class="fas fa-times ml-1"></i> رفض</button>
-                        </div>` : `<div class="text-center text-gray-400 text-sm font-medium bg-gray-50 py-2 rounded border">تم اتخاذ الإجراء</div>`;
-
-                    tBody.innerHTML += `
-                        <tr class="hover:bg-orange-50/30 transition-colors group border-b border-gray-50">
-                            <td class="p-4 sm:p-5"><span class="font-black text-lg text-brand-orange">#${req.reqNumber}</span><div class="text-xs text-gray-400 mt-1">${req.date}</div></td>
-                            <td class="p-4 sm:p-5"><div class="font-bold text-gray-800 text-base">${req.userName}</div><div class="text-sm text-gray-500 flex items-center mt-1"><i class="fas fa-envelope ml-1"></i> <span dir="ltr">${req.userId}</span></div></td>
-                            <td class="p-4 sm:p-5"><span class="bg-gray-100 px-3 py-1.5 rounded-md text-sm text-gray-800 font-bold border border-gray-200 shadow-sm whitespace-nowrap">${req.type}</span></td>
-                            <td class="p-4 sm:p-5"><div class="flex flex-col max-w-[220px]">${filesHtml}</div></td>
-                            <td class="p-4 sm:p-5">${getStatusBadgeHtml(req.status)}</td>
-                            <td class="p-4 sm:p-5">${actionsHtml}</td>
-                        </tr>
-                    `;
-                });
-            }
-        };
-
-        // اتصال بقاعدة البيانات والتحقق من الجلسة
-        window.addEventListener('DOMContentLoaded', async () => {
-            if(!auth || !db) return;
-            const initAuth = async () => {
-                try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
-                    else await signInAnonymously(auth);
-                } catch(err) { console.error("Auth init error"); }
-            };
-            await initAuth();
-
-            onAuthStateChanged(auth, (user) => {
-                if(!user) return; 
-                
-                const usersRef = collection(db, 'artifacts', appId, 'public', 'data', 'app_users');
-                const reqRef = collection(db, 'artifacts', appId, 'public', 'data', 'requests');
-
-                onSnapshot(usersRef, (snap) => {
-                    allUsers = snap.docs.map(d => ({ docId: d.id, ...d.data() }));
-                    
-                    if (!allUsers.find(u => u.email === 'admin@bena.sa')) {
-                        addDoc(usersRef, { email: 'admin@bena.sa', password: 'admin', name: 'مشرف النظام', phone: '0500000000', role: 'employee' }).catch(()=>{});
-                    }
-
-                    // --- محاولة استعادة الجلسة (الدخول التلقائي عند تحديث الصفحة) ---
-                    if (!currentUser) {
-                        const matchedUser = allUsers.find(u => u.firebaseUid === user.uid);
-                        if (matchedUser) {
-                            currentUser = matchedUser;
-                            hide(el('authInitializing'));
-                            updateMainLayout();
-                        } else {
-                            hide(el('authInitializing'));
-                            show(el('authContent'));
-                        }
-                    }
-
-                }, () => {});
-
-                onSnapshot(reqRef, (snap) => {
-                    allRequests = snap.docs.map(d => ({ docId: d.id, ...d.data() })).reverse();
-                    if(currentUser) {
-                        if(currentUser.role === 'employee') renderEmployeeDashboard();
-                        else renderBeneficiaryDashboard();
-                    }
-                }, () => {});
-            });
-        });
-    </script>
-</body>
-</html>
+              </div>
+              
+              <div className="overflow-x-auto">
+                {isLoading ? (
+                   <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+                     <Loader2 className="w-10 h-10 animate-spin mb-4" style={{ color: BRAND.orange }} />
+                     <p className="font-semibold">جاري مزامنة البيانات من السحابة...</p>
+                   </div>
+                ) : (
+                  <table className="w-full text-right">
+                    <thead className="bg-white text-gray-500 text-sm border-b">
+                      <tr>
+                        <th className="px-6 py-4 font-bold">اسم المستفيد</th>
+                        <th className="px-6 py-4 font-bold">رقم الجوال</th>
+                        <th className="px-6 py-4 font-bold">الجهة الجديدة</th>
+                        <th className="px-6 py-4 font-bold text-center">الحالة</th>
+                        <th className="px-6 py-4 font-bold text-center">الإجراءات</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {beneficiaries.map((beneficiary) => (
+                        <tr key={beneficiary.id} className="hover:bg-gray-50 transition-colors group">
+                          <td className="px-6 py-4 text-sm font-bold text-gray-800">
+                            {beneficiary.name}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-600 font-medium" dir="ltr">
+                            {beneficiary.phone}
+                          </td>
+                          <td className="px-6 py-4 text-sm text
