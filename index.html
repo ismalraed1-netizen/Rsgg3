@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OMAR Scripts | سكربتات فايف إم</title>
-
+  <title>سكربت راديو فايف إم | OMAR</title>
   <style>
     * {
       box-sizing: border-box;
@@ -34,7 +33,7 @@
       z-index: 0;
     }
 
-    header, section, footer, main {
+    header, main, section, footer {
       position: relative;
       z-index: 1;
     }
@@ -153,7 +152,7 @@
       flex-wrap: wrap;
     }
 
-    .phone {
+    .radio-frame {
       min-height: 580px;
       border-radius: 38px;
       padding: 28px;
@@ -164,7 +163,19 @@
       overflow: hidden;
     }
 
-    .screen {
+    .radio-frame::before {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: rgba(255, 122, 0, .22);
+      filter: blur(60px);
+      right: -80px;
+      top: -80px;
+    }
+
+    .radio-box {
       position: relative;
       height: 100%;
       min-height: 520px;
@@ -175,20 +186,40 @@
       overflow: hidden;
     }
 
-    .radio-ui {
-      height: 100%;
+    .radio-top {
       display: flex;
-      flex-direction: column;
-      gap: 18px;
+      justify-content: space-between;
+      align-items: center;
+      color: #ff7a00;
+      font-weight: 900;
+      direction: ltr;
+      margin-bottom: 18px;
+    }
+
+    .radio-title {
+      text-align: center;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin-bottom: 14px;
+    }
+
+    .radio-subtitle {
+      text-align: center;
+      color: #ff7a00;
+      font-size: 14px;
+      margin-bottom: 18px;
     }
 
     .speaker {
-      height: 90px;
+      height: 92px;
       border-radius: 18px;
       background:
         radial-gradient(circle, rgba(255,255,255,.12) 1px, transparent 2px) 0 0 / 14px 14px,
         #151515;
       border: 1px solid rgba(255,255,255,.08);
+      margin-bottom: 18px;
     }
 
     .display {
@@ -199,20 +230,60 @@
       text-align: center;
       color: #ff8a00;
       box-shadow: inset 0 0 35px rgba(255,122,0,.09);
+      margin-bottom: 18px;
+    }
+
+    .display-row {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 800;
+      color: #fff;
+      font-size: 14px;
     }
 
     .freq {
-      font-size: 46px;
+      font-size: 52px;
       font-weight: 900;
       letter-spacing: 5px;
       margin: 18px 0 6px;
+    }
+
+    .mhz {
+      color: #ffb15c;
+      font-weight: 800;
+    }
+
+    .bar {
+      height: 8px;
+      background: #2a1608;
+      border-radius: 20px;
+      margin-top: 22px;
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      width: 72%;
+      background: #ff7a00;
+      border-radius: 20px;
+      box-shadow: 0 0 18px rgba(255, 122, 0, .9);
+    }
+
+    .input {
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 14px;
+      padding: 16px;
+      color: #aaa;
+      background: rgba(255,255,255,.04);
+      margin-bottom: 18px;
     }
 
     .controls {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 12px;
-      margin-top: auto;
+      margin-bottom: 18px;
     }
 
     .control {
@@ -224,6 +295,15 @@
       place-items: center;
       color: #ff7a00;
       font-size: 26px;
+      box-shadow: inset 0 0 20px rgba(255,122,0,.04);
+    }
+
+    .omar {
+      text-align: center;
+      color: #ff7a00;
+      font-weight: 900;
+      letter-spacing: 6px;
+      margin-top: 8px;
     }
 
     section {
@@ -294,50 +374,24 @@
       line-height: 1.8;
     }
 
-    .products {
+    .features-list {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 22px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-top: 25px;
     }
 
-    .product {
-      border-radius: 26px;
-      overflow: hidden;
-      background: #0c0c0d;
-      border: 1px solid rgba(255,255,255,.1);
-    }
-
-    .product-top {
-      height: 190px;
-      background:
-        linear-gradient(135deg, rgba(255,122,0,.35), rgba(0,0,0,.25)),
-        radial-gradient(circle at center, rgba(255,122,0,.6), transparent 38%),
-        #161616;
-      display: grid;
-      place-items: center;
-      font-size: 64px;
-      color: #ff7a00;
-    }
-
-    .product-body {
-      padding: 24px;
-    }
-
-    .product-body h4 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    .product-body p {
-      color: #bfbfbf;
+    .feature-line {
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      color: #ddd;
       line-height: 1.7;
-      margin-bottom: 18px;
     }
 
-    .price {
+    .feature-line strong {
       color: #ff7a00;
-      font-size: 26px;
-      font-weight: 900;
     }
 
     .cta {
@@ -357,6 +411,7 @@
       color: #ddd;
       font-size: 18px;
       margin-bottom: 26px;
+      line-height: 1.8;
     }
 
     footer {
@@ -379,12 +434,16 @@
       }
 
       .cards,
-      .products {
+      .features-list {
         grid-template-columns: 1fr;
       }
 
-      .phone {
+      .radio-frame {
         min-height: 500px;
+      }
+
+      .hero h2 {
+        font-size: 44px;
       }
     }
   </style>
@@ -396,176 +455,175 @@
   <header>
     <div class="brand">
       <div class="logo">O</div>
-      <h1>OMAR SCRIPTS</h1>
+      <h1>OMAR RADIO</h1>
     </div>
 
     <nav>
       <a href="#home">الرئيسية</a>
       <a href="#features">المميزات</a>
-      <a href="#scripts">السكربتات</a>
-      <a href="#contact">تواصل</a>
+      <a href="#preview">الواجهة</a>
+      <a href="#contact">الطلب</a>
     </nav>
 
-    <a class="btn" href="#scripts">استعرض السكربتات</a>
+    <a class="btn" href="#contact">اطلب السكربت</a>
   </header>
 
   <main id="home" class="hero">
     <div>
-      <div class="badge">FiveM Developer • Lua • QBCore</div>
+      <div class="badge">FiveM Radio Script • QBCore • UI</div>
 
       <h2>
-        سكربتات <span>احترافية</span><br />
-        لسيرفرك
+        سكربت راديو <span>احترافي</span><br />
+        لفايف إم
       </h2>
 
       <p>
-        موقع متخصص لعرض سكربتات فايف إم بواجهة برتقالية فخمة،
-        مناسب للمطور عمر لعرض المنتجات، المميزات، التحديثات،
-        وطرق التواصل مع المتابعين والعملاء.
+        سكربت راديو بواجهة فخمة نفس الصورة، مخصص لسيرفرات FiveM.
+        يدعم الترددات، كلمة السر، التحكم بالصوت، وتغيير الواجهة.
+        مناسب للسيرفرات الرول بلاي اللي تبغى تجربة اتصال واقعية.
       </p>
 
       <div class="actions">
-        <a class="btn" href="#contact">اطلب سكربت خاص</a>
-        <a class="btn secondary" href="#features">شاهد المميزات</a>
+        <a class="btn" href="#preview">شاهد الواجهة</a>
+        <a class="btn secondary" href="#features">شرح المميزات</a>
       </div>
     </div>
 
-    <div class="phone">
-      <div class="screen">
-        <div class="radio-ui">
-          <div style="display:flex;justify-content:space-between;align-items:center;color:#ff7a00;font-weight:900;direction:ltr">
-            <span>&lt;/&gt;</span>
-            <span>RADIO UI</span>
-            <span>×</span>
+    <div class="radio-frame" id="preview">
+      <div class="radio-box">
+        <div class="radio-top">
+          <span>&lt;/&gt;</span>
+          <span>RADIO SYSTEM</span>
+          <span>×</span>
+        </div>
+
+        <div class="radio-title">OMAR RADIO</div>
+        <div class="radio-subtitle">واجهة راديو احترافية لسيرفرات FiveM</div>
+
+        <div class="speaker"></div>
+
+        <div class="display">
+          <div class="display-row">
+            <span>غير متصل</span>
+            <span>التردد</span>
           </div>
 
-          <div class="speaker"></div>
+          <div class="freq">0.00</div>
+          <div class="mhz">MHz</div>
 
-          <div class="display">
-            <div style="display:flex;justify-content:space-between;font-weight:800">
-              <span>غير متصل</span>
-              <span>التردد</span>
-            </div>
-
-            <div class="freq">0.00</div>
-            <div>MHz</div>
-
-            <div style="height:8px;background:#2a1608;border-radius:20px;margin-top:22px;overflow:hidden">
-              <div style="height:100%;width:72%;background:#ff7a00;border-radius:20px"></div>
-            </div>
-          </div>
-
-          <div style="border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:16px;color:#aaa">
-            كلمة سر -- 🔒
-          </div>
-
-          <div class="controls">
-            <div class="control">⚙</div>
-            <div class="control">👥</div>
-            <div class="control">⏻</div>
-            <div class="control">▰</div>
-          </div>
-
-          <div style="text-align:center;color:#ff7a00;font-weight:900;letter-spacing:6px;margin-top:8px">
-            OMAR
+          <div class="bar">
+            <span></span>
           </div>
         </div>
+
+        <div class="input">كلمة سر التردد -- 🔒</div>
+
+        <div class="controls">
+          <div class="control">⚙</div>
+          <div class="control">👥</div>
+          <div class="control">⏻</div>
+          <div class="control">▰</div>
+        </div>
+
+        <div class="omar">OMAR</div>
       </div>
     </div>
   </main>
 
   <section id="features">
     <div class="section-title">
-      <h3>ليش تختار <span>OMAR Scripts</span>؟</h3>
-      <p>عرض واضح وقوي للمميزات اللي تهم أصحاب السيرفرات.</p>
+      <h3>شرح <span>سكربت الراديو</span></h3>
+      <p>واجهة احترافية ومميزات واضحة للمتابعين قبل تجربة السكربت.</p>
     </div>
 
     <div class="cards">
       <div class="card">
-        <div class="icon">⚡</div>
-        <h4>خفيف على السيرفر</h4>
+        <div class="icon">📻</div>
+        <h4>واجهة راديو فخمة</h4>
         <p>
-          تصميم نظيف وأداء مستقر بدون استهلاك عالي،
-          مناسب للسيرفرات الكبيرة والصغيرة.
+          تصميم أسود وبرتقالي قريب من شكل جهاز الراديو الحقيقي،
+          مع شاشة ترددات وأزرار واضحة وسهلة.
         </p>
       </div>
 
       <div class="card">
-        <div class="icon">🎮</div>
-        <h4>تجربة لعب واقعية</h4>
+        <div class="icon">🔐</div>
+        <h4>نظام كلمة سر</h4>
         <p>
-          واجهات عملية وأفكار تخدم الرول بلاي
-          وتزيد تفاعل اللاعبين داخل السيرفر.
+          تقدر تخلي التردد محمي بكلمة سر، مناسب للعساكر،
+          العصابات، الإسعاف، أو أي جهة خاصة داخل السيرفر.
         </p>
       </div>
 
       <div class="card">
-        <div class="icon">🔧</div>
-        <h4>قابل للتعديل</h4>
+        <div class="icon">🎚️</div>
+        <h4>تحكم كامل بالصوت</h4>
         <p>
-          ألوان، نصوص، إعدادات، وصلاحيات قابلة للتخصيص حسب هوية سيرفرك.
+          تغيير الصوت، الاتصال، فصل الاتصال، والتحكم بالتردد
+          من نفس الواجهة بدون تعقيد.
         </p>
       </div>
+    </div>
+
+    <div class="features-list">
+      <div class="feature-line"><strong>يدعم:</strong> ترددات خاصة وعامة داخل السيرفر.</div>
+      <div class="feature-line"><strong>يدعم:</strong> كلمة سر للترددات الحساسة.</div>
+      <div class="feature-line"><strong>واجهة:</strong> تصميم برتقالي وأسود مناسب للعرض والمتابعين.</div>
+      <div class="feature-line"><strong>استخدام:</strong> مناسب للشرطة، الإسعاف، العصابات، والإدارات.</div>
+      <div class="feature-line"><strong>تخصيص:</strong> تقدر تغير الاسم، اللون، النصوص، والشعار.</div>
+      <div class="feature-line"><strong>تجربة:</strong> سهل للاعب وما يحتاج شرح طويل.</div>
     </div>
   </section>
 
-  <section id="scripts">
+  <section>
     <div class="section-title">
-      <h3>أحدث <span>السكربتات</span></h3>
-      <p>ضع هنا منتجاتك وسكربتاتك الجاهزة للبيع أو العرض.</p>
+      <h3>مناسب لأي <span>سيرفر رول بلاي</span></h3>
+      <p>السكربت يعطي اللاعبين تجربة اتصال منظمة وواجهة مرتبة بدل الراديو العادي.</p>
     </div>
 
-    <div class="products">
-      <div class="product">
-        <div class="product-top">📻</div>
-        <div class="product-body">
-          <h4>سكربت راديو متكامل</h4>
-          <p>
-            واجهة احترافية، نظام ترددات، كلمة سر، وتحكم بالصوت.
-          </p>
-          <div class="price">متوفر الآن</div>
-        </div>
+    <div class="cards">
+      <div class="card">
+        <div class="icon">🚓</div>
+        <h4>الشرطة والعسكر</h4>
+        <p>
+          ترددات خاصة للقطاعات الأمنية مع كلمة سر وتنظيم أفضل للتواصل.
+        </p>
       </div>
 
-      <div class="product">
-        <div class="product-top">🧟</div>
-        <div class="product-body">
-          <h4>سكربت زومبي</h4>
-          <p>
-            نظام تحولات، رسبون، مناطق، وتجربة رعب مناسبة لسيرفرات النجاة.
-          </p>
-          <div class="price">قريبًا</div>
-        </div>
+      <div class="card">
+        <div class="icon">🚑</div>
+        <h4>الإسعاف</h4>
+        <p>
+          تواصل سريع بين المسعفين والمستشفى أثناء البلاغات والسيناريوهات.
+        </p>
       </div>
 
-      <div class="product">
-        <div class="product-top">🛡️</div>
-        <div class="product-body">
-          <h4>سكربتات خاصة</h4>
-          <p>
-            برمجة حسب الطلب لسيرفرات QBCore مع تصميم هوية كاملة.
-          </p>
-          <div class="price">حسب الطلب</div>
-        </div>
+      <div class="card">
+        <div class="icon">💀</div>
+        <h4>العصابات</h4>
+        <p>
+          ترددات خاصة للعصابات والفرق داخل السيرفر مع خصوصية أعلى.
+        </p>
       </div>
     </div>
   </section>
 
   <section id="contact">
     <div class="cta">
-      <h3>جاهز تعرض سكربتك بشكل احترافي؟</h3>
+      <h3>تبغى السكربت في سيرفرك؟</h3>
       <p>
-        أضف رابط الديسكورد أو التيك توك هنا،
-        وخلي المتابعين يتواصلون معك مباشرة.
+        تواصل معي لطلب السكربت أو تعديل الواجهة باسم سيرفرك.
+        السكربت مناسب للعرض على المتابعين ومناسب للبيع أو الاستخدام داخل السيرفر.
       </p>
+
       <a class="btn" href="https://omar.manus.space" target="_blank">
-        زيارة موقعي
+        اطلب السكربت الآن
       </a>
     </div>
   </section>
 
   <footer>
-    © 2026 OMAR Scripts — FiveM Developer
+    © 2026 OMAR RADIO — FiveM Radio Script
   </footer>
 </body>
 </html>
