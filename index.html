@@ -1,350 +1,571 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة المستفيدين - جمعية بناء وتنمية</title>
-    
-    <!-- خطوط جوجل (Cairo) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OMAR Scripts | سكربتات فايف إم</title>
 
-    <!-- مكتبة الأيقونات المضمونة (FontAwesome) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Tajawal", "Cairo", Arial, sans-serif;
+    }
 
-    <!-- إعدادات Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Cairo', 'sans-serif'] },
-                    colors: {
-                        brand: {
-                            orange: '#ee7818',
-                            green: '#80ba3c',
-                            gray: '#9ea1a2'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 80% 20%, rgba(255, 122, 0, 0.25), transparent 35%),
+        radial-gradient(circle at 15% 75%, rgba(255, 77, 0, 0.18), transparent 32%),
+        linear-gradient(135deg, #050505 0%, #111 45%, #1a0900 100%);
+      color: #fff;
+      overflow-x: hidden;
+    }
 
-    <!-- مكتبات React الأساسية للعمل بدون سيرفر -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    .glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 122, 0, .05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 122, 0, .05) 1px, transparent 1px);
+      background-size: 42px 42px;
+      z-index: 0;
+    }
 
-    <!-- مكتبات Firebase الآمنة للعمل المباشر -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    header, section, footer, main {
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      width: min(1180px, 92%);
+      margin: auto;
+      padding: 28px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      direction: ltr;
+    }
+
+    .logo {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #ff7a00, #ff3d00);
+      color: #111;
+      font-size: 28px;
+      font-weight: 900;
+      box-shadow: 0 0 25px rgba(255, 122, 0, .7);
+    }
+
+    .brand h1 {
+      font-size: 22px;
+      letter-spacing: 3px;
+    }
+
+    nav {
+      display: flex;
+      gap: 22px;
+      color: #ddd;
+      font-size: 15px;
+    }
+
+    nav a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .btn {
+      border: 1px solid rgba(255, 122, 0, .65);
+      background: linear-gradient(135deg, #ff7a00, #ff3d00);
+      color: #111;
+      padding: 13px 22px;
+      border-radius: 14px;
+      font-weight: 900;
+      text-decoration: none;
+      box-shadow: 0 0 30px rgba(255, 93, 0, .35);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn.secondary {
+      background: rgba(255,255,255,.04);
+      color: #fff;
+      border-color: rgba(255,255,255,.16);
+      box-shadow: none;
+    }
+
+    .hero {
+      width: min(1180px, 92%);
+      margin: auto;
+      padding: 70px 0 50px;
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      align-items: center;
+      gap: 42px;
+    }
+
+    .badge {
+      display: inline-flex;
+      border: 1px solid rgba(255,122,0,.35);
+      background: rgba(255,122,0,.08);
+      color: #ff9b33;
+      padding: 10px 16px;
+      border-radius: 999px;
+      margin-bottom: 22px;
+      font-weight: 700;
+    }
+
+    .hero h2 {
+      font-size: clamp(42px, 7vw, 86px);
+      line-height: 1.05;
+      margin-bottom: 18px;
+    }
+
+    .hero h2 span {
+      color: #ff7a00;
+      text-shadow: 0 0 25px rgba(255, 122, 0, .6);
+    }
+
+    .hero p {
+      color: #d8d8d8;
+      font-size: 20px;
+      line-height: 1.9;
+      max-width: 650px;
+      margin-bottom: 28px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .phone {
+      min-height: 580px;
+      border-radius: 38px;
+      padding: 28px;
+      background: linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      border: 1px solid rgba(255, 122, 0, .25);
+      box-shadow: inset 0 0 40px rgba(255,255,255,.04), 0 0 55px rgba(255, 100, 0, .22);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screen {
+      position: relative;
+      height: 100%;
+      min-height: 520px;
+      border-radius: 28px;
+      background: #0b0b0d;
+      border: 1px solid rgba(255,255,255,.1);
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .radio-ui {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .speaker {
+      height: 90px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle, rgba(255,255,255,.12) 1px, transparent 2px) 0 0 / 14px 14px,
+        #151515;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .display {
+      border-radius: 18px;
+      padding: 24px;
+      background: linear-gradient(180deg, rgba(255,122,0,.18), rgba(0,0,0,.5));
+      border: 1px solid rgba(255,122,0,.35);
+      text-align: center;
+      color: #ff8a00;
+      box-shadow: inset 0 0 35px rgba(255,122,0,.09);
+    }
+
+    .freq {
+      font-size: 46px;
+      font-weight: 900;
+      letter-spacing: 5px;
+      margin: 18px 0 6px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: auto;
+    }
+
+    .control {
+      height: 66px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      display: grid;
+      place-items: center;
+      color: #ff7a00;
+      font-size: 26px;
+    }
+
+    section {
+      width: min(1180px, 92%);
+      margin: auto;
+      padding: 70px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 34px;
+    }
+
+    .section-title h3 {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    .section-title span {
+      color: #ff7a00;
+    }
+
+    .section-title p {
+      color: #bdbdbd;
+      font-size: 18px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      padding: 28px;
+      min-height: 230px;
+      border-radius: 24px;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.1);
+      transition: .25s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255,122,0,.55);
+      box-shadow: 0 0 35px rgba(255,122,0,.15);
+    }
+
+    .icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,122,0,.13);
+      color: #ff7a00;
+      font-size: 27px;
+      margin-bottom: 20px;
+    }
+
+    .card h4 {
+      font-size: 23px;
+      margin-bottom: 12px;
+    }
+
+    .card p {
+      color: #c9c9c9;
+      line-height: 1.8;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .product {
+      border-radius: 26px;
+      overflow: hidden;
+      background: #0c0c0d;
+      border: 1px solid rgba(255,255,255,.1);
+    }
+
+    .product-top {
+      height: 190px;
+      background:
+        linear-gradient(135deg, rgba(255,122,0,.35), rgba(0,0,0,.25)),
+        radial-gradient(circle at center, rgba(255,122,0,.6), transparent 38%),
+        #161616;
+      display: grid;
+      place-items: center;
+      font-size: 64px;
+      color: #ff7a00;
+    }
+
+    .product-body {
+      padding: 24px;
+    }
+
+    .product-body h4 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .product-body p {
+      color: #bfbfbf;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .price {
+      color: #ff7a00;
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    .cta {
+      text-align: center;
+      border-radius: 30px;
+      padding: 60px 20px;
+      background: linear-gradient(135deg, rgba(255,122,0,.22), rgba(255,61,0,.08));
+      border: 1px solid rgba(255,122,0,.25);
+    }
+
+    .cta h3 {
+      font-size: 44px;
+      margin-bottom: 14px;
+    }
+
+    .cta p {
+      color: #ddd;
+      font-size: 18px;
+      margin-bottom: 26px;
+    }
+
+    footer {
+      width: min(1180px, 92%);
+      margin: auto;
+      padding: 30px 0 45px;
+      color: #888;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+
+    @media (max-width: 900px) {
+      nav {
+        display: none;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 35px;
+      }
+
+      .cards,
+      .products {
+        grid-template-columns: 1fr;
+      }
+
+      .phone {
+        min-height: 500px;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased">
-    
-    <!-- المكان الذي سيعمل فيه التطبيق -->
-    <div id="root"></div>
 
-    <!-- كود التطبيق بالكامل -->
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+<body>
+  <div class="glow"></div>
 
-        // =========================================================================
-        // 🔴 إعدادات قاعدة البيانات السحابية FIREBASE 🔴
-        // إذا لم تضع بياناتك هنا، سيعمل الموقع بشكل محلي للتجربة فقط ولن يحفظ البيانات.
-        // =========================================================================
-        const firebaseConfig = {
-            apiKey: "ضع_مفتاح_API_هنا",
-            authDomain: "ضع_نطاق_المصادقة_هنا",
-            projectId: "ضع_معرف_المشروع_هنا",
-            storageBucket: "ضع_سلة_التخزين_هنا",
-            messagingSenderId: "ضع_رقم_المرسل_هنا",
-            appId: "ضع_معرف_التطبيق_هنا"
-        };
+  <header>
+    <div class="brand">
+      <div class="logo">O</div>
+      <h1>OMAR SCRIPTS</h1>
+    </div>
 
-        const isFirebaseConfigured = firebaseConfig.apiKey !== "ضع_مفتاح_API_هنا";
+    <nav>
+      <a href="#home">الرئيسية</a>
+      <a href="#features">المميزات</a>
+      <a href="#scripts">السكربتات</a>
+      <a href="#contact">تواصل</a>
+    </nav>
 
-        // تهيئة قاعدة البيانات
-        let auth, db;
-        if (isFirebaseConfigured) {
-            firebase.initializeApp(firebaseConfig);
-            auth = firebase.auth();
-            db = firebase.firestore();
-        }
+    <a class="btn" href="#scripts">استعرض السكربتات</a>
+  </header>
 
-        // شعار الجمعية
-        const BrandLogo = ({ className = "w-24 h-24" }) => (
-            <svg viewBox="0 0 200 200" className={className} xmlns="http://www.w3.org/2000/svg">
-                <path d="M 45 70 L 80 85 L 80 135 L 45 135 Z" fill="#9ea1a2" opacity="0.8" />
-                <path d="M 120 85 L 155 70 L 155 135 L 120 135 Z" fill="#9ea1a2" opacity="0.8" />
-                <path d="M 85 30 L 115 30 L 115 135 L 85 135 Z" fill="#ee7818" />
-                <path d="M 25 125 Q 100 160 100 180 Q 100 160 175 125 Q 190 100 185 140 Q 100 195 15 140 Q 10 100 25 125 Z" fill="#80ba3c" />
-            </svg>
-        );
+  <main id="home" class="hero">
+    <div>
+      <div class="badge">FiveM Developer • Lua • QBCore</div>
 
-        function App() {
-            const [isUiAuthenticated, setIsUiAuthenticated] = useState(false);
-            const [loginUsername, setLoginUsername] = useState('');
-            const [loginPassword, setLoginPassword] = useState('');
-            const [loginError, setLoginError] = useState('');
-            
-            const [beneficiaries, setBeneficiaries] = useState([]);
-            const [isLoading, setIsLoading] = useState(false);
-            const [formData, setFormData] = useState({ name: '', phone: '', targetAssoc: 'جمعية سكني الجميل' });
-            const [notification, setNotification] = useState('');
+      <h2>
+        سكربتات <span>احترافية</span><br />
+        لسيرفرك
+      </h2>
 
-            // جلب البيانات من السحابة
-            useEffect(() => {
-                if (!isUiAuthenticated || !isFirebaseConfigured) return;
-                
-                const initAuth = async () => {
-                    try {
-                        await auth.signInAnonymously();
-                    } catch (error) {
-                        console.error("Auth Error:", error);
-                    }
-                };
-                initAuth();
+      <p>
+        موقع متخصص لعرض سكربتات فايف إم بواجهة برتقالية فخمة،
+        مناسب للمطور عمر لعرض المنتجات، المميزات، التحديثات،
+        وطرق التواصل مع المتابعين والعملاء.
+      </p>
 
-                setIsLoading(true);
-                const unsubscribe = db.collection('beneficiaries')
-                    .orderBy("createdAt", "desc")
-                    .onSnapshot((snapshot) => {
-                        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                        setBeneficiaries(data);
-                        setIsLoading(false);
-                    }, (error) => {
-                        console.error("Firestore error:", error);
-                        setIsLoading(false);
-                    });
+      <div class="actions">
+        <a class="btn" href="#contact">اطلب سكربت خاص</a>
+        <a class="btn secondary" href="#features">شاهد المميزات</a>
+      </div>
+    </div>
 
-                return () => unsubscribe();
-            }, [isUiAuthenticated]);
+    <div class="phone">
+      <div class="screen">
+        <div class="radio-ui">
+          <div style="display:flex;justify-content:space-between;align-items:center;color:#ff7a00;font-weight:900;direction:ltr">
+            <span>&lt;/&gt;</span>
+            <span>RADIO UI</span>
+            <span>×</span>
+          </div>
 
-            const showNotification = (msg) => {
-                setNotification(msg);
-                setTimeout(() => setNotification(''), 3000);
-            };
+          <div class="speaker"></div>
 
-            const handleLogin = (e) => {
-                e.preventDefault();
-                if (loginUsername.toLowerCase() === 'admin' && loginPassword === 'binaa2024') {
-                    setIsUiAuthenticated(true);
-                    setLoginError('');
-                } else {
-                    setLoginError('اسم المستخدم أو كلمة المرور غير صحيحة');
-                }
-            };
+          <div class="display">
+            <div style="display:flex;justify-content:space-between;font-weight:800">
+              <span>غير متصل</span>
+              <span>التردد</span>
+            </div>
 
-            const formatPhoneNumber = (phone) => {
-                let cleaned = phone.replace(/\D/g, ''); 
-                if (cleaned.startsWith('966')) return cleaned;
-                else if (cleaned.startsWith('05')) return '966' + cleaned.substring(1);
-                else if (cleaned.startsWith('5')) return '966' + cleaned;
-                return cleaned;
-            };
+            <div class="freq">0.00</div>
+            <div>MHz</div>
 
-            const generateMessage = (target) => {
-                return `السلام عليكم ورحمة الله وبركاته،\n\nنفيدكم بأنه سبق استلام ملفكم لدى جمعية بناء وتنمية مساكن، وقد تم نقل ملفكم إلى ${target} لاستكمال إجراءات الطلب ومتابعته من قبلهم.\n\nلأي استفسار، نأمل التواصل مع الجمعية المذكورة مباشرة.\n\nشاكرين لكم تعاونكم، مع خالص تمنياتنا بالتوفيق.`;
-            };
+            <div style="height:8px;background:#2a1608;border-radius:20px;margin-top:22px;overflow:hidden">
+              <div style="height:100%;width:72%;background:#ff7a00;border-radius:20px"></div>
+            </div>
+          </div>
 
-            const handleAddBeneficiary = async (e) => {
-                e.preventDefault();
-                if (!formData.name || !formData.phone || !formData.targetAssoc) return;
+          <div style="border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:16px;color:#aaa">
+            كلمة سر -- 🔒
+          </div>
 
-                if (!isFirebaseConfigured) {
-                    // العمل محلياً للتجربة إذا لم تضع بيانات فايربيس
-                    const newBen = { ...formData, id: Date.now().toString(), status: 'pending', createdAt: Date.now() };
-                    setBeneficiaries([newBen, ...beneficiaries]);
-                    setFormData({ ...formData, name: '', phone: '' });
-                    showNotification('تمت الإضافة (مؤقتاً للنسخة التجريبية)');
-                    return;
-                }
+          <div class="controls">
+            <div class="control">⚙</div>
+            <div class="control">👥</div>
+            <div class="control">⏻</div>
+            <div class="control">▰</div>
+          </div>
 
-                try {
-                    await db.collection('beneficiaries').add({
-                        name: formData.name,
-                        phone: formData.phone, 
-                        targetAssoc: formData.targetAssoc,
-                        status: 'pending',
-                        createdAt: Date.now()
-                    });
-                    setFormData({ ...formData, name: '', phone: '' });
-                    showNotification('تم الحفظ السحابي بنجاح');
-                } catch (error) {
-                    console.error("Error adding doc:", error);
-                    showNotification('حدث خطأ أثناء الإضافة');
-                }
-            };
+          <div style="text-align:center;color:#ff7a00;font-weight:900;letter-spacing:6px;margin-top:8px">
+            OMAR
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 
-            const handleSendWhatsApp = async (beneficiary) => {
-                const formattedPhone = formatPhoneNumber(beneficiary.phone);
-                const message = encodeURIComponent(generateMessage(beneficiary.targetAssoc));
-                
-                // فتح الواتساب
-                window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank');
+  <section id="features">
+    <div class="section-title">
+      <h3>ليش تختار <span>OMAR Scripts</span>؟</h3>
+      <p>عرض واضح وقوي للمميزات اللي تهم أصحاب السيرفرات.</p>
+    </div>
 
-                if (isFirebaseConfigured) {
-                    try {
-                        await db.collection('beneficiaries').doc(beneficiary.id).update({
-                            status: 'sent',
-                            sentAt: Date.now()
-                        });
-                    } catch (error) {
-                        console.error("Error updating:", error);
-                    }
-                } else {
-                    // تحديث الحالة محلياً للنسخة التجريبية
-                    setBeneficiaries(beneficiaries.map(b => b.id === beneficiary.id ? {...b, status: 'sent'} : b));
-                }
-            };
+    <div class="cards">
+      <div class="card">
+        <div class="icon">⚡</div>
+        <h4>خفيف على السيرفر</h4>
+        <p>
+          تصميم نظيف وأداء مستقر بدون استهلاك عالي،
+          مناسب للسيرفرات الكبيرة والصغيرة.
+        </p>
+      </div>
 
-            const handleDelete = async (id) => {
-                if (window.confirm('هل أنت متأكد من حذف هذا المستفيد نهائياً؟')) {
-                    if (isFirebaseConfigured) {
-                        try {
-                            await db.collection('beneficiaries').doc(id).delete();
-                            showNotification('تم الحذف بنجاح');
-                        } catch (error) {
-                            console.error("Error deleting:", error);
-                        }
-                    } else {
-                         setBeneficiaries(beneficiaries.filter(b => b.id !== id));
-                    }
-                }
-            };
+      <div class="card">
+        <div class="icon">🎮</div>
+        <h4>تجربة لعب واقعية</h4>
+        <p>
+          واجهات عملية وأفكار تخدم الرول بلاي
+          وتزيد تفاعل اللاعبين داخل السيرفر.
+        </p>
+      </div>
 
-            // واجهة تسجيل الدخول
-            if (!isUiAuthenticated) {
-                return (
-                    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-                        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border-t-4 border-brand-orange">
-                            <div className="flex flex-col items-center mb-8">
-                                <BrandLogo className="w-28 h-28 mb-4 drop-shadow-md" />
-                                <h1 className="text-2xl font-bold text-gray-800 text-center">جمعية بناء وتنمية مساكن</h1>
-                                <p className="text-sm mt-1 font-bold text-brand-green">بوابة إشعار المستفيدين</p>
-                            </div>
+      <div class="card">
+        <div class="icon">🔧</div>
+        <h4>قابل للتعديل</h4>
+        <p>
+          ألوان، نصوص، إعدادات، وصلاحيات قابلة للتخصيص حسب هوية سيرفرك.
+        </p>
+      </div>
+    </div>
+  </section>
 
-                            <form onSubmit={handleLogin} className="space-y-5">
-                                {loginError && (
-                                    <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center font-bold">
-                                        <i className="fas fa-exclamation-circle ml-2"></i>
-                                        {loginError}
-                                    </div>
-                                )}
-                                
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1.5">اسم المستخدم</label>
-                                    <input 
-                                        type="text" 
-                                        value={loginUsername}
-                                        onChange={(e) => setLoginUsername(e.target.value)}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-orange outline-none"
-                                        placeholder="أدخل اسم المستخدم" required dir="ltr"
-                                    />
-                                </div>
-                                
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1.5">كلمة المرور</label>
-                                    <input 
-                                        type="password" 
-                                        value={loginPassword}
-                                        onChange={(e) => setLoginPassword(e.target.value)}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-orange outline-none"
-                                        placeholder="••••••••" required dir="ltr"
-                                    />
-                                </div>
+  <section id="scripts">
+    <div class="section-title">
+      <h3>أحدث <span>السكربتات</span></h3>
+      <p>ضع هنا منتجاتك وسكربتاتك الجاهزة للبيع أو العرض.</p>
+    </div>
 
-                                <button type="submit" className="w-full text-white font-bold py-3 rounded-lg bg-brand-orange hover:bg-orange-600 transition-all shadow-lg">
-                                    <i className="fas fa-shield-alt ml-2"></i> تسجيل الدخول
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                );
-            }
+    <div class="products">
+      <div class="product">
+        <div class="product-top">📻</div>
+        <div class="product-body">
+          <h4>سكربت راديو متكامل</h4>
+          <p>
+            واجهة احترافية، نظام ترددات، كلمة سر، وتحكم بالصوت.
+          </p>
+          <div class="price">متوفر الآن</div>
+        </div>
+      </div>
 
-            const stats = {
-                total: beneficiaries.length,
-                sent: beneficiaries.filter(b => b.status === 'sent').length,
-                pending: beneficiaries.filter(b => b.status === 'pending').length,
-            };
+      <div class="product">
+        <div class="product-top">🧟</div>
+        <div class="product-body">
+          <h4>سكربت زومبي</h4>
+          <p>
+            نظام تحولات، رسبون، مناطق، وتجربة رعب مناسبة لسيرفرات النجاة.
+          </p>
+          <div class="price">قريبًا</div>
+        </div>
+      </div>
 
-            return (
-                <div className="min-h-screen pb-12">
-                    {notification && (
-                        <div className="fixed bottom-6 left-6 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center z-50">
-                            <i className="fas fa-check-circle ml-3 text-brand-green text-xl"></i>
-                            <span className="font-bold">{notification}</span>
-                        </div>
-                    )}
+      <div class="product">
+        <div class="product-top">🛡️</div>
+        <div class="product-body">
+          <h4>سكربتات خاصة</h4>
+          <p>
+            برمجة حسب الطلب لسيرفرات QBCore مع تصميم هوية كاملة.
+          </p>
+          <div class="price">حسب الطلب</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-                    <header className="bg-white shadow-sm border-b-4 border-brand-orange sticky top-0 z-40">
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-                            <div className="flex items-center space-x-4 space-x-reverse">
-                                <BrandLogo className="w-14 h-14" />
-                                <div>
-                                    <h1 className="text-xl font-bold text-brand-gray">بوابة إشعار النقل</h1>
-                                    <p className="text-xs font-bold mt-1 text-brand-green flex items-center">
-                                        جمعية بناء وتنمية مساكن
-                                        {isFirebaseConfigured ? (
-                                            <span className="mr-2 text-green-500"><i className="fas fa-wifi text-xs"></i> متصل بالسحابة</span>
-                                        ) : (
-                                            <span className="mr-2 text-red-500"><i className="fas fa-wifi text-xs"></i> غير متصل</span>
-                                        )}
-                                    </p>
-                                </div>
-                            </div>
-                            <button onClick={() => setIsUiAuthenticated(false)} className="px-4 py-2 text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg">
-                                <i className="fas fa-sign-out-alt ml-2"></i> خروج
-                            </button>
-                        </div>
-                    </header>
+  <section id="contact">
+    <div class="cta">
+      <h3>جاهز تعرض سكربتك بشكل احترافي؟</h3>
+      <p>
+        أضف رابط الديسكورد أو التيك توك هنا،
+        وخلي المتابعين يتواصلون معك مباشرة.
+      </p>
+      <a class="btn" href="https://omar.manus.space" target="_blank">
+        زيارة موقعي
+      </a>
+    </div>
+  </section>
 
-                    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                        {!isFirebaseConfigured && (
-                            <div className="mb-8 bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl flex items-start shadow-sm">
-                                <i className="fas fa-exclamation-triangle text-2xl ml-3 mt-1"></i>
-                                <div>
-                                    <h3 className="font-bold text-lg mb-1">النظام غير متصل بقاعدة البيانات الحقيقية!</h3>
-                                    <p className="text-sm">أنت الآن تستخدم النظام كنسخة تجريبية، إذا أغلقت الصفحة ستضيع الأسماء. يجب عليك وضع أكواد (Firebase) داخل الملف ليتم الحفظ بشكل دائم.</p>
-                                </div>
-                            </div>
-                        )}
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                            <div className="bg-white rounded-xl shadow-sm p-6 border-r-4 border-brand-gray flex items-center">
-                                <div className="p-4 rounded-lg bg-gray-100 text-brand-gray ml-4"><i className="fas fa-users text-2xl"></i></div>
-                                <div><p className="text-sm text-gray-500 font-bold">إجمالي المستفيدين</p><p className="text-3xl font-black">{stats.total}</p></div>
-                            </div>
-                            <div className="bg-white rounded-xl shadow-sm p-6 border-r-4 border-brand-green flex items-center">
-                                <div className="p-4 rounded-lg bg-green-50 text-brand-green ml-4"><i className="fas fa-check-circle text-2xl"></i></div>
-                                <div><p className="text-sm text-gray-500 font-bold">تم الإرسال</p><p className="text-3xl font-black">{stats.sent}</p></div>
-                            </div>
-                            <div className="bg-white rounded-xl shadow-sm p-6 border-r-4 border-brand-orange flex items-center">
-                                <div className="p-4 rounded-lg bg-orange-50 text-brand-orange ml-4"><i className="fas fa-comment-dots text-2xl"></i></div>
-                                <div><p className="text-sm text-gray-500 font-bold">بانتظار الإرسال</p><p className="text-3xl font-black">{stats.pending}</p></div>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            <div className="lg:col-span-1">
-                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden sticky top-24">
-                                    <div className="px-6 py-5 bg-green-50/50 border-b">
-                                        <h2 className="text-lg font-bold text-brand-green"><i className="fas fa-user-plus ml-2"></i> إضافة مستفيد للنقل</h2>
-                                    </div>
-                                    <div className="p-6">
-                                        <form onSubmit={handleAddBeneficiary} className="space-y-5">
-                                            <div>
-                                                <label className="block text-sm font-bold text-gray-700 mb-2">اسم المستفيد</label>
-                                                <input type="text" required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-green outline-none" placeholder="الاسم الثلاثي أو الرباعي" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-bold text-gray-700 mb-2">رقم الجوال</label>
-                                                <input type="tel" required value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-green outline-none text-left" placeholder="05XXXXXXXX" dir="ltr" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-bold text-gray-700 mb-2">الجمعية المنقول إليها</label>
-                                                <input type="text" required value={formData.targetAssoc} onChange={(e) => setFormData({...formData, targetAssoc: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:
+  <footer>
+    © 2026 OMAR Scripts — FiveM Developer
+  </footer>
+</body>
+</html>
