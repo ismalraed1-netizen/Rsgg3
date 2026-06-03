@@ -3,627 +3,318 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>سكربت راديو فايف إم | OMAR</title>
+  <title>استعلام المستفيدين | جمعية بناء وتنمية مساكن</title>
+
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: "Tajawal", "Cairo", Arial, sans-serif;
+      font-family: "Tahoma", "Arial", sans-serif;
     }
 
     body {
       min-height: 100vh;
       background:
-        radial-gradient(circle at 80% 20%, rgba(255, 122, 0, 0.25), transparent 35%),
-        radial-gradient(circle at 15% 75%, rgba(255, 77, 0, 0.18), transparent 32%),
-        linear-gradient(135deg, #050505 0%, #111 45%, #1a0900 100%);
-      color: #fff;
-      overflow-x: hidden;
+        radial-gradient(circle at 10% 80%, rgba(247, 132, 25, .12), transparent 30%),
+        linear-gradient(135deg, #ffffff 0%, #f7f7f7 100%);
+      color: #333;
     }
 
-    .glow {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(rgba(255, 122, 0, .05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 122, 0, .05) 1px, transparent 1px);
-      background-size: 42px 42px;
-      z-index: 0;
-    }
-
-    header, main, section, footer {
-      position: relative;
-      z-index: 1;
-    }
-
-    header {
-      width: min(1180px, 92%);
-      margin: auto;
-      padding: 28px 0;
+    .page {
+      min-height: 100vh;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      direction: ltr;
-    }
-
-    .logo {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(145deg, #ff7a00, #ff3d00);
-      color: #111;
-      font-size: 28px;
-      font-weight: 900;
-      box-shadow: 0 0 25px rgba(255, 122, 0, .7);
-    }
-
-    .brand h1 {
-      font-size: 22px;
-      letter-spacing: 3px;
-    }
-
-    nav {
-      display: flex;
-      gap: 22px;
-      color: #ddd;
-      font-size: 15px;
-    }
-
-    nav a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .btn {
-      border: 1px solid rgba(255, 122, 0, .65);
-      background: linear-gradient(135deg, #ff7a00, #ff3d00);
-      color: #111;
-      padding: 13px 22px;
-      border-radius: 14px;
-      font-weight: 900;
-      text-decoration: none;
-      box-shadow: 0 0 30px rgba(255, 93, 0, .35);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn.secondary {
-      background: rgba(255,255,255,.04);
-      color: #fff;
-      border-color: rgba(255,255,255,.16);
-      box-shadow: none;
-    }
-
-    .hero {
-      width: min(1180px, 92%);
-      margin: auto;
-      padding: 70px 0 50px;
-      display: grid;
-      grid-template-columns: 1.05fr .95fr;
-      align-items: center;
-      gap: 42px;
-    }
-
-    .badge {
-      display: inline-flex;
-      border: 1px solid rgba(255,122,0,.35);
-      background: rgba(255,122,0,.08);
-      color: #ff9b33;
-      padding: 10px 16px;
-      border-radius: 999px;
-      margin-bottom: 22px;
-      font-weight: 700;
-    }
-
-    .hero h2 {
-      font-size: clamp(42px, 7vw, 86px);
-      line-height: 1.05;
-      margin-bottom: 18px;
-    }
-
-    .hero h2 span {
-      color: #ff7a00;
-      text-shadow: 0 0 25px rgba(255, 122, 0, .6);
-    }
-
-    .hero p {
-      color: #d8d8d8;
-      font-size: 20px;
-      line-height: 1.9;
-      max-width: 650px;
-      margin-bottom: 28px;
-    }
-
-    .actions {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .radio-frame {
-      min-height: 580px;
-      border-radius: 38px;
-      padding: 28px;
-      background: linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
-      border: 1px solid rgba(255, 122, 0, .25);
-      box-shadow: inset 0 0 40px rgba(255,255,255,.04), 0 0 55px rgba(255, 100, 0, .22);
+      justify-content: center;
+      padding: 30px;
       position: relative;
       overflow: hidden;
     }
 
-    .radio-frame::before {
-      content: "";
+    .dots {
       position: absolute;
-      width: 280px;
-      height: 280px;
-      border-radius: 50%;
-      background: rgba(255, 122, 0, .22);
-      filter: blur(60px);
-      right: -80px;
-      top: -80px;
+      left: -80px;
+      bottom: 60px;
+      width: 420px;
+      height: 180px;
+      background-image: radial-gradient(#bfc1c3 4px, transparent 5px);
+      background-size: 22px 22px;
+      opacity: .55;
+      transform: rotate(0deg);
     }
 
-    .radio-box {
-      position: relative;
+    .wave {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 260px;
       height: 100%;
-      min-height: 520px;
-      border-radius: 28px;
-      background: #0b0b0d;
-      border: 1px solid rgba(255,255,255,.1);
-      padding: 24px;
-      overflow: hidden;
-    }
-
-    .radio-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #ff7a00;
-      font-weight: 900;
-      direction: ltr;
-      margin-bottom: 18px;
-    }
-
-    .radio-title {
-      text-align: center;
-      color: #fff;
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      margin-bottom: 14px;
-    }
-
-    .radio-subtitle {
-      text-align: center;
-      color: #ff7a00;
-      font-size: 14px;
-      margin-bottom: 18px;
-    }
-
-    .speaker {
-      height: 92px;
-      border-radius: 18px;
-      background:
-        radial-gradient(circle, rgba(255,255,255,.12) 1px, transparent 2px) 0 0 / 14px 14px,
-        #151515;
-      border: 1px solid rgba(255,255,255,.08);
-      margin-bottom: 18px;
-    }
-
-    .display {
-      border-radius: 18px;
-      padding: 24px;
-      background: linear-gradient(180deg, rgba(255,122,0,.18), rgba(0,0,0,.5));
-      border: 1px solid rgba(255,122,0,.35);
-      text-align: center;
-      color: #ff8a00;
-      box-shadow: inset 0 0 35px rgba(255,122,0,.09);
-      margin-bottom: 18px;
-    }
-
-    .display-row {
-      display: flex;
-      justify-content: space-between;
-      font-weight: 800;
-      color: #fff;
-      font-size: 14px;
-    }
-
-    .freq {
-      font-size: 52px;
-      font-weight: 900;
-      letter-spacing: 5px;
-      margin: 18px 0 6px;
-    }
-
-    .mhz {
-      color: #ffb15c;
-      font-weight: 800;
-    }
-
-    .bar {
-      height: 8px;
-      background: #2a1608;
-      border-radius: 20px;
-      margin-top: 22px;
-      overflow: hidden;
-    }
-
-    .bar span {
-      display: block;
-      height: 100%;
-      width: 72%;
-      background: #ff7a00;
-      border-radius: 20px;
-      box-shadow: 0 0 18px rgba(255, 122, 0, .9);
-    }
-
-    .input {
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: 14px;
-      padding: 16px;
-      color: #aaa;
-      background: rgba(255,255,255,.04);
-      margin-bottom: 18px;
-    }
-
-    .controls {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .control {
-      height: 66px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.1);
-      display: grid;
-      place-items: center;
-      color: #ff7a00;
-      font-size: 26px;
-      box-shadow: inset 0 0 20px rgba(255,122,0,.04);
-    }
-
-    .omar {
-      text-align: center;
-      color: #ff7a00;
-      font-weight: 900;
-      letter-spacing: 6px;
-      margin-top: 8px;
-    }
-
-    section {
-      width: min(1180px, 92%);
-      margin: auto;
-      padding: 70px 0;
-    }
-
-    .section-title {
-      text-align: center;
-      margin-bottom: 34px;
-    }
-
-    .section-title h3 {
-      font-size: 42px;
-      margin-bottom: 10px;
-    }
-
-    .section-title span {
-      color: #ff7a00;
-    }
-
-    .section-title p {
-      color: #bdbdbd;
-      font-size: 18px;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      opacity: .12;
+      background: repeating-linear-gradient(
+        115deg,
+        transparent 0px,
+        transparent 9px,
+        #777 10px,
+        #777 12px
+      );
+      clip-path: polygon(45% 0, 100% 0, 70% 100%, 10% 100%);
     }
 
     .card {
-      padding: 28px;
-      min-height: 230px;
-      border-radius: 24px;
-      background: rgba(255,255,255,.045);
-      border: 1px solid rgba(255,255,255,.1);
-      transition: .25s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(255,122,0,.55);
-      box-shadow: 0 0 35px rgba(255,122,0,.15);
-    }
-
-    .icon {
-      width: 58px;
-      height: 58px;
-      border-radius: 18px;
-      display: grid;
-      place-items: center;
-      background: rgba(255,122,0,.13);
-      color: #ff7a00;
-      font-size: 27px;
-      margin-bottom: 20px;
-    }
-
-    .card h4 {
-      font-size: 23px;
-      margin-bottom: 12px;
-    }
-
-    .card p {
-      color: #c9c9c9;
-      line-height: 1.8;
-    }
-
-    .features-list {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 18px;
-      margin-top: 25px;
-    }
-
-    .feature-line {
-      padding: 18px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
-      color: #ddd;
-      line-height: 1.7;
-    }
-
-    .feature-line strong {
-      color: #ff7a00;
-    }
-
-    .cta {
-      text-align: center;
+      width: 100%;
+      max-width: 1050px;
+      background: rgba(255,255,255,.94);
       border-radius: 30px;
-      padding: 60px 20px;
-      background: linear-gradient(135deg, rgba(255,122,0,.22), rgba(255,61,0,.08));
-      border: 1px solid rgba(255,122,0,.25);
+      box-shadow: 0 25px 70px rgba(0,0,0,.12);
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+      border: 1px solid #eee;
     }
 
-    .cta h3 {
-      font-size: 44px;
-      margin-bottom: 14px;
+    .side {
+      background: linear-gradient(135deg, #f7941d, #ef6b1f);
+      color: white;
+      padding: 55px 45px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .cta p {
-      color: #ddd;
+    .side::after {
+      content: "";
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.13);
+      left: -90px;
+      bottom: -90px;
+    }
+
+    .logo-box {
+      width: 95px;
+      height: 95px;
+      background: white;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 28px;
+      color: #f7941d;
+      font-size: 38px;
+      font-weight: bold;
+    }
+
+    .side h1 {
+      font-size: 34px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .side p {
       font-size: 18px;
-      margin-bottom: 26px;
-      line-height: 1.8;
+      line-height: 2;
+      opacity: .95;
     }
 
-    footer {
-      width: min(1180px, 92%);
-      margin: auto;
-      padding: 30px 0 45px;
-      color: #888;
+    .info-list {
+      margin-top: 35px;
+      display: grid;
+      gap: 14px;
+      font-size: 15px;
+    }
+
+    .info-list span {
+      background: rgba(255,255,255,.16);
+      padding: 13px 16px;
+      border-radius: 14px;
+      display: block;
+    }
+
+    .form-area {
+      padding: 55px 45px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #eef7e7;
+      color: #6dbb3f;
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-size: 14px;
+      margin-bottom: 18px;
+      font-weight: bold;
+    }
+
+    .form-area h2 {
+      font-size: 30px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .form-area .desc {
+      color: #777;
+      line-height: 1.9;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 9px;
+      color: #444;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 16px;
+      outline: none;
+      transition: .2s;
+      background: #fafafa;
+    }
+
+    input:focus, select:focus {
+      border-color: #f7941d;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(247,148,29,.12);
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      background: linear-gradient(135deg, #6dbb3f, #4d9f32);
+      color: white;
+      padding: 17px;
+      font-size: 18px;
+      border-radius: 18px;
+      cursor: pointer;
+      margin-top: 12px;
+      font-weight: bold;
+      transition: .2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(77,159,50,.25);
+    }
+
+    .result {
+      display: none;
+      margin-top: 25px;
+      border-radius: 18px;
+      padding: 20px;
+      background: #fff8ef;
+      border: 1px solid #ffd8aa;
+      color: #555;
+      line-height: 2;
+    }
+
+    .result strong {
+      color: #ef6b1f;
+    }
+
+    .footer {
+      margin-top: 26px;
+      color: #999;
+      font-size: 14px;
       text-align: center;
-      border-top: 1px solid rgba(255,255,255,.08);
     }
 
-    @media (max-width: 900px) {
-      nav {
-        display: none;
-      }
-
-      .hero {
-        grid-template-columns: 1fr;
-        padding-top: 35px;
-      }
-
-      .cards,
-      .features-list {
+    @media (max-width: 850px) {
+      .card {
         grid-template-columns: 1fr;
       }
 
-      .radio-frame {
-        min-height: 500px;
+      .side, .form-area {
+        padding: 35px 25px;
       }
 
-      .hero h2 {
-        font-size: 44px;
+      .side h1 {
+        font-size: 27px;
+      }
+
+      .form-area h2 {
+        font-size: 25px;
       }
     }
   </style>
 </head>
 
 <body>
-  <div class="glow"></div>
+  <div class="page">
+    <div class="wave"></div>
+    <div class="dots"></div>
 
-  <header>
-    <div class="brand">
-      <div class="logo">O</div>
-      <h1>OMAR RADIO</h1>
-    </div>
+    <div class="card">
+      <section class="side">
+        <div class="logo-box">ب</div>
+        <h1>جمعية بناء وتنمية مساكن بمنطقة جازان</h1>
+        <p>
+          منصة إلكترونية مخصصة لخدمة المستفيدين، تتيح الاستعلام عن حالة الطلب
+          ومتابعة الإجراءات بكل سهولة.
+        </p>
 
-    <nav>
-      <a href="#home">الرئيسية</a>
-      <a href="#features">المميزات</a>
-      <a href="#preview">الواجهة</a>
-      <a href="#contact">الطلب</a>
-    </nav>
-
-    <a class="btn" href="#contact">اطلب السكربت</a>
-  </header>
-
-  <main id="home" class="hero">
-    <div>
-      <div class="badge">FiveM Radio Script • QBCore • UI</div>
-
-      <h2>
-        سكربت راديو <span>احترافي</span><br />
-        لفايف إم
-      </h2>
-
-      <p>
-        سكربت راديو بواجهة فخمة نفس الصورة، مخصص لسيرفرات FiveM.
-        يدعم الترددات، كلمة السر، التحكم بالصوت، وتغيير الواجهة.
-        مناسب للسيرفرات الرول بلاي اللي تبغى تجربة اتصال واقعية.
-      </p>
-
-      <div class="actions">
-        <a class="btn" href="#preview">شاهد الواجهة</a>
-        <a class="btn secondary" href="#features">شرح المميزات</a>
-      </div>
-    </div>
-
-    <div class="radio-frame" id="preview">
-      <div class="radio-box">
-        <div class="radio-top">
-          <span>&lt;/&gt;</span>
-          <span>RADIO SYSTEM</span>
-          <span>×</span>
+        <div class="info-list">
+          <span>📍 المملكة العربية السعودية - جازان</span>
+          <span>🌐 www.bena-jazan.sa</span>
+          <span>📞 0096651056560</span>
         </div>
+      </section>
 
-        <div class="radio-title">OMAR RADIO</div>
-        <div class="radio-subtitle">واجهة راديو احترافية لسيرفرات FiveM</div>
+      <section class="form-area">
+        <span class="badge">استعلام المستفيدين</span>
 
-        <div class="speaker"></div>
+        <h2>تحقق من حالة طلبك</h2>
+        <p class="desc">
+          أدخل رقم الهوية أو رقم الجوال المسجل لدينا لمعرفة حالة الطلب.
+        </p>
 
-        <div class="display">
-          <div class="display-row">
-            <span>غير متصل</span>
-            <span>التردد</span>
+        <form onsubmit="showResult(event)">
+          <div class="field">
+            <label>نوع الاستعلام</label>
+            <select>
+              <option>رقم الهوية الوطنية</option>
+              <option>رقم الجوال</option>
+              <option>رقم الطلب</option>
+            </select>
           </div>
 
-          <div class="freq">0.00</div>
-          <div class="mhz">MHz</div>
-
-          <div class="bar">
-            <span></span>
+          <div class="field">
+            <label>بيانات الاستعلام</label>
+            <input type="text" placeholder="مثال: 10xxxxxxxx" required>
           </div>
+
+          <button class="btn" type="submit">استعلام الآن</button>
+        </form>
+
+        <div class="result" id="resultBox">
+          <strong>حالة الطلب:</strong> تحت الإجراء<br>
+          <strong>الإجراء الحالي:</strong> مراجعة البيانات والمستندات<br>
+          <strong>ملاحظة:</strong> سيتم التواصل معك عند اكتمال التحقق.
         </div>
 
-        <div class="input">كلمة سر التردد -- 🔒</div>
-
-        <div class="controls">
-          <div class="control">⚙</div>
-          <div class="control">👥</div>
-          <div class="control">⏻</div>
-          <div class="control">▰</div>
+        <div class="footer">
+          جميع الحقوق محفوظة © جمعية بناء وتنمية مساكن
         </div>
-
-        <div class="omar">OMAR</div>
-      </div>
+      </section>
     </div>
-  </main>
+  </div>
 
-  <section id="features">
-    <div class="section-title">
-      <h3>شرح <span>سكربت الراديو</span></h3>
-      <p>واجهة احترافية ومميزات واضحة للمتابعين قبل تجربة السكربت.</p>
-    </div>
-
-    <div class="cards">
-      <div class="card">
-        <div class="icon">📻</div>
-        <h4>واجهة راديو فخمة</h4>
-        <p>
-          تصميم أسود وبرتقالي قريب من شكل جهاز الراديو الحقيقي،
-          مع شاشة ترددات وأزرار واضحة وسهلة.
-        </p>
-      </div>
-
-      <div class="card">
-        <div class="icon">🔐</div>
-        <h4>نظام كلمة سر</h4>
-        <p>
-          تقدر تخلي التردد محمي بكلمة سر، مناسب للعساكر،
-          العصابات، الإسعاف، أو أي جهة خاصة داخل السيرفر.
-        </p>
-      </div>
-
-      <div class="card">
-        <div class="icon">🎚️</div>
-        <h4>تحكم كامل بالصوت</h4>
-        <p>
-          تغيير الصوت، الاتصال، فصل الاتصال، والتحكم بالتردد
-          من نفس الواجهة بدون تعقيد.
-        </p>
-      </div>
-    </div>
-
-    <div class="features-list">
-      <div class="feature-line"><strong>يدعم:</strong> ترددات خاصة وعامة داخل السيرفر.</div>
-      <div class="feature-line"><strong>يدعم:</strong> كلمة سر للترددات الحساسة.</div>
-      <div class="feature-line"><strong>واجهة:</strong> تصميم برتقالي وأسود مناسب للعرض والمتابعين.</div>
-      <div class="feature-line"><strong>استخدام:</strong> مناسب للشرطة، الإسعاف، العصابات، والإدارات.</div>
-      <div class="feature-line"><strong>تخصيص:</strong> تقدر تغير الاسم، اللون، النصوص، والشعار.</div>
-      <div class="feature-line"><strong>تجربة:</strong> سهل للاعب وما يحتاج شرح طويل.</div>
-    </div>
-  </section>
-
-  <section>
-    <div class="section-title">
-      <h3>مناسب لأي <span>سيرفر رول بلاي</span></h3>
-      <p>السكربت يعطي اللاعبين تجربة اتصال منظمة وواجهة مرتبة بدل الراديو العادي.</p>
-    </div>
-
-    <div class="cards">
-      <div class="card">
-        <div class="icon">🚓</div>
-        <h4>الشرطة والعسكر</h4>
-        <p>
-          ترددات خاصة للقطاعات الأمنية مع كلمة سر وتنظيم أفضل للتواصل.
-        </p>
-      </div>
-
-      <div class="card">
-        <div class="icon">🚑</div>
-        <h4>الإسعاف</h4>
-        <p>
-          تواصل سريع بين المسعفين والمستشفى أثناء البلاغات والسيناريوهات.
-        </p>
-      </div>
-
-      <div class="card">
-        <div class="icon">💀</div>
-        <h4>العصابات</h4>
-        <p>
-          ترددات خاصة للعصابات والفرق داخل السيرفر مع خصوصية أعلى.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section id="contact">
-    <div class="cta">
-      <h3>تبغى السكربت في سيرفرك؟</h3>
-      <p>
-        تواصل معي لطلب السكربت أو تعديل الواجهة باسم سيرفرك.
-        السكربت مناسب للعرض على المتابعين ومناسب للبيع أو الاستخدام داخل السيرفر.
-      </p>
-
-      <a class="btn" href="https://omar.manus.space" target="_blank">
-        اطلب السكربت الآن
-      </a>
-    </div>
-  </section>
-
-  <footer>
-    © 2026 OMAR RADIO — FiveM Radio Script
-  </footer>
+  <script>
+    function showResult(e) {
+      e.preventDefault();
+      document.getElementById("resultBox").style.display = "block";
+    }
+  </script>
 </body>
 </html>
