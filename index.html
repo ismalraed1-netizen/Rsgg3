@@ -3,884 +3,768 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جمعية بناء وتنمية مساكن بجازان - لوحة المتابعة التفاعلية</title>
-    <!-- Tailwind CSS for modern responsive styling -->
+    <title>مصمم بطاقات موظفي جمعية بناء وتنمية مساكن</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Cairo Font for rich professional Arabic typography -->
+    <!-- FontAwesome Icons for visual flair -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Cairo and Tajawal for pristine Arabic typography resembling 29LT Azer -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            dark: '#132a1e',
-                            deep: '#08120c',
-                            orange: '#F37021',
-                            green: '#84BD00',
-                            gray: '#9FA1A4'
+                        brandOrange: {
+                            light: '#ff8a50',
+                            DEFAULT: '#f37021', // C2 M61 Y100 K0
+                            dark: '#c14b00'
+                        },
+                        brandGreen: {
+                            light: '#a2dd4e',
+                            DEFAULT: '#7cb342', // C55 M7 Y100 K0
+                            dark: '#4b830d'
+                        },
+                        brandGray: {
+                            light: '#f5f5f5',
+                            DEFAULT: '#9e9e9e', // C41 M33 Y33 K1
+                            dark: '#616161'
                         }
                     },
                     fontFamily: {
-                        sans: ['Cairo', 'sans-serif'],
+                        cairo: ['Cairo', 'sans-serif'],
+                        tajawal: ['Tajawal', 'sans-serif']
                     }
                 }
             }
         }
     </script>
+
     <style>
         body {
-            font-family: 'Cairo', sans-serif;
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background-color: #f0f4f8;
         }
-        /* Custom Halftone Dots from Page 4 of Brand Manual */
-        .brand-dots {
-            background-image: radial-gradient(#ffffff 15%, transparent 16%), radial-gradient(#ffffff 10%, transparent 11%);
-            background-size: 20px 20px;
-            background-position: 0 0, 10px 10px;
-            opacity: 0.05;
+
+        /* Card container styles for pixel-perfect standard preview */
+        .card-vertical {
+            width: 320px;
+            height: 500px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
         }
-        /* Print Stylesheet for Elegant A4 Output */
+
+        .card-horizontal {
+            width: 500px;
+            height: 320px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Print Media Styles to ensure high resolution print output */
         @media print {
-            .print-hide {
+            body {
+                background: white;
+                color: black;
+                padding: 0;
+                margin: 0;
+            }
+            .no-print {
                 display: none !important;
             }
-            body {
+            .print-area {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 30px !important;
+                flex-wrap: wrap !important;
+                padding: 20px !important;
                 background: white !important;
-                color: black !important;
             }
-            .print-card {
-                border: 1px solid #9FA1A4 !important;
+            .card-vertical, .card-horizontal {
+                box-shadow: none !important;
+                border: 1px dashed #ccc !important;
                 page-break-inside: avoid;
+                margin: 10px;
+                /* Exact CR80 standard specifications for printing if scaled */
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
             }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff8a50;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f37021;
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased selection:bg-emerald-100 min-h-screen pb-16">
+<body class="min-h-screen text-gray-800 flex flex-col transition-colors duration-300">
 
-    <!-- TOP LICENSE RIBBON -->
-    <div class="bg-brand-deep py-2 text-[10px] sm:text-xs font-semibold border-b border-white/5 relative z-10 px-4 sm:px-6 lg:px-8 print-hide">
-        <div class="max-w-7xl mx-auto flex justify-between items-center text-slate-300">
-            <span class="flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-brand-green animate-pulse"></span>
-                جمعية أهلية مرخصة برقم (1927) وتحت إشراف وزارة الموارد البشرية والتنمية الاجتماعية
-            </span>
-            <span class="hidden md:inline">جازان، المملكة العربية السعودية</span>
-        </div>
-    </div>
-
-    <!-- BRAND VISUAL HEADER -->
-    <header class="bg-gradient-to-r from-brand-dark to-brand-deep text-white shadow-xl relative overflow-hidden border-b-4 border-brand-green print-hide">
-        <!-- Halftone Pattern Overlay -->
-        <div class="absolute inset-0 brand-dots"></div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 relative z-10">
-            <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
-                
-                <!-- Logo & Titles (Page 2 Brand Manual) -->
-                <div class="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-right">
-                    <div id="logo-container" class="bg-white p-2.5 rounded-2xl shadow-xl flex items-center justify-center border-2 border-brand-green w-24 h-24 sm:w-28 sm:h-28 shrink-0 overflow-hidden">
-                        <!-- High Fidelity Fallback Logo implementation -->
-                        <img 
-                            src="https://cdn.discordapp.com/attachments/1174423801866498163/1517850729296167082/OIP.webp?ex=6a37c826&is=6a3676a6&hm=ea2f3faf228909ae180875f0b55e42cf6119827c936bf7e22b2b795aea358d54" 
-                            data-stage="0"
-                            alt="شعار جمعية بناء وتنمية" 
-                            class="w-full h-full object-contain"
-                            onerror="handleLogoError(this)" 
-                        />
-                    </div>
-                    <div class="space-y-1">
-                        <div class="inline-flex items-center gap-1.5 bg-[#84BD00]/20 text-brand-green text-xs font-bold px-3 py-1 rounded-full border border-brand-green/30">
-                            <span>الشعار الرسمي المعتمد</span>
-                        </div>
-                        <h1 class="text-xl sm:text-2xl lg:text-3xl font-black text-white">
-                            جمعية <span class="text-brand-orange">بناء</span> وتنمية مساكن
-                        </h1>
-                        <p class="text-slate-300 text-xs sm:text-sm font-medium">
-                            بمنطقة جازان | منصة إدارة ومتابعة التكليفات والمهام التنفيذية
-                        </p>
-                    </div>
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-100 no-print">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="p-2 bg-gradient-to-br from-brandOrange to-brandGreen rounded-xl">
+                    <!-- SVG Emblem inspired by the brand building/house lines -->
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
                 </div>
-
-                <!-- Action Controls -->
-                <div class="flex flex-wrap items-center justify-center lg:justify-end gap-3 w-full lg:w-auto">
-                    <button onclick="window.print()" class="bg-white/5 hover:bg-white/15 border border-white/10 text-white transition px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 text-xs sm:text-sm shadow-sm">
-                        <svg class="w-4 h-4 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                        </svg>
-                        <span>طباعة التقرير</span>
-                    </button>
-                    <button onclick="openAddModal()" class="bg-brand-orange hover:bg-orange-600 text-white font-bold transition px-5 py-2.5 rounded-xl flex items-center gap-2 text-xs sm:text-sm shadow-lg shadow-brand-orange/20">
-                        <span class="text-lg font-black">+</span>
-                        <span>إضافة مهمة جديدة</span>
-                    </button>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-gray-900 font-tajawal">منصة تصميم بطاقات الموظفين</h1>
+                    <p class="text-xs sm:text-sm text-gray-500 font-semibold text-brandOrange">جمعية بناء وتنمية مساكن بمنطقة جازان</p>
                 </div>
-
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="https://www.bena-jazan.sa" target="_blank" class="text-xs text-gray-400 hover:text-brandOrange font-medium transition flex items-center gap-1">
+                    <i class="fa-solid fa-globe"></i>
+                    <span>www.bena-jazan.sa</span>
+                </a>
+                <span class="text-gray-300">|</span>
+                <span class="bg-brandOrange/10 text-brandOrange text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>بوابة إصدار البطاقات الذكية</span>
+                </span>
             </div>
         </div>
     </header>
 
-    <!-- STATISTICS CARDS -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+    <!-- Main Application Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 print-hide">
-            
-            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200/60 flex items-center justify-between relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-1.5 h-full bg-brand-gray"></div>
-                <div>
-                    <p class="text-slate-400 font-bold text-xs">إجمالي المهام</p>
-                    <h3 id="stat-total" class="text-2xl sm:text-3xl font-black text-slate-800 mt-1">0</h3>
-                    <p class="text-[10px] text-slate-500 mt-0.5">البنود المدرجة</p>
-                </div>
-                <div class="bg-slate-100 text-slate-500 p-2.5 rounded-xl">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-                </div>
+        <!-- Controls Column (Left on Desktop, Top on Mobile) -->
+        <div class="lg:col-span-5 bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-6 no-print h-fit overflow-y-auto max-h-[85vh]">
+            <div class="border-b border-gray-100 pb-4">
+                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-brandOrange"></i>
+                    <span>لوحة التحكم والتخصيص</span>
+                </h2>
+                <p class="text-xs text-gray-500 mt-1">أدخل بيانات الموظف واختر نمط التصميم المفضّل طبقاً لدليل هوية مساكن.</p>
             </div>
 
-            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200/60 flex items-center justify-between relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-1.5 h-full bg-brand-green"></div>
-                <div>
-                    <p class="text-slate-400 font-bold text-xs">تم الإنجاز</p>
-                    <h3 id="stat-completed" class="text-2xl sm:text-3xl font-black text-brand-green mt-1">0</h3>
-                    <p id="stat-rate" class="text-[10px] text-brand-green font-bold mt-0.5">0% نسبة الإنجاز</p>
-                </div>
-                <div class="bg-emerald-50 text-brand-green p-2.5 rounded-xl">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200/60 flex items-center justify-between relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-1.5 h-full bg-brand-orange"></div>
-                <div>
-                    <p class="text-slate-400 font-bold text-xs">قيد العمل والمتابعة</p>
-                    <h3 id="stat-progress" class="text-2xl sm:text-3xl font-black text-brand-orange mt-1">0</h3>
-                    <p class="text-[10px] text-slate-500 mt-0.5">تحت الإجراء حالياً</p>
-                </div>
-                <div class="bg-orange-50 text-brand-orange p-2.5 rounded-xl">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200/60 flex items-center justify-between relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-1.5 h-full bg-rose-500"></div>
-                <div>
-                    <p class="text-slate-400 font-bold text-xs">معلقة بانتظار البدء</p>
-                    <h3 id="stat-pending" class="text-2xl sm:text-3xl font-black text-rose-600 mt-1">0</h3>
-                    <p class="text-[10px] text-rose-500 font-bold mt-0.5">تتطلب تدخلاً سريعاً</p>
-                </div>
-                <div class="bg-rose-50 text-rose-600 p-2.5 rounded-xl">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- MAIN TABLE & FILTERS SECTION -->
-        <section class="bg-white rounded-3xl shadow-md border border-slate-200/80 overflow-hidden">
-            
-            <!-- Filters & Search Bar -->
-            <div class="p-4 sm:p-6 bg-slate-50 border-b border-slate-200 flex flex-col lg:flex-row gap-4 justify-between items-center print-hide">
+            <!-- Section: Employee Details -->
+            <div class="space-y-4">
+                <h3 class="text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                    <i class="fa-solid fa-user-pen text-brandGreen"></i>
+                    <span>بيانات الموظف</span>
+                </h3>
                 
-                <!-- Search Box -->
-                <div class="relative w-full lg:max-w-md">
-                    <span class="absolute inset-y-0 right-3.5 flex items-center pointer-events-none text-slate-400">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                    </span>
-                    <input 
-                        type="text" 
-                        id="search-input"
-                        oninput="renderDashboard()"
-                        placeholder="ابحث عن مهمة، موظف مكلف، أو بند حوكمة..."
-                        class="w-full pr-11 pl-4 py-2.5 sm:py-3 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none text-sm transition shadow-sm"
-                    />
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">الاسم الكامل (ثنائي أو ثلاثي)</label>
+                    <input type="text" id="inputName" value="أحمد محمد الودعاني" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brandOrange text-sm" placeholder="أدخل اسم الموظف">
                 </div>
 
-                <!-- Category Filters -->
-                <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-start lg:justify-end">
-                    <span class="text-xs font-bold text-slate-500 ml-2">تصنيف وتصفية المهام:</span>
-                    <div id="filter-buttons" class="flex flex-wrap gap-2">
-                        <!-- Dynamically Generated -->
-                    </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">المسمى الوظيفي</label>
+                    <input type="text" id="inputTitle" value="المدير العام" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brandOrange text-sm" placeholder="مثال: المدير العام / مهندس مشاريع">
                 </div>
 
-            </div>
-
-            <!-- DESKTOP DATA TABLE -->
-            <div class="overflow-x-auto hidden lg:block">
-                <table class="w-full text-right border-collapse print-hide">
-                    <thead>
-                        <tr class="bg-gradient-to-r from-brand-dark to-brand-deep text-white border-b-2 border-brand-green">
-                            <th class="py-4 px-5 text-center font-bold text-xs w-14">م</th>
-                            <th class="py-4 px-4 font-bold text-xs min-w-[220px]">المهمة / الملف</th>
-                            <th class="py-4 px-4 text-center font-bold text-xs w-28">الأهمية</th>
-                            <th class="py-4 px-4 font-bold text-xs min-w-[280px]">الوضع الحالي + الإجراء المعتمد</th>
-                            <th class="py-4 px-4 font-bold text-xs min-w-[170px]">المسؤول عن التنفيذ</th>
-                            <th class="py-4 px-5 text-center font-bold text-xs w-36">العمليات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body" class="divide-y divide-slate-100">
-                        <!-- Dynamically Generated -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- MOBILE CARDS CONTAINER -->
-            <div id="mobile-cards-container" class="block lg:hidden divide-y divide-slate-100 print-hide">
-                <!-- Dynamically Generated -->
-            </div>
-
-            <!-- NO DATA FALLBACK -->
-            <div id="no-data-fallback" class="hidden py-16 text-center text-slate-400">
-                <svg class="w-12 h-12 text-slate-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-                <p class="font-bold">لا توجد نتائج مطابقة لبحثك أو تصفيتك</p>
-            </div>
-
-        </section>
-
-        <!-- PRINT FORMAL LAYOUT -->
-        <div id="print-layout" class="hidden print:block w-full text-right p-6">
-            <!-- Formal Header -->
-            <div class="flex justify-between items-start border-b-4 border-brand-green pb-6 mb-8">
-                <div class="flex items-center gap-5">
-                    <div id="print-logo-container" class="border border-brand-green p-1.5 rounded-xl w-20 h-20 flex items-center justify-center">
-                        <!-- SVG fallback always loaded inside the printing page -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">الرقم الوظيفي</label>
+                        <input type="text" id="inputId" value="EMP-2026-389" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brandOrange text-sm" placeholder="مثال: EMP-2026-001">
                     </div>
                     <div>
-                        <h1 class="text-xl font-extrabold text-slate-800">جمعية بناء وتنمية مساكن بمنطقة جازان</h1>
-                        <p class="text-xs text-brand-green font-bold mt-0.5">مسجلة بوزارة الموارد البشرية برقم (1927)</p>
-                        <p class="text-[10px] text-slate-500">المملكة العربية السعودية - جازان</p>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">تاريخ الانتهاء</label>
+                        <input type="text" id="inputExpiry" value="12/2028" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brandOrange text-sm" placeholder="مثال: 12 / 2028">
                     </div>
                 </div>
-                <div class="text-left text-xs text-slate-600 space-y-1 font-semibold">
-                    <p>الرقم: ب ت م / <span id="print-year"></span></p>
-                    <p>التاريخ: <span id="print-date"></span></p>
-                    <p>المرفقات: جدول المتابعة الدوري</p>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">الصورة الشخصية للموظف</label>
+                    <div class="flex items-center gap-3">
+                        <div class="relative">
+                            <label for="inputPhoto" class="cursor-pointer bg-brandOrange/5 hover:bg-brandOrange/10 text-brandOrange text-xs font-bold py-2.5 px-4 rounded-lg border border-dashed border-brandOrange/30 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <span>تحميل صورة الموظف</span>
+                            </label>
+                            <input type="file" id="inputPhoto" accept="image/*" class="hidden">
+                        </div>
+                        <button type="button" id="btnResetPhoto" class="text-xs text-gray-400 hover:text-red-500 transition">استعادة الافتراضي</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Print Title -->
-            <div class="text-center my-6">
-                <h2 class="text-lg font-black text-slate-800 border-b-2 border-slate-200 pb-2 inline-block px-8">
-                    جدول المهام والتكليفات الإدارية والميدانية - نسخة متابعة رسمية
-                </h2>
+            <!-- Section: Design Preferences -->
+            <div class="space-y-4 pt-4 border-t border-gray-100">
+                <h3 class="text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                    <i class="fa-solid fa-palette text-brandOrange"></i>
+                    <span>نمط وتصميم الهوية</span>
+                </h3>
+
+                <!-- Color Palette Selection -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-2">سمة اللون الغالب على التصميم</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" onclick="changeTheme('orange')" class="theme-btn border-2 border-brandOrange p-2 rounded-xl text-center hover:bg-brandOrange/5 transition cursor-pointer" data-theme="orange">
+                            <span class="block w-5 h-5 bg-brandOrange mx-auto rounded-full mb-1"></span>
+                            <span class="text-2xs font-bold text-gray-700">البرتقالي الرسمي</span>
+                        </button>
+                        <button type="button" onclick="changeTheme('green')" class="theme-btn border border-gray-100 p-2 rounded-xl text-center hover:bg-brandGreen/5 transition cursor-pointer" data-theme="green">
+                            <span class="block w-5 h-5 bg-brandGreen mx-auto rounded-full mb-1"></span>
+                            <span class="text-2xs font-semibold text-gray-700">الأخضر الطبيعي</span>
+                        </button>
+                        <button type="button" onclick="changeTheme('classic')" class="theme-btn border border-gray-100 p-2 rounded-xl text-center hover:bg-gray-100 transition cursor-pointer" data-theme="classic">
+                            <span class="block w-5 h-5 bg-gradient-to-r from-brandOrange to-brandGreen mx-auto rounded-full mb-1"></span>
+                            <span class="text-2xs font-semibold text-gray-700">مزيج الهوية</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card Orientation -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-2">توجيه وحجم البطاقة</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" onclick="changeOrientation('vertical')" id="btnOptVertical" class="border-2 border-brandOrange p-2.5 rounded-xl flex items-center justify-center gap-2 bg-brandOrange/5 font-bold text-xs text-brandOrange">
+                            <i class="fa-solid fa-id-card"></i>
+                            <span>طولي (قياسي)</span>
+                        </button>
+                        <button type="button" onclick="changeOrientation('horizontal')" id="btnOptHorizontal" class="border border-gray-200 p-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-50 text-xs text-gray-600">
+                            <i class="fa-solid fa-id-card rotate-90"></i>
+                            <span>عرضي (أفقي)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Design Assets Options -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-2">تفاصيل وعناصر زخرفية</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-2 cursor-pointer text-xs">
+                            <input type="checkbox" id="chkShowDots" checked onchange="toggleDecorative()" class="rounded border-gray-300 text-brandOrange focus:ring-brandOrange">
+                            <span class="text-gray-700">إظهار شبكة النقاط (الرسومات الجرافيكية)</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer text-xs">
+                            <input type="checkbox" id="chkShowWaves" checked onchange="toggleDecorative()" class="rounded border-gray-300 text-brandOrange focus:ring-brandOrange">
+                            <span class="text-gray-700">إظهار الخطوط المتموجة للهوية</span>
+                        </label>
+                    </div>
+                </div>
             </div>
 
-            <!-- Table -->
-            <table class="w-full text-xs border-collapse border border-slate-400 my-4">
-                <thead>
-                    <tr class="bg-slate-100 text-slate-800">
-                        <th class="border border-slate-400 py-3 px-2 text-center w-8 font-bold">م</th>
-                        <th class="border border-slate-400 py-3 px-3 text-right font-bold w-1/4">المهمة المكلف بها</th>
-                        <th class="border border-slate-400 py-3 px-2 text-center w-16 font-bold">الأهمية</th>
-                        <th class="border border-slate-400 py-3 px-3 text-right font-bold">الوضع الحالي والإجراء التفصيلي المعتمد</th>
-                        <th class="border border-slate-400 py-3 px-3 text-right font-bold w-1/5">المسؤول عن المتابعة</th>
-                    </tr>
-                </thead>
-                <tbody id="print-table-body">
-                    <!-- Dynamically Generated -->
-                </tbody>
-            </table>
-
-            <!-- Print Signatures -->
-            <div class="mt-12 grid grid-cols-2 gap-12 text-center text-xs font-bold text-slate-700">
-                <div class="space-y-12">
-                  <p>توقيع وختم اللجنة الرقابية</p>
-                  <p class="text-slate-400">......................................................</p>
-                </div>
-                <div class="space-y-12">
-                  <p>اعتماد المشرف / المدير العام للجمعية</p>
-                  <p class="text-slate-400">......................................................</p>
+            <!-- Section: Authorized Signature -->
+            <div class="space-y-4 pt-4 border-t border-gray-100">
+                <h3 class="text-sm font-bold text-gray-700 flex items-center justify-between">
+                    <span class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-signature text-brandGreen"></i>
+                        <span>توقيع الجهة المعتمدة</span>
+                    </span>
+                    <button type="button" onclick="clearSignature()" class="text-2xs text-red-500 hover:underline">مسح اللوحة</button>
+                </h3>
+                <p class="text-2xs text-gray-500">ارسم توقيع المدير العام أو التوقيع الرسمي في المربع أدناه ليظهر تلقائياً على ظهر البطاقة:</p>
+                
+                <div class="border border-gray-200 rounded-xl bg-gray-50 overflow-hidden relative">
+                    <canvas id="signatureCanvas" height="90" class="w-full bg-white cursor-crosshair touch-none"></canvas>
+                    <div class="absolute bottom-1 right-2 pointer-events-none">
+                        <span class="text-3xs text-gray-300 font-mono">لوحة التوقيع الرقمي المباشر</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Footer fixed on print bottom -->
-            <div class="fixed bottom-0 left-0 right-0 text-center text-[10px] text-slate-400 border-t border-slate-200 pt-3">
-                الجمعية الأهلية لبناء وتنمية مساكن بمنطقة جازان | البريد الإلكتروني: info@bena-jazan.sa | جوال: 0551056560
+            <!-- Print Action Trigger -->
+            <div class="pt-2">
+                <button type="button" onclick="window.print()" class="w-full bg-gradient-to-r from-brandOrange to-orange-600 hover:from-brandOrange-dark hover:to-orange-700 text-white font-bold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm cursor-pointer">
+                    <i class="fa-solid fa-print"></i>
+                    <span>جاهز للتصميم؟ اطبع البطاقة الآن</span>
+                </button>
+                <p class="text-3xs text-center text-gray-400 mt-2">ملاحظة: يمكنك قص البطاقة وطي الوجهين وتغليفهما حرارياً للحصول على بطاقة ممتازة.</p>
+            </div>
+        </div>
+
+        <!-- Preview Column (Right on Desktop, Bottom on Mobile) -->
+        <div class="lg:col-span-7 flex flex-col items-center justify-start space-y-6">
+            
+            <div class="no-print text-center max-w-md">
+                <span class="bg-brandGreen/10 text-brandGreen text-xs font-bold px-3 py-1 rounded-full">معاينة تفاعلية حية (WYSIWYG)</span>
+                <p class="text-xs text-gray-500 mt-2">شاهد كيف ستبدو البطاقة (الوجهين الأمامي والخلفي) بشكل فوري أثناء التعديل والتحكم.</p>
+            </div>
+
+            <!-- Live Preview Wrapper -->
+            <div id="printArea" class="print-area flex flex-col md:flex-row items-center justify-center gap-8 w-full">
+                
+                <!-- Front Side Card -->
+                <div id="idCardFront" class="card-vertical bg-white select-none relative shadow-xl overflow-hidden transition-all duration-300">
+                    
+                    <!-- Decorative Background Waves -->
+                    <div class="wave-bg absolute inset-0 opacity-10 pointer-events-none z-0">
+                        <!-- SVG waves based on manual -->
+                        <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                            <path class="fill-brandOrange" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,122.7C960,117,1056,171,1152,186.7C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+                        </svg>
+                    </div>
+
+                    <!-- Decorative Dots Pattern -->
+                    <div class="dots-bg absolute right-4 top-16 opacity-10 pointer-events-none z-0">
+                        <svg width="60" height="120" viewBox="0 0 60 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse">
+                                    <circle cx="3" cy="3" r="1.5" class="fill-brandOrange" />
+                                </pattern>
+                            </defs>
+                            <rect width="100%" height="100%" fill="url(#dots)" />
+                        </svg>
+                    </div>
+
+                    <!-- Top Design Header Block (Angled Ribbon representing construction) -->
+                    <div id="headerAccent" class="absolute top-0 inset-x-0 h-16 bg-gradient-to-r from-brandOrange to-brandOrange-dark flex items-center justify-between px-4 z-10 transition-colors duration-300">
+                        <div class="text-right">
+                            <span class="block text-2xs font-extrabold text-white leading-tight">جمعية بناء وتنمية مساكن بجازان</span>
+                        </div>
+                        <div class="h-10 w-10 bg-white p-1 rounded-lg flex items-center justify-center shadow-sm">
+                            <!-- Logo Image fallback using SVG placeholder to guarantee visual representation -->
+                            <img id="cardLogoFront" src="https://cdn.discordapp.com/attachments/1174423801866498163/1517850729296167082/OIP.webp?ex=6a37c826&is=6a3676a6&hm=ea2f3faf228909ae180875f0b55e42cf6119827c936bf7e22b2b795aea358d54" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/100x100/f37021/ffffff?text=Bena';" 
+                                 class="max-h-full max-w-full object-contain" alt="شعار الجمعية">
+                        </div>
+                    </div>
+
+                    <!-- Card Body Elements -->
+                    <div class="relative z-10 flex flex-col items-center justify-between h-full pt-20 pb-4 px-6 text-center">
+                        
+                        <!-- Employee Avatar Framing (Circular/Rounded badge matching manual style) -->
+                        <div class="relative mt-2">
+                            <div id="avatarFrame" class="w-28 h-28 rounded-full border-4 border-brandOrange/30 shadow-md overflow-hidden bg-gray-50 flex items-center justify-center transition-colors duration-300">
+                                <img id="previewPhotoFront" src="https://placehold.co/300x300/e2e8f0/64748b?text=Photo" class="w-full h-full object-cover" alt="صورة الموظف">
+                            </div>
+                        </div>
+
+                        <!-- Info Section -->
+                        <div class="mt-4 space-y-1 w-full">
+                            <h4 id="previewName" class="text-lg font-bold text-gray-800 leading-tight">أحمد محمد الودعاني</h4>
+                            <div class="flex items-center justify-center gap-1.5">
+                                <span id="previewTitle" class="text-xs font-semibold text-brandOrange bg-brandOrange/10 px-2.5 py-0.5 rounded-full inline-block transition-colors duration-300">المدير العام</span>
+                            </div>
+                        </div>
+
+                        <!-- Barcode & QR Metadata -->
+                        <div class="w-full bg-gray-50/80 backdrop-blur-sm border border-gray-100 rounded-xl p-3 grid grid-cols-12 items-center gap-2 mt-auto">
+                            <div class="col-span-8 text-right space-y-1">
+                                <div class="flex items-center gap-1">
+                                    <span class="text-4xs text-gray-400 font-bold">الرقم الوظيفي:</span>
+                                    <span id="previewId" class="text-2xs font-extrabold text-gray-700 tracking-wider">EMP-2026-389</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span class="text-4xs text-gray-400 font-bold">تاريخ الانتهاء:</span>
+                                    <span id="previewExpiry" class="text-2xs font-extrabold text-gray-700">12/2028</span>
+                                </div>
+                                <!-- Visual simulated barcode (lines of custom widths) -->
+                                <div class="flex items-center gap-0.5 h-4 mt-2">
+                                    <span class="bg-gray-800 h-full w-[2px]"></span>
+                                    <span class="bg-gray-800 h-full w-[1px]"></span>
+                                    <span class="bg-gray-800 h-full w-[3px]"></span>
+                                    <span class="bg-gray-800 h-full w-[1px]"></span>
+                                    <span class="bg-gray-800 h-full w-[2px]"></span>
+                                    <span class="bg-gray-800 h-full w-[1px]"></span>
+                                    <span class="bg-gray-800 h-full w-[4px]"></span>
+                                    <span class="bg-gray-800 h-full w-[1px]"></span>
+                                    <span class="bg-gray-800 h-full w-[2px]"></span>
+                                    <span class="bg-gray-800 h-full w-[3px]"></span>
+                                    <span class="bg-gray-800 h-full w-[1px]"></span>
+                                    <span class="bg-gray-800 h-full w-[2px]"></span>
+                                </div>
+                            </div>
+                            <div class="col-span-4 flex justify-end">
+                                <img id="previewQr" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=BenaJazan-Ahmed-EMP2026389" class="w-14 h-14 object-contain rounded border border-gray-200" alt="رمز الاستجابة">
+                            </div>
+                        </div>
+
+                        <!-- Footer Accent Line matching visual elements -->
+                        <div id="footerAccentFront" class="absolute bottom-0 inset-x-0 h-1.5 bg-brandGreen transition-colors duration-300"></div>
+
+                    </div>
+                </div>
+
+                <!-- Back Side Card -->
+                <div id="idCardBack" class="card-vertical bg-white select-none relative shadow-xl overflow-hidden transition-all duration-300">
+                    
+                    <!-- Decorative Background Waves -->
+                    <div class="wave-bg absolute inset-0 opacity-5 pointer-events-none z-0">
+                        <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                            <path class="fill-brandGreen" d="M0,192L60,186.7C120,181,240,171,360,144C480,117,600,75,720,80C840,85,960,139,1080,144C1200,149,1320,107,1380,85.3L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+                        </svg>
+                    </div>
+
+                    <!-- Decorative Dots Pattern -->
+                    <div class="dots-bg absolute left-4 bottom-16 opacity-10 pointer-events-none z-0">
+                        <svg width="60" height="120" viewBox="0 0 60 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <pattern id="dotsBack" width="12" height="12" patternUnits="userSpaceOnUse">
+                                    <circle cx="3" cy="3" r="1.5" class="fill-brandGreen" />
+                                </pattern>
+                            </defs>
+                            <rect width="100%" height="100%" fill="url(#dotsBack)" />
+                        </svg>
+                    </div>
+
+                    <!-- Inner Card Layout -->
+                    <div class="relative z-10 flex flex-col items-center justify-between h-full py-6 px-6 text-center">
+                        
+                        <!-- Upper Emblem & Society Heading -->
+                        <div class="w-full flex items-center justify-center gap-2 pb-3 border-b border-gray-100">
+                            <div class="h-8 w-8">
+                                <img id="cardLogoBack" src="https://cdn.discordapp.com/attachments/1174423801866498163/1517850729296167082/OIP.webp?ex=6a37c826&is=6a3676a6&hm=ea2f3faf228909ae180875f0b55e42cf6119827c936bf7e22b2b795aea358d54" 
+                                     onerror="this.onerror=null; this.src='https://placehold.co/100x100/f37021/ffffff?text=Bena';" 
+                                     class="max-h-full max-w-full object-contain" alt="شعار الجمعية">
+                            </div>
+                            <div class="text-right">
+                                <span class="block text-2xs font-extrabold text-gray-800">جمعية بناء وتنمية مساكن</span>
+                                <span class="block text-4xs text-gray-400">بمنطقة جازان - مسجلة برقم 1539</span>
+                            </div>
+                        </div>
+
+                        <!-- Instructions / Terms of usage (Official Legal Standard text) -->
+                        <div class="text-right space-y-2 my-4 w-full">
+                            <h5 class="text-3xs font-extrabold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-info text-brandOrange"></i>
+                                <span>شروط وتعليمات استخدام البطاقة:</span>
+                            </h5>
+                            <ul class="text-4xs text-gray-500 space-y-1.5 list-disc list-inside">
+                                <li>تعتبر هذه البطاقة وثيقة رسمية تخص حاملها فقط ولا يجوز التنازل عنها للغير.</li>
+                                <li>تُستخدم البطاقة لإثبات الهوية والانتساب لجمعية بناء وتنمية مساكن.</li>
+                                <li>في حال العثور على البطاقة، يرجى تسليمها لأقرب مركز للجمعية أو الاتصال بنا.</li>
+                                <li>تخضع البيانات المسجلة للقوانين واللوائح الداخلية للجمعية.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Signature View Box showing live custom drawn signature -->
+                        <div class="w-full flex flex-col items-center justify-center bg-gray-50/50 rounded-xl p-2 border border-gray-100 relative">
+                            <span class="text-4xs text-gray-400 block mb-1">اعتماد وتوقيع المدير العام للجمعية</span>
+                            <div class="h-10 w-32 flex items-center justify-center">
+                                <img id="previewSignature" class="max-h-full max-w-full object-contain filter contrast-125" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='30'></svg>" alt="التوقيع الرقمي">
+                            </div>
+                        </div>
+
+                        <!-- Contact Details & Social accounts (Matching Page 8) -->
+                        <div class="w-full text-right mt-auto pt-3 border-t border-gray-100 space-y-2">
+                            <div class="flex items-center justify-between text-4xs text-gray-500">
+                                <span class="flex items-center gap-1">
+                                    <i class="fa-brands fa-whatsapp text-green-500"></i>
+                                    <span>00966551056560</span>
+                                </span>
+                                <span class="flex items-center gap-1">
+                                    <i class="fa-solid fa-globe text-brandOrange"></i>
+                                    <span>www.bena-jazan.sa</span>
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-center gap-4 text-4xs text-gray-500 pt-1">
+                                <span class="flex items-center gap-1">
+                                    <i class="fa-brands fa-instagram text-pink-500"></i>
+                                    <i class="fa-brands fa-twitter text-sky-500"></i>
+                                    <i class="fa-brands fa-facebook text-blue-600"></i>
+                                    <span class="font-bold">@Binaatanmia</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Footer Accent Line matching identity style -->
+                        <div id="footerAccentBack" class="absolute bottom-0 inset-x-0 h-1.5 bg-brandOrange transition-colors duration-300"></div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Print Instructions and Tips -->
+            <div class="no-print bg-amber-50 border border-amber-200 rounded-xl p-4 max-w-xl text-xs text-amber-900 leading-relaxed space-y-2">
+                <h4 class="font-bold flex items-center gap-1.5 text-amber-800">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span>توصيات طباعة ممتازة:</span>
+                </h4>
+                <p>للحصول على جودة تضاهي البطاقات البلاستيكية المصنعية، ننصح بـ:</p>
+                <ul class="list-disc list-inside space-y-1 text-amber-800/90">
+                    <li>استخدام ورق طباعة سميك بوزن يتراوح بين <strong>250 إلى 300 جرام</strong>.</li>
+                    <li>تفعيل خيار <strong>"طباعة الخلفيات الملونة" (Print Background Graphics)</strong> في إعدادات المتصفح عند الطباعة.</li>
+                    <li>إدخال البطاقة المطبوعة بعد قصها في غلاف بلاستيكي حراري مخصص للبطاقات وتمريرها بجهاز التغليف.</li>
+                </ul>
             </div>
         </div>
 
     </main>
 
-    <!-- FOOTER DESIGN -->
-    <footer class="mt-16 bg-[#08120c] text-white border-t-4 border-brand-green pt-12 pb-8 relative overflow-hidden print-hide">
-        <div class="absolute inset-0 brand-dots"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-white/5">
-                
-                <!-- Col 1 -->
-                <div class="space-y-4">
-                    <div class="flex items-center gap-3">
-                        <div id="footer-logo-container" class="bg-white p-1.5 rounded-lg w-12 h-12 flex items-center justify-center overflow-hidden">
-                            <!-- Handled dynamically or loaded with fallback -->
-                        </div>
-                        <div>
-                            <h3 class="font-black text-sm">جمعية بناء وتنمية مساكن بجازان</h3>
-                            <p class="text-slate-400 text-xs">بناء الإنسان.. تنمية المجتمع</p>
-                        </div>
-                    </div>
-                    <p class="text-slate-400 text-xs leading-relaxed max-w-sm">
-                        نسعى لتقديم حلول سكنية تنموية رائدة لمستفيدي منطقة جازان الأشد حاجة، ومتابعة دقيقة لكافة المشاريع الإنشائية والإشرافية.
-                    </p>
-                </div>
-
-                <!-- Col 2 -->
-                <div class="space-y-3">
-                    <h4 class="text-brand-green font-black text-sm">قنوات التواصل المعتمدة بالهوية</h4>
-                    <ul class="space-y-2.5 text-xs text-slate-300">
-                        <li class="flex items-center gap-2">
-                            <span class="text-brand-orange">●</span>
-                            <span>الرقم الموحد: 0551056560</span>
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <span class="text-brand-orange">●</span>
-                            <a href="https://www.bena-jazan.sa" target="_blank" class="hover:underline">www.bena-jazan.sa</a>
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <span class="text-brand-orange">●</span>
-                            <span>المملكة العربية السعودية، جازان</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Col 3 -->
-                <div class="space-y-3">
-                    <h4 class="text-brand-green font-black text-sm">مواقع التواصل الاجتماعي</h4>
-                    <p class="text-xs text-slate-400">المعرف المعتمد للمنصات الرسمية للجمعية:</p>
-                    <div class="flex gap-3 text-xs text-slate-300 font-semibold">
-                        <div class="bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 border border-white/5">
-                            <span class="text-brand-orange">Instagram:</span>
-                            <span>@Binaatanmia</span>
-                        </div>
-                        <div class="bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 border border-white/5">
-                            <span class="text-brand-green">Twitter:</span>
-                            <span>@Binaatanmia</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-4">
-                <p>© <span id="footer-year"></span> جمعية بناء وتنمية مساكن بمنطقة جازان. جميع الحقوق محفوظة.</p>
-                <p>دليل الهوية البصرية المعتمد الإصدار (V1)</p>
+    <!-- Footer of the page -->
+    <footer class="bg-white border-t border-gray-100 py-6 mt-12 text-center text-xs text-gray-500 no-print">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>© 2026 جميع الحقوق محفوظة لـ جمعية بناء وتنمية مساكن بمنطقة جازان.</p>
+            <div class="flex items-center gap-4">
+                <span>تطوير وتصميم الهوية الرقمية للجمعية</span>
+                <span class="text-gray-300">|</span>
+                <a href="#" class="hover:text-brandOrange transition">دليل الاستخدام</a>
             </div>
         </div>
     </footer>
 
-    <!-- ADD / EDIT DIALOG MODAL -->
-    <div id="form-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm print-hide">
-        <div class="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all duration-300">
-            <div class="bg-gradient-to-r from-brand-dark to-brand-deep text-white p-6 flex justify-between items-center border-b border-slate-100">
-                <h3 id="modal-title" class="text-base font-bold">إضافة بند مهام وتكليفات جديد</h3>
-                <button onclick="closeModal()" class="text-slate-300 hover:text-white text-xl font-bold">×</button>
-            </div>
-            <form onsubmit="saveTask(event)">
-                <input type="hidden" id="form-id">
-                <div class="p-6 space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1.5">اسم المهمة / الملف التفصيلي</label>
-                        <input type="text" id="form-task-title" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none text-sm font-medium transition" placeholder="مثال: استكمال حوكمة الملفات الإنشائية...">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 mb-1.5">أهمية البند</label>
-                            <select id="form-priority" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none text-sm font-semibold transition">
-                                <option value="عاجلة">عاجلة جداً</option>
-                                <option value="عادية">عادية</option>
-                                <option value="منخفضة">منخفضة</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 mb-1.5">الحالة الحالية للعمل</label>
-                            <select id="form-status" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none text-sm font-semibold transition">
-                                <option value="معلق">معلق</option>
-                                <option value="قيد التنفيذ">قيد التنفيذ</option>
-                                <option value="مكتمل">تم الإنجاز (مكتمل)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1.5">الجهة أو المشرف المسؤول عن التنفيذ</label>
-                        <input type="text" id="form-assigned" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none text-sm font-medium transition" placeholder="مثال: المهندس محمد، الأستاذة أمل حكمي...">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1.5">الوضع الحالي + الإجراء المعتمد والقرارات</label>
-                        <textarea id="form-action" rows="4" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none text-sm font-medium transition resize-none" placeholder="اكتب التحديثات الحالية، العقبات، والتكليفات الموجهة لفرق العمل..."></textarea>
-                    </div>
-                </div>
-                <div class="bg-slate-50 px-6 py-4 flex justify-between items-center border-t border-slate-100">
-                    <button type="submit" class="bg-brand-green hover:bg-[#6c9b00] text-white font-bold transition px-6 py-2.5 rounded-xl text-xs shadow-md">حفظ البيانات</button>
-                    <button type="button" onclick="closeModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold transition px-5 py-2.5 rounded-xl text-xs">إلغاء</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- VIEW DIALOG MODAL -->
-    <div id="view-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm print-hide">
-        <div class="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all duration-300">
-            <div class="bg-gradient-to-r from-brand-dark to-brand-deep text-white p-6 relative">
-                <button onclick="closeViewModal()" class="absolute top-6 left-6 text-slate-300 hover:text-white text-xl font-bold">×</button>
-                <div id="view-priority-badge" class="inline-flex items-center gap-1.5 bg-brand-orange text-white text-[11px] font-bold px-3 py-1 rounded-full mb-2"></div>
-                <h3 id="view-task-title" class="text-base sm:text-lg font-bold leading-relaxed"></h3>
-            </div>
-            <div class="p-6 space-y-6">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/50">
-                        <span class="text-xs text-slate-400 font-bold block mb-1.5">حالة البند الحالية</span>
-                        <div id="view-status-badge"></div>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/50">
-                        <span class="text-xs text-slate-400 font-bold block mb-1.5">الجهة المكلفة بالإجراء</span>
-                        <div id="view-assigned-name" class="font-bold text-slate-700 text-xs"></div>
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <h4 class="text-xs font-bold text-slate-400">الوضع الراهن والقرار المتخذ:</h4>
-                    <div id="view-action-text" class="bg-emerald-50/20 border border-brand-green/10 p-5 rounded-2xl text-slate-700 text-sm leading-relaxed whitespace-pre-wrap"></div>
-                </div>
-            </div>
-            <div class="bg-slate-50 px-6 py-4 flex justify-end items-center border-t border-slate-100">
-                <button onclick="closeViewModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold transition px-5 py-2.5 rounded-xl text-xs">إغلاق</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- CUSTOM CONFIRMATION DELETE MODAL (Replacing Native confirm() Dialog Blockers) -->
-    <div id="delete-confirm-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm print-hide">
-        <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all duration-300">
-            <div class="p-6 text-center space-y-4">
-                <div class="w-16 h-16 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto text-3xl font-black">
-                    ⚠
-                </div>
-                <h3 class="text-lg font-bold text-slate-800">تأكيد عملية الحذف</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">
-                    هل أنت متأكد من رغبتك في حذف هذا التكليف نهائياً من اللوحة؟ لا يمكن التراجع عن هذا الإجراء بعد الحفظ.
-                </p>
-            </div>
-            <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse justify-between items-center border-t border-slate-100">
-                <button onclick="confirmDeleteTask()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold transition px-5 py-2.5 rounded-xl text-xs shadow-md">
-                    حذف المهمة
-                </button>
-                <button onclick="closeDeleteModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold transition px-5 py-2.5 rounded-xl text-xs">
-                    إلغاء الأمر
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- CORE LOGIC & CONTROLLER SCRIPT -->
+    <!-- Application Interactive Logic -->
     <script>
-        // High fidelity inline SVG logo as final stable stage
-        const SVG_LOGO_MARKUP = `
-            <svg viewBox="0 0 150 180" class="w-full h-full">
-                <path d="M 62 100 L 62 50 C 62 42, 75 36, 75 36 L 75 14 L 95 24 L 95 40 C 105 45, 105 55, 105 55 L 105 100 Z" fill="#F37021" />
-                <path d="M 33 100 L 33 55 L 56 46 L 56 100 Z" fill="#9FA1A4" opacity="0.95" />
-                <path d="M 111 100 L 111 60 L 125 51 L 125 100 Z" fill="#9FA1A4" opacity="0.7" />
-                <path d="M 23 103 Q 75 91 127 103 L 124 107 Q 75 95 26 107 Z" fill="#F37021" />
-                <rect x="42" y="110" width="66" height="11" rx="4" fill="#ffffff" opacity="0.95" />
-                <text x="75" y="119" font-size="8.5" font-weight="900" fill="#475569" text-anchor="middle" font-family="Cairo">بناء وتنمية</text>
-                <path d="M 75 168 C 65 152, 18 120, 18 78 C 22 93, 43 125, 75 146" fill="none" stroke="#84BD00" stroke-width="6" stroke-linecap="round" />
-                <path d="M 75 168 C 85 152, 132 120, 132 78 C 128 93, 107 125, 75 146" fill="none" stroke="#84BD00" stroke-width="6" stroke-linecap="round" />
-            </svg>
-        `;
-
-        // Multi-tier Fallback logo logic
-        function handleLogoError(img) {
-            const stage = img.getAttribute('data-stage');
-            if (stage === '0') {
-                img.setAttribute('data-stage', '1');
-                img.src = "19523.jpg"; // Local asset fallback
-            } else if (stage === '1') {
-                const parent = img.parentNode;
-                if (parent) {
-                    parent.innerHTML = SVG_LOGO_MARKUP;
-                }
+        // Default brand colors used in the manual
+        const colorPalette = {
+            orange: {
+                primary: '#f37021',
+                secondary: '#7cb342',
+                gradientStart: 'from-brandOrange',
+                gradientEnd: 'to-brandOrange-dark',
+                textBg: 'bg-brandOrange/10',
+                textCol: 'text-brandOrange',
+                border: 'border-brandOrange/30'
+            },
+            green: {
+                primary: '#7cb342',
+                secondary: '#f37021',
+                gradientStart: 'from-brandGreen',
+                gradientEnd: 'to-brandGreen-dark',
+                textBg: 'bg-brandGreen/10',
+                textCol: 'text-brandGreen',
+                border: 'border-brandGreen/30'
+            },
+            classic: {
+                primary: '#f37021',
+                secondary: '#7cb342',
+                gradientStart: 'from-brandOrange',
+                gradientEnd: 'to-brandGreen',
+                textBg: 'bg-gradient-to-r from-brandOrange/10 to-brandGreen/10',
+                textCol: 'text-brandOrange',
+                border: 'border-brandOrange/30'
             }
-        }
+        };
 
-        // Initial setup & Local Storage syncing
-        const defaultTasks = [
-            {
-                id: 1,
-                title: "زيارة بيت النجمي (بعد الحريق)",
-                priority: "عاجلة",
-                status: "معلق",
-                action: "زيارة ميدانية طارئة لبيت النجمي لتقييم الأضرار الإنشائية الناتجة عن الحريق، والتنسيق لتقديم الدعم السكني الفوري والمناسب.",
-                assignedTo: "اللجنة الميدانية ولجنة الإسكان"
-            },
-            {
-                id: 2,
-                title: "مشكلة عداد المياه في العقارات (96)",
-                priority: "عاجلة",
-                status: "معلق",
-                action: "متابعة شركة المياه الوطنية لحل مشكلة قراءات العداد أو التسريب الخاص بالعقارات المحددة.",
-                assignedTo: "إدارة المرافق والخدمات"
-            },
-            {
-                id: 3,
-                title: "سند الأمر من الأستاذة باسمة",
-                priority: "عاجلة",
-                status: "معلق",
-                action: "استلام وتوثيق سند الأمر وتدقيقه قانونياً لاعتماده ضمن الملفات الرسمية.",
-                assignedTo: "الأستاذة باسمة / القسم القانوني"
-            },
-            {
-                id: 4,
-                title: "استكمال ملفات الوحدات السكنية",
-                priority: "عاجلة",
-                status: "مكتمل",
-                action: "تم بحمد الله التنفيذ الكامل لجميع الملفات والوحدات ومراجعتها وتدقيقها رقمياً ومطابقتها للشروط.",
-                assignedTo: "قسم الإسكان التنموي"
-            },
-            {
-                id: 5,
-                title: "الفواتير الضريبية مع المؤسسات التي تتعطل في التسليم - حلها بشكل عاجل وطلوع فاتورة (85)",
-                priority: "عاجلة",
-                status: "قيد التنفيذ",
-                action: "تم تواصل المهندس محمد مع البقمي، وأفاد بأنه لا يوجد لديه اشتراكات، ويعمل حالياً على إصدار الفاتورة دون تحديد وقت معين. الإجراء الحالي: متابعة المهندس محمد لتحديد موعد نهائي ملزم لإصدار فاتورة (85)، وتصعيد الموضوع للإدارة عند استمرار التأخير.",
-                assignedTo: "المهندس محمد"
-            },
-            {
-                id: 6,
-                title: "ملف الحوكمة",
-                priority: "عاجلة",
-                status: "قيد التنفيذ",
-                action: "تم التحدث مع الأستاذة مشاعر، وبانتظار تحديد الوقت المناسب للعمل عليه تماشياً مع معايير وزارة الموارد البشرية والتنمية الاجتماعية.",
-                assignedTo: "الأستاذة مشاعر"
-            },
-            {
-                id: 7,
-                title: "مشكلة المياه في الجمعية",
-                priority: "عاجلة",
-                status: "معلق",
-                action: "فحص شبكة المياه الداخلية بالجمعية وحل الانقطاعات أو الخلل الفني المغذي للمكاتب.",
-                assignedTo: "قسم الصيانة والمرافق"
-            },
-            {
-                id: 8,
-                title: "تكليف المهندس محمد بعمل تقرير لجميع مشاريع القسم (بناء، ترميم، استكمال بناء، وصيانة)",
-                priority: "عاجلة",
-                status: "قيد التنفيذ",
-                action: "اعتماد تشكيل لجنة رسمية من الأستاذة آمنة، والأستاذة أمل نجمي، والأستاذة مشاعر سوادي لمتابعة المشاريع والعمل عليها وتسليمها بأسرع وقت ممكن.",
-                assignedTo: "اللجنة المشكلة (آمنة، أمل نجمي، مشاعر سوادي)"
-            },
-            {
-                id: 9,
-                title: "تكريم مريم خضري من قسم الاتصال المؤسسي",
-                priority: "عاجلة",
-                status: "قيد التنفيذ",
-                action: "إعداد شهادة ودرع تكريم تقديراً لجهودها المميزة في الاتصال المؤسسي، ويشمل التكريم كل من ساهم وفق المعايير المعتمدة للمستحقين، مع تحديد موعد مناسب للتسليم.",
-                assignedTo: "قسم الاتصال المؤسسي"
-            },
-            {
-                id: 10,
-                title: "تكليف الأستاذة أمل حكمي بمتابعة الدوام وأعمال الموظفين من بداية الدوام إلى نهايته",
-                priority: "عاجلة",
-                status: "قيد التنفيذ",
-                action: "تكليف الأستاذة أمل حكمي رسمياً بمتابعة الدوام وأعمال الموظفين وإعداد التقارير الدورية بالملاحظات ورفعها للإدارة.",
-                assignedTo: "الأستاذة أمل حكمي"
+        // Application State variables
+        let currentTheme = 'orange';
+        let currentOrientation = 'vertical';
+        let defaultPhoto = 'https://placehold.co/300x300/e2e8f0/64748b?text=Photo';
+
+        // Element Selectors
+        const inputName = document.getElementById('inputName');
+        const inputTitle = document.getElementById('inputTitle');
+        const inputId = document.getElementById('inputId');
+        const inputExpiry = document.getElementById('inputExpiry');
+        const inputPhoto = document.getElementById('inputPhoto');
+        const btnResetPhoto = document.getElementById('btnResetPhoto');
+
+        const previewName = document.getElementById('previewName');
+        const previewTitle = document.getElementById('previewTitle');
+        const previewId = document.getElementById('previewId');
+        const previewExpiry = document.getElementById('previewExpiry');
+        const previewPhotoFront = document.getElementById('previewPhotoFront');
+        const previewQr = document.getElementById('previewQr');
+
+        // Binding typing inputs to live preview outputs
+        inputName.addEventListener('input', (e) => {
+            previewName.innerText = e.target.value || 'أحمد محمد الودعاني';
+            updateQrCode();
+        });
+
+        inputTitle.addEventListener('input', (e) => {
+            previewTitle.innerText = e.target.value || 'المدير العام';
+        });
+
+        inputId.addEventListener('input', (e) => {
+            previewId.innerText = e.target.value || 'EMP-2026-389';
+            updateQrCode();
+        });
+
+        inputExpiry.addEventListener('input', (e) => {
+            previewExpiry.innerText = e.target.value || '12/2028';
+        });
+
+        // Photo uploading logic
+        inputPhoto.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    previewPhotoFront.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
             }
-        ];
+        });
 
-        let tasks = JSON.parse(localStorage.getItem('bena_tasks')) || defaultTasks;
-        let currentFilter = "الكل";
-        let pendingDeleteId = null;
+        btnResetPhoto.addEventListener('click', () => {
+            previewPhotoFront.src = defaultPhoto;
+            inputPhoto.value = '';
+        });
 
-        function saveToStorage() {
-            localStorage.setItem('bena_tasks', JSON.stringify(tasks));
+        // Dynamic QR code API update
+        function updateQrCode() {
+            const name = inputName.value || 'Ahmed';
+            const id = inputId.value || 'EMP-2026';
+            const encodedData = encodeURIComponent(`BenaJazan-Emp:${name}-ID:${id}`);
+            previewQr.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodedData}`;
         }
 
-        // Calculation Stats Update
-        function updateStats() {
-            const total = tasks.length;
-            const completed = tasks.filter(t => t.status === "مكتمل").length;
-            const progress = tasks.filter(t => t.status === "قيد التنفيذ").length;
-            const pending = tasks.filter(t => t.status === "معلق").length;
-            const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+        // Toggle Decorative Backgrounds (Dots / Waves)
+        function toggleDecorative() {
+            const showDots = document.getElementById('chkShowDots').checked;
+            const showWaves = document.getElementById('chkShowWaves').checked;
 
-            document.getElementById('stat-total').textContent = total;
-            document.getElementById('stat-completed').textContent = completed;
-            document.getElementById('stat-rate').textContent = `${rate}% نسبة الإنجاز`;
-            document.getElementById('stat-progress').textContent = progress;
-            document.getElementById('stat-pending').textContent = pending;
-        }
-
-        // Render Filter Buttons
-        function renderFilters() {
-            const container = document.getElementById('filter-buttons');
-            const states = ["الكل", "معلق", "قيد التنفيذ", "مكتمل"];
-            container.innerHTML = states.map(state => {
-                const isSelected = currentFilter === state;
-                const count = state === "الكل" ? tasks.length : tasks.filter(t => t.status === state).length;
-                return `
-                    <button onclick="setFilter('${state}')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
-                        isSelected 
-                            ? "bg-gradient-to-r from-brand-dark to-brand-deep text-white shadow-md" 
-                            : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-100"
-                    }">
-                        <span>${state}</span>
-                        <span class="px-1.5 py-0.2 rounded-full text-[10px] ${isSelected ? 'bg-white/20' : 'bg-slate-100'}">${count}</span>
-                    </button>
-                `;
-            }).join('');
-        }
-
-        function setFilter(filter) {
-            currentFilter = filter;
-            renderDashboard();
-        }
-
-        // Toggle Status Cycle
-        function cycleStatus(id) {
-            tasks = tasks.map(t => {
-                if (t.id === id) {
-                    let next = "معلق";
-                    if (t.status === "معلق") next = "قيد التنفيذ";
-                    else if (t.status === "قيد التنفيذ") next = "مكتمل";
-                    return { ...t, status: next };
-                }
-                return t;
+            document.querySelectorAll('.dots-bg').forEach(el => {
+                el.style.display = showDots ? 'block' : 'none';
             });
-            saveToStorage();
-            renderDashboard();
+            document.querySelectorAll('.wave-bg').forEach(el => {
+                el.style.display = showWaves ? 'block' : 'none';
+            });
         }
 
-        // Safe Custom Delete Dialog
-        function openDeleteModal(id) {
-            pendingDeleteId = id;
-            document.getElementById('delete-confirm-modal').classList.remove('hidden');
-        }
+        // Theme changer function
+        function changeTheme(themeName) {
+            currentTheme = themeName;
+            const theme = colorPalette[themeName];
 
-        function closeDeleteModal() {
-            pendingDeleteId = null;
-            document.getElementById('delete-confirm-modal').classList.add('hidden');
-        }
+            // 1. Update active button borders
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                const btnTheme = btn.getAttribute('data-theme');
+                if (btnTheme === themeName) {
+                    btn.classList.add('border-brandOrange');
+                    btn.classList.remove('border-gray-100');
+                } else {
+                    btn.classList.remove('border-brandOrange');
+                    btn.classList.add('border-gray-100');
+                }
+            });
 
-        function confirmDeleteTask() {
-            if (pendingDeleteId) {
-                tasks = tasks.filter(t => t.id !== pendingDeleteId);
-                saveToStorage();
-                renderDashboard();
-            }
-            closeDeleteModal();
-        }
+            // 2. Front Card Accent Changes
+            const headerAccent = document.getElementById('headerAccent');
+            const footerAccentFront = document.getElementById('footerAccentFront');
+            const footerAccentBack = document.getElementById('footerAccentBack');
+            const avatarFrame = document.getElementById('avatarFrame');
 
-        // Details view modal controller
-        function viewTask(id) {
-            const task = tasks.find(t => t.id === id);
-            if (!task) return;
-
-            document.getElementById('view-priority-badge').textContent = `مهمة ${task.priority}`;
-            document.getElementById('view-task-title').textContent = task.title;
-            document.getElementById('view-assigned-name').textContent = task.assignedTo || "غير محدد";
-            document.getElementById('view-action-text').textContent = task.action || "-";
+            // Reset gradients & text colors
+            headerAccent.className = `absolute top-0 inset-x-0 h-16 bg-gradient-to-r ${theme.gradientStart} ${theme.gradientEnd} flex items-center justify-between px-4 z-10 transition-all duration-300`;
+            previewTitle.className = `text-xs font-semibold ${theme.textCol} ${theme.textBg} px-2.5 py-0.5 rounded-full inline-block transition-colors duration-300`;
             
-            const badge = document.getElementById('view-status-badge');
-            if (task.status === "مكتمل") {
-                badge.innerHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold border bg-emerald-50 text-emerald-800 border-brand-green/20"><span class="w-2.5 h-2.5 rounded-full bg-brand-green"></span>تم التنفيذ</span>`;
-            } else if (task.status === "قيد التنفيذ") {
-                badge.innerHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold border bg-orange-50 text-brand-orange border-brand-orange/20"><span class="w-2.5 h-2.5 rounded-full bg-brand-orange"></span>قيد التنفيذ</span>`;
+            // Re-apply frame color based on branding rules
+            avatarFrame.style.borderColor = theme.primary + '4D'; // Hex code with alpha for border matching
+            
+            // Footer bands
+            footerAccentFront.style.backgroundColor = theme.secondary;
+            footerAccentBack.style.backgroundColor = theme.primary;
+        }
+
+        // Card Orientation Switch (Vertical/Horizontal CR-80)
+        function changeOrientation(orientation) {
+            currentOrientation = orientation;
+            const front = document.getElementById('idCardFront');
+            const back = document.getElementById('idCardBack');
+
+            const btnOptVertical = document.getElementById('btnOptVertical');
+            const btnOptHorizontal = document.getElementById('btnOptHorizontal');
+
+            if (orientation === 'horizontal') {
+                front.className = 'card-horizontal bg-white select-none relative shadow-xl overflow-hidden transition-all duration-300';
+                back.className = 'card-horizontal bg-white select-none relative shadow-xl overflow-hidden transition-all duration-300';
+                
+                // Adjust style classes for horizontal view alignment
+                btnOptHorizontal.className = 'border-2 border-brandOrange p-2.5 rounded-xl flex items-center justify-center gap-2 bg-brandOrange/5 font-bold text-xs text-brandOrange';
+                btnOptVertical.className = 'border border-gray-200 p-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-50 text-xs text-gray-600';
             } else {
-                badge.innerHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold border bg-rose-50 text-rose-700 border-rose-200"><span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span>معلق</span>`;
+                front.className = 'card-vertical bg-white select-none relative shadow-xl overflow-hidden transition-all duration-300';
+                back.className = 'card-vertical bg-white select-none relative shadow-xl overflow-hidden transition-all duration-300';
+                
+                btnOptVertical.className = 'border-2 border-brandOrange p-2.5 rounded-xl flex items-center justify-center gap-2 bg-brandOrange/5 font-bold text-xs text-brandOrange';
+                btnOptHorizontal.className = 'border border-gray-200 p-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-50 text-xs text-gray-600';
             }
-
-            document.getElementById('view-modal').classList.remove('hidden');
         }
 
-        function closeViewModal() {
-            document.getElementById('view-modal').classList.add('hidden');
+        // Canvas Signature Pad Logic
+        const signatureCanvas = document.getElementById('signatureCanvas');
+        const signatureCtx = signatureCanvas.getContext('2d');
+        const previewSignature = document.getElementById('previewSignature');
+        let isDrawing = false;
+
+        // Signature Canvas Draw Functions
+        function getMousePos(canvasDom, touchOrMouseEvent) {
+            const rect = canvasDom.getBoundingClientRect();
+            if (touchOrMouseEvent.touches && touchOrMouseEvent.touches.length > 0) {
+                return {
+                    x: touchOrMouseEvent.touches[0].clientX - rect.left,
+                    y: touchOrMouseEvent.touches[0].clientY - rect.top
+                };
+            }
+            return {
+                x: touchOrMouseEvent.clientX - rect.left,
+                y: touchOrMouseEvent.clientY - rect.top
+            };
         }
 
-        // Add / Edit Modal Actions
-        function openAddModal() {
-            document.getElementById('modal-title').textContent = "إضافة بند مهام وتكليفات جديد";
-            document.getElementById('form-id').value = "";
-            document.getElementById('form-task-title').value = "";
-            document.getElementById('form-priority').value = "عاجلة";
-            document.getElementById('form-status').value = "معلق";
-            document.getElementById('form-assigned').value = "";
-            document.getElementById('form-action').value = "";
-            document.getElementById('form-modal').classList.remove('hidden');
-        }
-
-        function openEditModal(id) {
-            const task = tasks.find(t => t.id === id);
-            if (!task) return;
-
-            document.getElementById('modal-title').textContent = "تعديل تفاصيل البند الحالي";
-            document.getElementById('form-id').value = task.id;
-            document.getElementById('form-task-title').value = task.title;
-            document.getElementById('form-priority').value = task.priority;
-            document.getElementById('form-status').value = task.status;
-            document.getElementById('form-assigned').value = task.assignedTo;
-            document.getElementById('form-action').value = task.action;
-            document.getElementById('form-modal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('form-modal').classList.add('hidden');
-        }
-
-        function saveTask(e) {
+        function startDrawing(e) {
+            isDrawing = true;
+            const pos = getMousePos(signatureCanvas, e);
+            signatureCtx.beginPath();
+            signatureCtx.moveTo(pos.x, pos.y);
             e.preventDefault();
-            const id = document.getElementById('form-id').value;
-            const title = document.getElementById('form-task-title').value;
-            const priority = document.getElementById('form-priority').value;
-            const status = document.getElementById('form-status').value;
-            const assignedTo = document.getElementById('form-assigned').value;
-            const action = document.getElementById('form-action').value;
-
-            if (id) {
-                // Edit mode
-                tasks = tasks.map(t => t.id == id ? { ...t, title, priority, status, assignedTo, action } : t);
-            } else {
-                // Add mode
-                const newId = tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
-                tasks.push({ id: newId, title, priority, status, assignedTo, action });
-            }
-            saveToStorage();
-            closeModal();
-            renderDashboard();
         }
 
-        // Core Rendering Pipeline
-        function renderDashboard() {
-            const query = document.getElementById('search-input').value.toLowerCase();
-            
-            // Filter processing
-            const filtered = tasks.filter(task => {
-                const matchSearch = task.title.toLowerCase().includes(query) || 
-                                    task.action.toLowerCase().includes(query) || 
-                                    task.assignedTo.toLowerCase().includes(query);
-                const matchFilter = currentFilter === "الكل" || task.status === currentFilter;
-                return matchSearch && matchFilter;
-            });
-
-            // Update Statistics
-            updateStats();
-            renderFilters();
-
-            const tableBody = document.getElementById('table-body');
-            const mobileContainer = document.getElementById('mobile-cards-container');
-            const fallback = document.getElementById('no-data-fallback');
-
-            if (filtered.length === 0) {
-                tableBody.innerHTML = '';
-                mobileContainer.innerHTML = '';
-                fallback.classList.remove('hidden');
-                return;
-            } else {
-                fallback.classList.add('hidden');
-            }
-
-            // Desktop Table Markup
-            tableBody.innerHTML = filtered.map((task, index) => {
-                let badgeClass = "bg-rose-50 text-rose-700 border-rose-200";
-                let dotClass = "bg-rose-600";
-                if (task.status === "مكتمل") {
-                    badgeClass = "bg-emerald-50 text-emerald-800 border-brand-green/20";
-                    dotClass = "bg-brand-green";
-                } else if (task.status === "قيد التنفيذ") {
-                    badgeClass = "bg-orange-50 text-brand-orange border-brand-orange/20";
-                    dotClass = "bg-brand-orange";
-                }
-
-                return `
-                    <tr class="hover:bg-slate-50/50 transition duration-150">
-                        <td class="py-5 px-5 text-center font-bold text-slate-400 text-sm">${index + 1}</td>
-                        <td class="py-5 px-4"><div class="font-bold text-slate-800 leading-relaxed text-[15px]">${task.title}</div></td>
-                        <td class="py-5 px-4 text-center"><span class="bg-brand-orange text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow-sm">${task.priority}</span></td>
-                        <td class="py-5 px-4">
-                            <div class="space-y-2">
-                                <button onclick="cycleStatus(${task.id})" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold border transition transform hover:scale-105 ${badgeClass}">
-                                    <span class="w-2 h-2 rounded-full ${dotClass}"></span>
-                                    <span>${task.status}</span>
-                                </button>
-                                <p class="text-slate-600 text-[13px] leading-relaxed line-clamp-2 hover:line-clamp-none transition-all">${task.action}</p>
-                            </div>
-                        </td>
-                        <td class="py-5 px-4"><div class="text-slate-700 text-sm font-semibold">${task.assignedTo || '-'}</div></td>
-                        <td class="py-5 px-5 text-center">
-                            <div class="flex items-center justify-center gap-1.5">
-                                <button onclick="viewTask(${task.id})" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition">🔎</button>
-                                <button onclick="openEditModal(${task.id})" class="p-2 bg-sky-50 hover:bg-sky-100 text-sky-700 rounded-xl transition">✍️</button>
-                                <button onclick="openDeleteModal(${task.id})" class="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl transition">🗑️</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-
-            // Mobile Cards Markup
-            mobileContainer.innerHTML = filtered.map((task, index) => {
-                let badgeClass = "bg-rose-50 text-rose-700 border-rose-200";
-                let dotClass = "bg-rose-600";
-                if (task.status === "مكتمل") {
-                    badgeClass = "bg-emerald-50 text-emerald-800 border-brand-green/20";
-                    dotClass = "bg-brand-green";
-                } else if (task.status === "قيد التنفيذ") {
-                    badgeClass = "bg-orange-50 text-brand-orange border-brand-orange/20";
-                    dotClass = "bg-brand-orange";
-                }
-
-                return `
-                    <div class="p-4 sm:p-6 space-y-4 hover:bg-slate-50/45 transition">
-                        <div class="flex justify-between items-start gap-4">
-                            <span class="font-black text-slate-400 text-xs sm:text-sm">بند رقم ${index + 1}</span>
-                            <span class="bg-brand-orange text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full shadow-sm">${task.priority}</span>
-                        </div>
-                        <div class="font-bold text-slate-800 leading-relaxed text-sm sm:text-base">${task.title}</div>
-                        <div class="text-slate-600 text-xs leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">${task.action}</div>
-                        <div class="flex flex-wrap gap-2 items-center text-slate-700 text-xs font-semibold">
-                            <span class="text-slate-400">المسؤول عن التنفيذ:</span>
-                            <span class="bg-slate-100 text-slate-800 px-2.5 py-1 rounded-lg">${task.assignedTo || 'غير معين'}</span>
-                        </div>
-                        <div class="flex items-center justify-between pt-3 border-t border-slate-100">
-                            <button onclick="cycleStatus(${task.id})" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition ${badgeClass}">
-                                <span class="w-2 h-2 rounded-full ${dotClass}"></span>
-                                <span>${task.status}</span>
-                            </button>
-                            <div class="flex items-center gap-2">
-                                <button onclick="viewTask(${task.id})" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl">🔎</button>
-                                <button onclick="openEditModal(${task.id})" class="p-2 bg-sky-50 hover:bg-sky-100 text-sky-700 rounded-xl">✍️</button>
-                                <button onclick="openDeleteModal(${task.id})" class="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl">🗑️</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            // Print table layout Syncing
-            const printTableBody = document.getElementById('print-table-body');
-            printTableBody.innerHTML = tasks.map((task, index) => `
-                <tr>
-                    <td class="border border-slate-400 py-2.5 px-2 text-center font-bold">${index + 1}</td>
-                    <td class="border border-slate-400 py-2.5 px-3 font-bold text-slate-900">${task.title}</td>
-                    <td class="border border-slate-400 py-2.5 px-2 text-center font-extrabold text-[#F37021]">${task.priority}</td>
-                    <td class="border border-slate-400 py-2.5 px-3 text-slate-700 leading-relaxed">
-                        <strong class="block text-slate-900 mb-1">[حالة البند: \${task.status}]</strong>
-                        \${task.action}
-                    </td>
-                    <td class="border border-slate-400 py-2.5 px-3 font-semibold text-slate-800">\${task.assignedTo || 'غير محدد'}</td>
-                </tr>
-            `).join('');
+        function draw(e) {
+            if (!isDrawing) return;
+            const pos = getMousePos(signatureCanvas, e);
+            signatureCtx.lineTo(pos.x, pos.y);
+            signatureCtx.strokeStyle = '#2d3748'; // Elegant dark grey color for natural ink look
+            signatureCtx.lineWidth = 2.5;
+            signatureCtx.lineCap = 'round';
+            signatureCtx.lineJoin = 'round';
+            signatureCtx.stroke();
+            e.preventDefault();
         }
 
-        // Initialize App UI, Fallbacks and Dates
+        function stopDrawing() {
+            if (isDrawing) {
+                isDrawing = false;
+                // Sync drawn signature directly to back card view
+                previewSignature.src = signatureCanvas.toDataURL();
+            }
+        }
+
+        function clearSignature() {
+            signatureCtx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+            // Revert back to empty SVG layout
+            previewSignature.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='30'></svg>";
+        }
+
+        // Event listeners for desktop mouse
+        signatureCanvas.addEventListener('mousedown', startDrawing);
+        signatureCanvas.addEventListener('mousemove', draw);
+        window.addEventListener('mouseup', stopDrawing);
+
+        // Event listeners for mobile/tablet touchscreen
+        signatureCanvas.addEventListener('touchstart', startDrawing);
+        signatureCanvas.addEventListener('touchmove', draw);
+        window.addEventListener('touchend', stopDrawing);
+
+        // Initial trigger to update dynamic QR server on load
         window.onload = function() {
-            const now = new Date();
-            document.getElementById('footer-year').textContent = now.getFullYear();
-            document.getElementById('print-year').textContent = now.getFullYear();
-            document.getElementById('print-date').textContent = now.toLocaleDateString('ar-SA');
-            
-            // Set dynamic inline fallbacks for footers and printers
-            document.getElementById('print-logo-container').innerHTML = SVG_LOGO_MARKUP;
-            document.getElementById('footer-logo-container').innerHTML = SVG_LOGO_MARKUP;
-            
-            renderDashboard();
-        }
+            updateQrCode();
+            // Match the canvas visual size ratio with coordinates size
+            signatureCanvas.width = signatureCanvas.offsetWidth;
+        };
+
+        // Resize handler to avoid stretching signature lines on dynamic page scale
+        window.addEventListener('resize', () => {
+            const currentData = signatureCanvas.toDataURL();
+            const tempImg = new Image();
+            tempImg.src = currentData;
+            tempImg.onload = function() {
+                signatureCanvas.width = signatureCanvas.offsetWidth;
+                signatureCtx.drawImage(tempImg, 0, 0);
+            }
+        });
     </script>
 </body>
 </html>
