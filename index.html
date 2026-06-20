@@ -1,320 +1,839 @@
+```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>استعلام المستفيدين | جمعية بناء وتنمية مساكن</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Tahoma", "Arial", sans-serif;
-    }
-
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 10% 80%, rgba(247, 132, 25, .12), transparent 30%),
-        linear-gradient(135deg, #ffffff 0%, #f7f7f7 100%);
-      color: #333;
-    }
-
-    .page {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 30px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .dots {
-      position: absolute;
-      left: -80px;
-      bottom: 60px;
-      width: 420px;
-      height: 180px;
-      background-image: radial-gradient(#bfc1c3 4px, transparent 5px);
-      background-size: 22px 22px;
-      opacity: .55;
-      transform: rotate(0deg);
-    }
-
-    .wave {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 260px;
-      height: 100%;
-      opacity: .12;
-      background: repeating-linear-gradient(
-        115deg,
-        transparent 0px,
-        transparent 9px,
-        #777 10px,
-        #777 12px
-      );
-      clip-path: polygon(45% 0, 100% 0, 70% 100%, 10% 100%);
-    }
-
-    .card {
-      width: 100%;
-      max-width: 1050px;
-      background: rgba(255,255,255,.94);
-      border-radius: 30px;
-      box-shadow: 0 25px 70px rgba(0,0,0,.12);
-      display: grid;
-      grid-template-columns: 1fr 1.1fr;
-      overflow: hidden;
-      position: relative;
-      z-index: 2;
-      border: 1px solid #eee;
-    }
-
-    .side {
-      background: linear-gradient(135deg, #f7941d, #ef6b1f);
-      color: white;
-      padding: 55px 45px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .side::after {
-      content: "";
-      position: absolute;
-      width: 300px;
-      height: 300px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.13);
-      left: -90px;
-      bottom: -90px;
-    }
-
-    .logo-box {
-      width: 95px;
-      height: 95px;
-      background: white;
-      border-radius: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 28px;
-      color: #f7941d;
-      font-size: 38px;
-      font-weight: bold;
-    }
-
-    .side h1 {
-      font-size: 34px;
-      line-height: 1.5;
-      margin-bottom: 18px;
-    }
-
-    .side p {
-      font-size: 18px;
-      line-height: 2;
-      opacity: .95;
-    }
-
-    .info-list {
-      margin-top: 35px;
-      display: grid;
-      gap: 14px;
-      font-size: 15px;
-    }
-
-    .info-list span {
-      background: rgba(255,255,255,.16);
-      padding: 13px 16px;
-      border-radius: 14px;
-      display: block;
-    }
-
-    .form-area {
-      padding: 55px 45px;
-    }
-
-    .badge {
-      display: inline-block;
-      background: #eef7e7;
-      color: #6dbb3f;
-      padding: 9px 18px;
-      border-radius: 999px;
-      font-size: 14px;
-      margin-bottom: 18px;
-      font-weight: bold;
-    }
-
-    .form-area h2 {
-      font-size: 30px;
-      margin-bottom: 10px;
-      color: #333;
-    }
-
-    .form-area .desc {
-      color: #777;
-      line-height: 1.9;
-      margin-bottom: 30px;
-      font-size: 16px;
-    }
-
-    .field {
-      margin-bottom: 18px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 9px;
-      color: #444;
-      font-weight: bold;
-    }
-
-    input, select {
-      width: 100%;
-      border: 1px solid #ddd;
-      border-radius: 16px;
-      padding: 16px;
-      font-size: 16px;
-      outline: none;
-      transition: .2s;
-      background: #fafafa;
-    }
-
-    input:focus, select:focus {
-      border-color: #f7941d;
-      background: #fff;
-      box-shadow: 0 0 0 4px rgba(247,148,29,.12);
-    }
-
-    .btn {
-      width: 100%;
-      border: none;
-      background: linear-gradient(135deg, #6dbb3f, #4d9f32);
-      color: white;
-      padding: 17px;
-      font-size: 18px;
-      border-radius: 18px;
-      cursor: pointer;
-      margin-top: 12px;
-      font-weight: bold;
-      transition: .2s;
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px rgba(77,159,50,.25);
-    }
-
-    .result {
-      display: none;
-      margin-top: 25px;
-      border-radius: 18px;
-      padding: 20px;
-      background: #fff8ef;
-      border: 1px solid #ffd8aa;
-      color: #555;
-      line-height: 2;
-    }
-
-    .result strong {
-      color: #ef6b1f;
-    }
-
-    .footer {
-      margin-top: 26px;
-      color: #999;
-      font-size: 14px;
-      text-align: center;
-    }
-
-    @media (max-width: 850px) {
-      .card {
-        grid-template-columns: 1fr;
-      }
-
-      .side, .form-area {
-        padding: 35px 25px;
-      }
-
-      .side h1 {
-        font-size: 27px;
-      }
-
-      .form-area h2 {
-        font-size: 25px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جمعية بناء وتنمية مساكن بجازان - لوحة المتابعة التفاعلية</title>
+    <!-- Tailwind CSS for modern responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Cairo Font for rich professional Arabic typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#132a1e',
+                            deep: '#08120c',
+                            orange: '#F37021',
+                            green: '#84BD00',
+                            gray: '#9FA1A4'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+        /* Custom Halftone Dots from Page 4 of Brand Manual */
+        .brand-dots {
+            background-image: radial-gradient(#ffffff 15%, transparent 16%), radial-gradient(#ffffff 10%, transparent 11%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            opacity: 0.05;
+        }
+        /* Print Stylesheet for Elegant A4 Output */
+        @media print {
+            .print-hide {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .print-card {
+                border: 1px solid #9FA1A4 !important;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
 </head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-emerald-100 min-h-screen pb-16">
 
-<body>
-  <div class="page">
-    <div class="wave"></div>
-    <div class="dots"></div>
-
-    <div class="card">
-      <section class="side">
-        <div class="logo-box">ب</div>
-        <h1>جمعية بناء وتنمية مساكن بمنطقة جازان</h1>
-        <p>
-          منصة إلكترونية مخصصة لخدمة المستفيدين، تتيح الاستعلام عن حالة الطلب
-          ومتابعة الإجراءات بكل سهولة.
-        </p>
-
-        <div class="info-list">
-          <span>📍 المملكة العربية السعودية - جازان</span>
-          <span>🌐 www.bena-jazan.sa</span>
-          <span>📞 0096651056560</span>
+    <!-- TOP LICENSE RIBBON -->
+    <div class="bg-brand-deep py-2 text-[10px] sm:text-xs font-semibold border-b border-white/5 relative z-10 px-4 sm:px-6 lg:px-8 print-hide">
+        <div class="max-w-7xl mx-auto flex justify-between items-center text-slate-300">
+            <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-brand-green animate-pulse"></span>
+                جمعية أهلية مرخصة برقم (1927) وتحت إشراف وزارة الموارد البشرية والتنمية الاجتماعية
+            </span>
+            <span class="hidden md:inline">جازان، المملكة العربية السعودية</span>
         </div>
-      </section>
-
-      <section class="form-area">
-        <span class="badge">استعلام المستفيدين</span>
-
-        <h2>تحقق من حالة طلبك</h2>
-        <p class="desc">
-          أدخل رقم الهوية أو رقم الجوال المسجل لدينا لمعرفة حالة الطلب.
-        </p>
-
-        <form onsubmit="showResult(event)">
-          <div class="field">
-            <label>نوع الاستعلام</label>
-            <select>
-              <option>رقم الهوية الوطنية</option>
-              <option>رقم الجوال</option>
-              <option>رقم الطلب</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label>بيانات الاستعلام</label>
-            <input type="text" placeholder="مثال: 10xxxxxxxx" required>
-          </div>
-
-          <button class="btn" type="submit">استعلام الآن</button>
-        </form>
-
-        <div class="result" id="resultBox">
-          <strong>حالة الطلب:</strong> تحت الإجراء<br>
-          <strong>الإجراء الحالي:</strong> مراجعة البيانات والمستندات<br>
-          <strong>ملاحظة:</strong> سيتم التواصل معك عند اكتمال التحقق.
-        </div>
-
-        <div class="footer">
-          جميع الحقوق محفوظة © جمعية بناء وتنمية مساكن
-        </div>
-      </section>
     </div>
-  </div>
 
-  <script>
-    function showResult(e) {
-      e.preventDefault();
-      document.getElementById("resultBox").style.display = "block";
-    }
-  </script>
+    <!-- BRAND VISUAL HEADER -->
+    <header class="bg-gradient-to-r from-brand-dark to-brand-deep text-white shadow-xl relative overflow-hidden border-b-4 border-brand-green print-hide">
+        <!-- Halftone Pattern Overlay -->
+        <div class="absolute inset-0 brand-dots"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 relative z-10">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+                
+                <!-- Logo & Titles (Page 2 Brand Manual) -->
+                <div class="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-right">
+                    <div class="bg-white p-3 rounded-2xl shadow-xl flex items-center justify-center border-2 border-brand-green w-24 h-24 sm:w-28 sm:h-28 shrink-0">
+                        <!-- High Fidelity Vector Representation of the Official Logo -->
+                        <svg viewBox="0 0 150 180" class="w-full h-full">
+                            <path d="M 65 100 L 65 50 Q 65 40 75 35 L 75 10 L 95 20 L 95 40 Q 105 45 105 55 L 105 100 Z" fill="#F37021" />
+                            <path d="M 35 100 L 35 55 L 58 45 L 58 100 Z" fill="#9FA1A4" opacity="0.9" />
+                            <path d="M 112 100 L 112 60 L 125 50 L 125 100 Z" fill="#9FA1A4" opacity="0.65" />
+                            <path d="M 25 103 Q 75 92 125 103 L 122 107 Q 75 96 28 107 Z" fill="#F37021" />
+                            <rect x="42" y="109" width="66" height="11" rx="4" fill="#f8f9fa" opacity="0.95" />
+                            <text x="75" y="118" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle">بناء وتنمية</text>
+                            <path d="M 75 165 C 65 150, 20 120, 20 80 C 24 95, 45 125, 75 145" fill="none" stroke="#84BD00" stroke-width="6" stroke-linecap="round" />
+                            <path d="M 75 165 C 85 150, 130 120, 130 80 C 126 95, 105 125, 75 145" fill="none" stroke="#84BD00" stroke-width="6" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="inline-flex items-center gap-1.5 bg-[#84BD00]/20 text-brand-green text-xs font-bold px-3 py-1 rounded-full border border-brand-green/30">
+                            <span>دليل الهوية البصرية المعتمد</span>
+                        </div>
+                        <h1 class="text-xl sm:text-2xl lg:text-3xl font-black text-white">
+                            جمعية <span class="text-brand-orange">بناء</span> وتنمية مساكن
+                        </h1>
+                        <p class="text-slate-300 text-xs sm:text-sm font-medium">
+                            بمنطقة جازان | منصة إدارة ومتابعة التكليفات والمهام التنفيذية
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="flex flex-wrap items-center justify-center lg:justify-end gap-3 w-full lg:w-auto">
+                    <button onclick="window.print()" class="bg-white/5 hover:bg-white/15 border border-white/10 text-white transition px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 text-xs sm:text-sm shadow-sm">
+                        <!-- Printer icon path -->
+                        <svg class="w-4 h-4 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                        <span>طباعة التقرير</span>
+                    </button>
+                    <button onclick="openAddModal()" class="bg-brand-orange hover:bg-orange-600 text-white font-bold transition px-5 py-2.5 rounded-xl flex items-center gap-2 text-xs sm:text-sm shadow-lg shadow-brand-orange/20">
+                        <span class="text-lg font-black">+</span>
+                        <span>إضافة مهمة جديدة</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- STATISTICS CARDS -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 print-hide">
+            
+            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200/60 flex items-center justify-between relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-1.5 h-full bg-brand-gray"></div>
+                <div>
+                    <p class="text-slate-400 font-bold text-xs">إجمالي المهام</p>
+                    <h3 id="stat-total" class="text-2xl sm:text-3xl font-black text-slate-800 mt-1">0</h3>
+                    <p class="text-[10px] text-slate-500 mt-0.5">البنود المدرجة</p>
+                </div>
+                <div class="bg-slate-100 text-slate-500 p-2.5 rounded-xl">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200/60 flex items-center justify-between relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-1.5 h-full bg-brand-green"></div>
+                <div>
+                    <p class="text-slate-400 font-bold text-xs">تم الإنجاز</p>
+                    <h3 id="stat-completed" class="text-2xl sm:text-3xl font-black text-brand-green mt-1">0</h3>
+                    <p id="stat-rate" class="text-[10px] text-brand-green font-bold mt-0.5">0% نسبة الإنجاز</p>
+                </div>
+                <div class="bg-emerald-50 text-brand-green p-2.5 rounded-xl">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200/60 flex items-center justify-between relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-1.5 h-full bg-brand-orange"></div>
+                <div>
+                    <p class="text-slate-400 font-bold text-xs">قيد العمل والمتابعة</p>
+                    <h3 id="stat-progress" class="text-2xl sm:text-3xl font-black text-brand-orange mt-1">0</h3>
+                    <p class="text-[10px] text-slate-500 mt-0.5">تحت الإجراء حالياً</p>
+                </div>
+                <div class="bg-orange-50 text-brand-orange p-2.5 rounded-xl">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200/60 flex items-center justify-between relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-1.5 h-full bg-rose-500"></div>
+                <div>
+                    <p class="text-slate-400 font-bold text-xs">معلقة بانتظار البدء</p>
+                    <h3 id="stat-pending" class="text-2xl sm:text-3xl font-black text-rose-600 mt-1">0</h3>
+                    <p class="text-[10px] text-rose-500 font-bold mt-0.5">تتطلب تدخلاً سريعاً</p>
+                </div>
+                <div class="bg-rose-50 text-rose-600 p-2.5 rounded-xl">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- MAIN TABLE & FILTERS SECTION -->
+        <section class="bg-white rounded-3xl shadow-md border border-slate-200/80 overflow-hidden">
+            
+            <!-- Filters & Search Bar -->
+            <div class="p-4 sm:p-6 bg-slate-50 border-b border-slate-200 flex flex-col lg:flex-row gap-4 justify-between items-center print-hide">
+                
+                <!-- Search Box -->
+                <div class="relative w-full lg:max-w-md">
+                    <span class="absolute inset-y-0 right-3.5 flex items-center pointer-events-none text-slate-400">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    </span>
+                    <input 
+                        type="text" 
+                        id="search-input"
+                        oninput="renderDashboard()"
+                        placeholder="ابحث عن مهمة، موظف مكلف، أو بند حوكمة..."
+                        class="w-full pr-11 pl-4 py-2.5 sm:py-3 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none text-sm transition shadow-sm"
+                    />
+                </div>
+
+                <!-- Category Filters -->
+                <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-start lg:justify-end">
+                    <span class="text-xs font-bold text-slate-500 ml-2">تصنيف وتصفية المهام:</span>
+                    <div id="filter-buttons" class="flex flex-wrap gap-2">
+                        <!-- Dynamically Generated -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- DESKTOP DATA TABLE -->
+            <div class="overflow-x-auto hidden lg:block">
+                <table class="w-full text-right border-collapse print-hide">
+                    <thead>
+                        <tr class="bg-gradient-to-r from-brand-dark to-brand-deep text-white border-b-2 border-brand-green">
+                            <th class="py-4 px-5 text-center font-bold text-xs w-14">م</th>
+                            <th class="py-4 px-4 font-bold text-xs min-w-[220px]">المهمة / الملف</th>
+                            <th class="py-4 px-4 text-center font-bold text-xs w-28">الأهمية</th>
+                            <th class="py-4 px-4 font-bold text-xs min-w-[280px]">الوضع الحالي + الإجراء المعتمد</th>
+                            <th class="py-4 px-4 font-bold text-xs min-w-[170px]">المسؤول عن التنفيذ</th>
+                            <th class="py-4 px-5 text-center font-bold text-xs w-36">العمليات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="divide-y divide-slate-100">
+                        <!-- Dynamically Generated -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- MOBILE CARDS CONTAINER -->
+            <div id="mobile-cards-container" class="block lg:hidden divide-y divide-slate-100 print-hide">
+                <!-- Dynamically Generated -->
+            </div>
+
+            <!-- NO DATA FALLBACK -->
+            <div id="no-data-fallback" class="hidden py-16 text-center text-slate-400">
+                <svg class="w-12 h-12 text-slate-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                <p class="font-bold">لا توجد نتائج مطابقة لبحثك أو تصفيتك</p>
+            </div>
+
+        </section>
+
+        <!-- PRINT FORMAL LAYOUT -->
+        <div id="print-layout" class="hidden print:block w-full text-right p-6">
+            <!-- Formal Header -->
+            <div class="flex justify-between items-start border-b-4 border-brand-green pb-6 mb-8">
+                <div class="flex items-center gap-5">
+                    <div class="border border-brand-green p-1.5 rounded-xl">
+                        <svg viewBox="0 0 150 180" class="w-16 h-16">
+                            <path d="M 65 100 L 65 50 Q 65 40 75 35 L 75 10 L 95 20 L 95 40 Q 105 45 105 55 L 105 100 Z" fill="#F37021" />
+                            <path d="M 35 100 L 35 55 L 58 45 L 58 100 Z" fill="#9FA1A4" />
+                            <path d="M 112 100 L 112 60 L 125 50 L 125 100 Z" fill="#9FA1A4" opacity="0.65" />
+                            <path d="M 25 103 Q 75 92 125 103 Z" fill="#F37021" />
+                            <path d="M 75 165 C 65 150, 20 120, 20 80 C 24 95, 45 125, 75 145" fill="none" stroke="#84BD00" stroke-width="6" />
+                            <path d="M 75 165 C 85 150, 130 120, 130 80 C 126 95, 105 125, 75 145" fill="none" stroke="#84BD00" stroke-width="6" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-extrabold text-slate-800">جمعية بناء وتنمية مساكن بمنطقة جازان</h1>
+                        <p class="text-xs text-brand-green font-bold mt-0.5">مسجلة بوزارة الموارد البشرية برقم (1927)</p>
+                        <p class="text-[10px] text-slate-500">المملكة العربية السعودية - جازان</p>
+                    </div>
+                </div>
+                <div class="text-left text-xs text-slate-600 space-y-1 font-semibold">
+                    <p>الرقم: ب ت م / <span id="print-year"></span></p>
+                    <p>التاريخ: <span id="print-date"></span></p>
+                    <p>المرفقات: جدول المتابعة الدوري</p>
+                </div>
+            </div>
+
+            <!-- Print Title -->
+            <div class="text-center my-6">
+                <h2 class="text-lg font-black text-slate-800 border-b-2 border-slate-200 pb-2 inline-block px-8">
+                    جدول المهام والتكليفات الإدارية والميدانية - نسخة متابعة رسمية
+                </h2>
+            </div>
+
+            <!-- Table -->
+            <table class="w-full text-xs border-collapse border border-slate-400 my-4">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-800">
+                        <th class="border border-slate-400 py-3 px-2 text-center w-8 font-bold">م</th>
+                        <th class="border border-slate-400 py-3 px-3 text-right font-bold w-1/4">المهمة المكلف بها</th>
+                        <th class="border border-slate-400 py-3 px-2 text-center w-16 font-bold">الأهمية</th>
+                        <th class="border border-slate-400 py-3 px-3 text-right font-bold">الوضع الحالي والإجراء التفصيلي المعتمد</th>
+                        <th class="border border-slate-400 py-3 px-3 text-right font-bold w-1/5">المسؤول عن المتابعة</th>
+                    </tr>
+                </thead>
+                <tbody id="print-table-body">
+                    <!-- Dynamically Generated -->
+                </tbody>
+            </table>
+
+            <!-- Print Signatures -->
+            <div class="mt-12 grid grid-cols-2 gap-12 text-center text-xs font-bold text-slate-700">
+                <div class="space-y-12">
+                  <p>توقيع وختم اللجنة الرقابية</p>
+                  <p class="text-slate-400">......................................................</p>
+                </div>
+                <div class="space-y-12">
+                  <p>اعتماد المشرف / المدير العام للجمعية</p>
+                  <p class="text-slate-400">......................................................</p>
+                </div>
+            </div>
+
+            <!-- Footer fixed on print bottom -->
+            <div class="fixed bottom-0 left-0 right-0 text-center text-[10px] text-slate-400 border-t border-slate-200 pt-3">
+                الجمعية الأهلية لبناء وتنمية مساكن بمنطقة جازان | البريد الإلكتروني: info@bena-jazan.sa | جوال: 0551056560
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER DESIGN -->
+    <footer class="mt-16 bg-[#08120c] text-white border-t-4 border-brand-green pt-12 pb-8 relative overflow-hidden print-hide">
+        <div class="absolute inset-0 brand-dots"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-white/5">
+                
+                <!-- Col 1 -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-white p-1.5 rounded-lg w-12 h-12 flex items-center justify-center">
+                            <svg viewBox="0 0 150 180" class="w-full h-full">
+                                <path d="M 65 100 L 65 50 Q 65 40 75 35 L 75 10 L 95 20 L 95 40 Q 105 45 105 55 L 105 100 Z" fill="#F37021" />
+                                <path d="M 35 100 L 35 55 L 58 45 L 58 100 Z" fill="#9FA1A4" />
+                                <path d="M 112 100 L 112 60 L 125 50 L 125 100 Z" fill="#9FA1A4" opacity="0.65" />
+                                <path d="M 25 103 Q 75 92 125 103 Z" fill="#F37021" />
+                                <path d="M 75 165 C 65 150, 20 120, 20 80 C 24 95, 45 125, 75 145" fill="none" stroke="#84BD00" stroke-width="6" />
+                                <path d="M 75 165 C 85 150, 130 120, 130 80 C 126 95, 105 125, 75 145" fill="none" stroke="#84BD00" stroke-width="6" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-sm">جمعية بناء وتنمية مساكن بجازان</h3>
+                            <p class="text-slate-400 text-xs">بناء الإنسان.. تنمية المجتمع</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-400 text-xs leading-relaxed max-w-sm">
+                        نسعى لتقديم حلول سكنية تنموية رائدة لمستفيدي منطقة جازان الأشد حاجة، ومتابعة دقيقة لكافة المشاريع الإنشائية والإشرافية.
+                    </p>
+                </div>
+
+                <!-- Col 2 -->
+                <div class="space-y-3">
+                    <h4 class="text-brand-green font-black text-sm">قنوات التواصل المعتمدة بالهوية</h4>
+                    <ul class="space-y-2.5 text-xs text-slate-300">
+                        <li class="flex items-center gap-2">
+                            <span class="text-brand-orange">●</span>
+                            <span>الرقم الموحد: 0551056560</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-brand-orange">●</span>
+                            <a href="https://www.bena-jazan.sa" target="_blank" class="hover:underline">www.bena-jazan.sa</a>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-brand-orange">●</span>
+                            <span>المملكة العربية السعودية، جازان</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Col 3 -->
+                <div class="space-y-3">
+                    <h4 class="text-brand-green font-black text-sm">مواقع التواصل الاجتماعي</h4>
+                    <p class="text-xs text-slate-400">المعرف المعتمد للمنصات الرسمية للجمعية:</p>
+                    <div class="flex gap-3 text-xs text-slate-300 font-semibold">
+                        <div class="bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 border border-white/5">
+                            <span class="text-brand-orange">Instagram:</span>
+                            <span>@Binaatanmia</span>
+                        </div>
+                        <div class="bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 border border-white/5">
+                            <span class="text-brand-green">Twitter:</span>
+                            <span>@Binaatanmia</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-4">
+                <p>© <span id="footer-year"></span> جمعية بناء وتنمية مساكن بمنطقة جازان. جميع الحقوق محفوظة.</p>
+                <p>دليل الهوية البصرية المعتمد الإصدار (V1)</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ADD / EDIT DIALOG MODAL -->
+    <div id="form-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm print-hide">
+        <div class="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all duration-300">
+            <div class="bg-gradient-to-r from-brand-dark to-brand-deep text-white p-6 flex justify-between items-center border-b border-slate-100">
+                <h3 id="modal-title" class="text-base font-bold">إضافة بند مهام وتكليفات جديد</h3>
+                <button onclick="closeModal()" class="text-slate-300 hover:text-white text-xl font-bold">×</button>
+            </div>
+            <form onsubmit="saveTask(event)">
+                <input type="hidden" id="form-id">
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1.5">اسم المهمة / الملف التفصيلي</label>
+                        <input type="text" id="form-task-title" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none text-sm font-medium transition" placeholder="مثال: استكمال حوكمة الملفات الإنشائية...">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-1.5">أهمية البند</label>
+                            <select id="form-priority" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none text-sm font-semibold transition">
+                                <option value="عاجلة">عاجلة جداً</option>
+                                <option value="عادية">عادية</option>
+                                <option value="منخفضة">منخفضة</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-1.5">الحالة الحالية للعمل</label>
+                            <select id="form-status" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none text-sm font-semibold transition">
+                                <option value="معلق">معلق</option>
+                                <option value="قيد التنفيذ">قيد التنفيذ</option>
+                                <option value="مكتمل">تم الإنجاز (مكتمل)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1.5">الجهة أو المشرف المسؤول عن التنفيذ</label>
+                        <input type="text" id="form-assigned" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none text-sm font-medium transition" placeholder="مثال: المهندس محمد، الأستاذة أمل حكمي...">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1.5">الوضع الحالي + الإجراء المعتمد والقرارات</label>
+                        <textarea id="form-action" rows="4" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none text-sm font-medium transition resize-none" placeholder="اكتب التحديثات الحالية، العقبات، والتكليفات الموجهة لفرق العمل..."></textarea>
+                    </div>
+                </div>
+                <div class="bg-slate-50 px-6 py-4 flex justify-between items-center border-t border-slate-100">
+                    <button type="submit" class="bg-brand-green hover:bg-[#6c9b00] text-white font-bold transition px-6 py-2.5 rounded-xl text-xs shadow-md">حفظ البيانات</button>
+                    <button type="button" onclick="closeModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold transition px-5 py-2.5 rounded-xl text-xs">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- VIEW DIALOG MODAL -->
+    <div id="view-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-sm print-hide">
+        <div class="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all duration-300">
+            <div class="bg-gradient-to-r from-brand-dark to-brand-deep text-white p-6 relative">
+                <button onclick="closeViewModal()" class="absolute top-6 left-6 text-slate-300 hover:text-white text-xl font-bold">×</button>
+                <div id="view-priority-badge" class="inline-flex items-center gap-1.5 bg-brand-orange text-white text-[11px] font-bold px-3 py-1 rounded-full mb-2"></div>
+                <h3 id="view-task-title" class="text-base sm:text-lg font-bold leading-relaxed"></h3>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/50">
+                        <span class="text-xs text-slate-400 font-bold block mb-1.5">حالة البند الحالية</span>
+                        <div id="view-status-badge"></div>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/50">
+                        <span class="text-xs text-slate-400 font-bold block mb-1.5">الجهة المكلفة بالإجراء</span>
+                        <div id="view-assigned-name" class="font-bold text-slate-700 text-xs"></div>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-slate-400">الوضع الراهن والقرار المتخذ:</h4>
+                    <div id="view-action-text" class="bg-emerald-50/20 border border-brand-green/10 p-5 rounded-2xl text-slate-700 text-sm leading-relaxed whitespace-pre-wrap"></div>
+                </div>
+            </div>
+            <div class="bg-slate-50 px-6 py-4 flex justify-end items-center border-t border-slate-100">
+                <button onclick="closeViewModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold transition px-5 py-2.5 rounded-xl text-xs">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CORE LOGIC & CONTROLLER SCRIPT -->
+    <script>
+        // Initial setup & Local Storage syncing
+        const defaultTasks = [
+            {
+                id: 1,
+                title: "زيارة بيت النجمي (بعد الحريق)",
+                priority: "عاجلة",
+                status: "معلق",
+                action: "زيارة ميدانية طارئة لبيت النجمي لتقييم الأضرار الإنشائية الناتجة عن الحريق، والتنسيق لتقديم الدعم السكني الفوري والمناسب.",
+                assignedTo: "اللجنة الميدانية ولجنة الإسكان"
+            },
+            {
+                id: 2,
+                title: "مشكلة عداد المياه في العقارات (96)",
+                priority: "عاجلة",
+                status: "معلق",
+                action: "متابعة شركة المياه الوطنية لحل مشكلة قراءات العداد أو التسريب الخاص بالعقارات المحددة.",
+                assignedTo: "إدارة المرافق والخدمات"
+            },
+            {
+                id: 3,
+                title: "سند الأمر من الأستاذة باسمة",
+                priority: "عاجلة",
+                status: "معلق",
+                action: "استلام وتوثيق سند الأمر وتدقيقه قانونياً لاعتماده ضمن الملفات الرسمية.",
+                assignedTo: "الأستاذة باسمة / القسم القانوني"
+            },
+            {
+                id: 4,
+                title: "استكمال ملفات الوحدات السكنية",
+                priority: "عاجلة",
+                status: "مكتمل",
+                action: "تم بحمد الله التنفيذ الكامل لجميع الملفات والوحدات ومراجعتها وتدقيقها رقمياً ومطابقتها للشروط.",
+                assignedTo: "قسم الإسكان التنموي"
+            },
+            {
+                id: 5,
+                title: "الفواتير الضريبية مع المؤسسات التي تتعطل في التسليم - حلها بشكل عاجل وطلوع فاتورة (85)",
+                priority: "عاجلة",
+                status: "قيد التنفيذ",
+                action: "تم تواصل المهندس محمد مع البقمي، وأفاد بأنه لا يوجد لديه اشتراكات، ويعمل حالياً على إصدار الفاتورة دون تحديد وقت معين. الإجراء الحالي: متابعة المهندس محمد لتحديد موعد نهائي ملزم لإصدار فاتورة (85)، وتصعيد الموضوع للإدارة عند استمرار التأخير.",
+                assignedTo: "المهندس محمد"
+            },
+            {
+                id: 6,
+                title: "ملف الحوكمة",
+                priority: "عاجلة",
+                status: "قيد التنفيذ",
+                action: "تم التحدث مع الأستاذة مشاعر، وبانتظار تحديد الوقت المناسب للعمل عليه تماشياً مع معايير وزارة الموارد البشرية والتنمية الاجتماعية.",
+                assignedTo: "الأستاذة مشاعر"
+            },
+            {
+                id: 7,
+                title: "مشكلة المياه في الجمعية",
+                priority: "عاجلة",
+                status: "معلق",
+                action: "فحص شبكة المياه الداخلية بالجمعية وحل الانقطاعات أو الخلل الفني المغذي للمكاتب.",
+                assignedTo: "قسم الصيانة والمرافق"
+            },
+            {
+                id: 8,
+                title: "تكليف المهندس محمد بعمل تقرير لجميع مشاريع القسم (بناء، ترميم، استكمال بناء، وصيانة)",
+                priority: "عاجلة",
+                status: "قيد التنفيذ",
+                action: "اعتماد تشكيل لجنة رسمية من الأستاذة آمنة، والأستاذة أمل نجمي، والأستاذة مشاعر سوادي لمتابعة المشاريع والعمل عليها وتسليمها بأسرع وقت ممكن.",
+                assignedTo: "اللجنة المشكلة (آمنة، أمل نجمي، مشاعر سوادي)"
+            },
+            {
+                id: 9,
+                title: "تكريم مريم خضري من قسم الاتصال المؤسسي",
+                priority: "عاجلة",
+                status: "قيد التنفيذ",
+                action: "إعداد شهادة ودرع تكريم تقديراً لجهودها المميزة في الاتصال المؤسسي، ويشمل التكريم كل من ساهم وفق المعايير المعتمدة للمستحقين، مع تحديد موعد مناسب للتسليم.",
+                assignedTo: "قسم الاتصال المؤسسي"
+            },
+            {
+                id: 10,
+                title: "تكليف الأستاذة أمل حكمي بمتابعة الدوام وأعمال الموظفين من بداية الدوام إلى نهايته",
+                priority: "عاجلة",
+                status: "قيد التنفيذ",
+                action: "تكليف الأستاذة أمل حكمي رسمياً بمتابعة الدوام وأعمال الموظفين وإعداد التقارير الدورية بالملاحظات ورفعها للإدارة.",
+                assignedTo: "الأستاذة أمل حكمي"
+            }
+        ];
+
+        let tasks = JSON.parse(localStorage.getItem('bena_tasks')) || defaultTasks;
+        let currentFilter = "الكل";
+
+        function saveToStorage() {
+            localStorage.setItem('bena_tasks', JSON.stringify(tasks));
+        }
+
+        // Calculation Stats Update
+        function updateStats() {
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.status === "مكتمل").length;
+            const progress = tasks.filter(t => t.status === "قيد التنفيذ").length;
+            const pending = tasks.filter(t => t.status === "معلق").length;
+            const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-completed').textContent = completed;
+            document.getElementById('stat-rate').textContent = `${rate}% نسبة الإنجاز`;
+            document.getElementById('stat-progress').textContent = progress;
+            document.getElementById('stat-pending').textContent = pending;
+        }
+
+        // Render Filter Buttons
+        function renderFilters() {
+            const container = document.getElementById('filter-buttons');
+            const states = ["الكل", "معلق", "قيد التنفيذ", "مكتمل"];
+            container.innerHTML = states.map(state => {
+                const isSelected = currentFilter === state;
+                const count = state === "الكل" ? tasks.length : tasks.filter(t => t.status === state).length;
+                return `
+                    <button onclick="setFilter('${state}')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                        isSelected 
+                            ? "bg-gradient-to-r from-brand-dark to-brand-deep text-white shadow-md" 
+                            : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-100"
+                    }">
+                        <span>${state}</span>
+                        <span class="px-1.5 py-0.2 rounded-full text-[10px] ${isSelected ? 'bg-white/20' : 'bg-slate-100'}">${count}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            renderDashboard();
+        }
+
+        // Toggle Status Cycle
+        function cycleStatus(id) {
+            tasks = tasks.map(t => {
+                if (t.id === id) {
+                    let next = "معلق";
+                    if (t.status === "معلق") next = "قيد التنفيذ";
+                    else if (t.status === "قيد التنفيذ") next = "مكتمل";
+                    return { ...t, status: next };
+                }
+                return t;
+            });
+            saveToStorage();
+            renderDashboard();
+        }
+
+        // Delete action
+        function deleteTask(id) {
+            if (confirm("هل أنت متأكد من رغبتك في حذف هذا التكليف نهائياً؟")) {
+                tasks = tasks.filter(t => t.id !== id);
+                saveToStorage();
+                renderDashboard();
+            }
+        }
+
+        // Details view modal controller
+        function viewTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+
+            document.getElementById('view-priority-badge').textContent = `مهمة ${task.priority}`;
+            document.getElementById('view-task-title').textContent = task.title;
+            document.getElementById('view-assigned-name').textContent = task.assignedTo || "غير محدد";
+            document.getElementById('view-action-text').textContent = task.action || "-";
+            
+            const badge = document.getElementById('view-status-badge');
+            if (task.status === "مكتمل") {
+                badge.innerHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold border bg-emerald-50 text-emerald-800 border-brand-green/20"><span class="w-2.5 h-2.5 rounded-full bg-brand-green"></span>تم التنفيذ</span>`;
+            } else if (task.status === "قيد التنفيذ") {
+                badge.innerHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold border bg-orange-50 text-brand-orange border-brand-orange/20"><span class="w-2.5 h-2.5 rounded-full bg-brand-orange"></span>قيد التنفيذ</span>`;
+            } else {
+                badge.innerHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold border bg-rose-50 text-rose-700 border-rose-200"><span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span>معلق</span>`;
+            }
+
+            document.getElementById('view-modal').classList.remove('hidden');
+        }
+
+        function closeViewModal() {
+            document.getElementById('view-modal').classList.add('hidden');
+        }
+
+        // Add / Edit Modal Actions
+        function openAddModal() {
+            document.getElementById('modal-title').textContent = "إضافة بند مهام وتكليفات جديد";
+            document.getElementById('form-id').value = "";
+            document.getElementById('form-task-title').value = "";
+            document.getElementById('form-priority').value = "عاجلة";
+            document.getElementById('form-status').value = "معلق";
+            document.getElementById('form-assigned').value = "";
+            document.getElementById('form-action').value = "";
+            document.getElementById('form-modal').classList.remove('hidden');
+        }
+
+        function openEditModal(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+
+            document.getElementById('modal-title').textContent = "تعديل تفاصيل البند الحالي";
+            document.getElementById('form-id').value = task.id;
+            document.getElementById('form-task-title').value = task.title;
+            document.getElementById('form-priority').value = task.priority;
+            document.getElementById('form-status').value = task.status;
+            document.getElementById('form-assigned').value = task.assignedTo;
+            document.getElementById('form-action').value = task.action;
+            document.getElementById('form-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('form-modal').classList.add('hidden');
+        }
+
+        function saveTask(e) {
+            e.preventDefault();
+            const id = document.getElementById('form-id').value;
+            const title = document.getElementById('form-task-title').value;
+            const priority = document.getElementById('form-priority').value;
+            const status = document.getElementById('form-status').value;
+            const assignedTo = document.getElementById('form-assigned').value;
+            const action = document.getElementById('form-action').value;
+
+            if (id) {
+                // Edit mode
+                tasks = tasks.map(t => t.id == id ? { ...t, title, priority, status, assignedTo, action } : t);
+            } else {
+                // Add mode
+                const newId = tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
+                tasks.push({ id: newId, title, priority, status, assignedTo, action });
+            }
+            saveToStorage();
+            closeModal();
+            renderDashboard();
+        }
+
+        // Core Rendering Pipeline
+        function renderDashboard() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            
+            // Filter processing
+            const filtered = tasks.filter(task => {
+                const matchSearch = task.title.toLowerCase().includes(query) || 
+                                    task.action.toLowerCase().includes(query) || 
+                                    task.assignedTo.toLowerCase().includes(query);
+                const matchFilter = currentFilter === "الكل" || task.status === currentFilter;
+                return matchSearch && matchFilter;
+            });
+
+            // Update Statistics
+            updateStats();
+            renderFilters();
+
+            const tableBody = document.getElementById('table-body');
+            const mobileContainer = document.getElementById('mobile-cards-container');
+            const fallback = document.getElementById('no-data-fallback');
+
+            if (filtered.length === 0) {
+                tableBody.innerHTML = '';
+                mobileContainer.innerHTML = '';
+                fallback.classList.remove('hidden');
+                return;
+            } else {
+                fallback.classList.add('hidden');
+            }
+
+            // Desktop Table Markup
+            tableBody.innerHTML = filtered.map((task, index) => {
+                let badgeClass = "bg-rose-50 text-rose-700 border-rose-200";
+                let dotClass = "bg-rose-600";
+                if (task.status === "مكتمل") {
+                    badgeClass = "bg-emerald-50 text-emerald-800 border-brand-green/20";
+                    dotClass = "bg-brand-green";
+                } else if (task.status === "قيد التنفيذ") {
+                    badgeClass = "bg-orange-50 text-brand-orange border-brand-orange/20";
+                    dotClass = "bg-brand-orange";
+                }
+
+                return `
+                    <tr class="hover:bg-slate-50/50 transition duration-150">
+                        <td class="py-5 px-5 text-center font-bold text-slate-400 text-sm">${index + 1}</td>
+                        <td class="py-5 px-4"><div class="font-bold text-slate-800 leading-relaxed text-[15px]">${task.title}</div></td>
+                        <td class="py-5 px-4 text-center"><span class="bg-brand-orange text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow-sm">${task.priority}</span></td>
+                        <td class="py-5 px-4">
+                            <div class="space-y-2">
+                                <button onclick="cycleStatus(${task.id})" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold border transition transform hover:scale-105 ${badgeClass}">
+                                    <span class="w-2 h-2 rounded-full ${dotClass}"></span>
+                                    <span>${task.status}</span>
+                                </button>
+                                <p class="text-slate-600 text-[13px] leading-relaxed line-clamp-2 hover:line-clamp-none transition-all">${task.action}</p>
+                            </div>
+                        </td>
+                        <td class="py-5 px-4"><div class="text-slate-700 text-sm font-semibold">${task.assignedTo || '-'}</div></td>
+                        <td class="py-5 px-5 text-center">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <button onclick="viewTask(${task.id})" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition">🔎</button>
+                                <button onclick="openEditModal(${task.id})" class="p-2 bg-sky-50 hover:bg-sky-100 text-sky-700 rounded-xl transition">✍️</button>
+                                <button onclick="deleteTask(${task.id})" class="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl transition">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Mobile Cards Markup
+            mobileContainer.innerHTML = filtered.map((task, index) => {
+                let badgeClass = "bg-rose-50 text-rose-700 border-rose-200";
+                let dotClass = "bg-rose-600";
+                if (task.status === "مكتمل") {
+                    badgeClass = "bg-emerald-50 text-emerald-800 border-brand-green/20";
+                    dotClass = "bg-brand-green";
+                } else if (task.status === "قيد التنفيذ") {
+                    badgeClass = "bg-orange-50 text-brand-orange border-brand-orange/20";
+                    dotClass = "bg-brand-orange";
+                }
+
+                return `
+                    <div class="p-4 sm:p-6 space-y-4 hover:bg-slate-50/45 transition">
+                        <div class="flex justify-between items-start gap-4">
+                            <span class="font-black text-slate-400 text-xs sm:text-sm">بند رقم ${index + 1}</span>
+                            <span class="bg-brand-orange text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full shadow-sm">${task.priority}</span>
+                        </div>
+                        <div class="font-bold text-slate-800 leading-relaxed text-sm sm:text-base">${task.title}</div>
+                        <div class="text-slate-600 text-xs leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">${task.action}</div>
+                        <div class="flex flex-wrap gap-2 items-center text-slate-700 text-xs font-semibold">
+                            <span class="text-slate-400">المسؤول عن التنفيذ:</span>
+                            <span class="bg-slate-100 text-slate-800 px-2.5 py-1 rounded-lg">${task.assignedTo || 'غير معين'}</span>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+                            <button onclick="cycleStatus(${task.id})" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition ${badgeClass}">
+                                <span class="w-2 h-2 rounded-full ${dotClass}"></span>
+                                <span>${task.status}</span>
+                            </button>
+                            <div class="flex items-center gap-2">
+                                <button onclick="viewTask(${task.id})" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl">🔎</button>
+                                <button onclick="openEditModal(${task.id})" class="p-2 bg-sky-50 hover:bg-sky-100 text-sky-700 rounded-xl">✍️</button>
+                                <button onclick="deleteTask(${task.id})" class="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Print table layout Syncing
+            const printTableBody = document.getElementById('print-table-body');
+            printTableBody.innerHTML = tasks.map((task, index) => `
+                <tr>
+                    <td class="border border-slate-400 py-2.5 px-2 text-center font-bold">${index + 1}</td>
+                    <td class="border border-slate-400 py-2.5 px-3 font-bold text-slate-900">${task.title}</td>
+                    <td class="border border-slate-400 py-2.5 px-2 text-center font-extrabold text-[#F37021]">${task.priority}</td>
+                    <td class="border border-slate-400 py-2.5 px-3 text-slate-700 leading-relaxed">
+                        <strong class="block text-slate-900 mb-1">[حالة البند: ${task.status}]</strong>
+                        ${task.action}
+                    </td>
+                    <td class="border border-slate-400 py-2.5 px-3 font-semibold text-slate-800">${task.assignedTo || 'غير محدد'}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Initialize App UI and Dates
+        window.onload = function() {
+            const now = new Date();
+            document.getElementById('footer-year').textContent = now.getFullYear();
+            document.getElementById('print-year').textContent = now.getFullYear();
+            document.getElementById('print-date').textContent = now.toLocaleDateString('ar-SA');
+            renderDashboard();
+        }
+    </script>
 </body>
 </html>
+
+```
