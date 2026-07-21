@@ -205,8 +205,23 @@
             <div class="space-y-4">
                 <h3 class="text-sm font-bold text-gray-700 flex items-center gap-1.5">
                     <i class="fa-solid fa-user-pen text-brandGreen"></i>
-                    <span>بيانات الموظف</span>
+                    <span>بيانات الموظف وشعار الجمعية</span>
                 </h3>
+
+                <!-- Upload Logo Field -->
+                <div class="bg-orange-50/60 p-3 rounded-xl border border-orange-100 space-y-2">
+                    <label class="block text-xs font-bold text-gray-700">شعار الجمعية الخاص بالتصميم</label>
+                    <div class="flex items-center gap-3">
+                        <div class="relative flex-1">
+                            <label for="inputLogo" class="cursor-pointer bg-white hover:bg-orange-100/50 text-brandOrange text-xs font-bold py-2 px-3 rounded-lg border border-dashed border-brandOrange/40 transition flex items-center justify-center gap-2 shadow-sm">
+                                <i class="fa-solid fa-file-image"></i>
+                                <span>اختيار صورة الشعار</span>
+                            </label>
+                            <input type="file" id="inputLogo" accept="image/*" class="hidden">
+                        </div>
+                        <button type="button" id="btnResetLogo" class="text-2xs text-gray-400 hover:text-red-500 transition underline whitespace-nowrap">استعادة الشعار الأصلي</button>
+                    </div>
+                </div>
                 
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">الاسم الكامل (ثنائي أو ثلاثي)</label>
@@ -392,7 +407,7 @@
                         <div class="text-right">
                             <span class="block text-2xs font-extrabold text-white leading-tight">جمعية بناء وتنمية مساكن</span>
                         </div>
-                        <div class="h-11 w-11 bg-white p-1 rounded-lg flex items-center justify-center shadow-sm">
+                        <div class="h-11 w-11 bg-white/95 backdrop-blur-md p-1 rounded-xl flex items-center justify-center shadow-md border border-white/50">
                             <img id="cardLogoFront" src="image_b81a69.png" 
                                  onerror="this.onerror=null; this.src='https://placehold.co/100x100/f37021/ffffff?text=Bena';" 
                                  class="max-h-full max-w-full object-contain" alt="شعار الجمعية">
@@ -463,7 +478,7 @@
                         
                         <!-- Upper Emblem & Society Heading -->
                         <div class="w-full flex items-center justify-center gap-2 pb-3 border-b border-gray-100">
-                            <div class="h-9 w-9">
+                            <div class="h-9 w-9 bg-gray-50/80 rounded-lg p-0.5 border border-gray-100 flex items-center justify-center">
                                 <img id="cardLogoBack" src="image_b81a69.png" 
                                      onerror="this.onerror=null; this.src='https://placehold.co/100x100/f37021/ffffff?text=Bena';" 
                                      class="max-h-full max-w-full object-contain" alt="شعار الجمعية">
@@ -605,19 +620,43 @@
         let currentTheme = 'orange';
         let currentOrientation = 'vertical';
         let defaultPhoto = 'https://placehold.co/300x300/e2e8f0/64748b?text=Photo';
+        let defaultLogo = 'image_b81a69.png';
 
         const inputName = document.getElementById('inputName');
         const inputTitle = document.getElementById('inputTitle');
         const inputId = document.getElementById('inputId');
         const inputPhoto = document.getElementById('inputPhoto');
+        const inputLogo = document.getElementById('inputLogo');
         const btnResetPhoto = document.getElementById('btnResetPhoto');
+        const btnResetLogo = document.getElementById('btnResetLogo');
 
         const previewName = document.getElementById('previewName');
         const previewTitle = document.getElementById('previewTitle');
         const previewId = document.getElementById('previewId');
         const jobIdContainer = document.getElementById('jobIdContainer');
         const previewPhotoFront = document.getElementById('previewPhotoFront');
+        const cardLogoFront = document.getElementById('cardLogoFront');
+        const cardLogoBack = document.getElementById('cardLogoBack');
         const previewQr = document.getElementById('previewQr');
+
+        // Dynamic Logo uploading logic
+        inputLogo.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    cardLogoFront.src = event.target.result;
+                    cardLogoBack.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        btnResetLogo.addEventListener('click', () => {
+            cardLogoFront.src = defaultLogo;
+            cardLogoBack.src = defaultLogo;
+            inputLogo.value = '';
+        });
 
         // Binding typing inputs to live preview outputs
         inputName.addEventListener('input', (e) => {
