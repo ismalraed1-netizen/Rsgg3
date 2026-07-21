@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons for visual flair -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Cairo and Tajawal for pristine Arabic typography resembling 29LT Azer -->
+    <!-- Google Fonts: Cairo and Tajawal for pristine Arabic typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
@@ -96,7 +96,6 @@
                 border: 1px dashed #ccc !important;
                 page-break-inside: avoid;
                 margin: 10px;
-                /* Exact CR80 standard specifications for printing if scaled */
                 print-color-adjust: exact;
                 -webkit-print-color-adjust: exact;
             }
@@ -125,7 +124,6 @@
         <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-4">
                 <div class="p-2 bg-gradient-to-br from-brandOrange to-brandGreen rounded-xl">
-                    <!-- SVG Emblem inspired by the brand building/house lines -->
                     <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                     </svg>
@@ -152,7 +150,7 @@
     <!-- Main Application Container -->
     <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        <!-- Controls Column (Left on Desktop, Top on Mobile) -->
+        <!-- Controls Column -->
         <div class="lg:col-span-5 bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-6 no-print h-fit overflow-y-auto max-h-[85vh]">
             <div class="border-b border-gray-100 pb-4">
                 <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
@@ -181,8 +179,8 @@
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">الرقم الوظيفي</label>
-                        <input type="text" id="inputId" value="EMP-2026-389" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brandOrange text-sm" placeholder="مثال: EMP-2026-001">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">الرقم الوظيفي <span class="text-gray-400 font-normal">(اختياري)</span></label>
+                        <input type="text" id="inputId" value="EMP-2026-389" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brandOrange text-sm" placeholder="اختياري (مثال: EMP-001)">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1">تاريخ الانتهاء</label>
@@ -291,7 +289,7 @@
             </div>
         </div>
 
-        <!-- Preview Column (Right on Desktop, Bottom on Mobile) -->
+        <!-- Preview Column -->
         <div class="lg:col-span-7 flex flex-col items-center justify-start space-y-6">
             
             <div class="no-print text-center max-w-md">
@@ -307,7 +305,6 @@
                     
                     <!-- Decorative Background Waves -->
                     <div class="wave-bg absolute inset-0 opacity-10 pointer-events-none z-0">
-                        <!-- SVG waves based on manual -->
                         <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
                             <path class="fill-brandOrange" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,122.7C960,117,1056,171,1152,186.7C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
                         </svg>
@@ -325,13 +322,12 @@
                         </svg>
                     </div>
 
-                    <!-- Top Design Header Block (Angled Ribbon representing construction) -->
+                    <!-- Top Design Header Block -->
                     <div id="headerAccent" class="absolute top-0 inset-x-0 h-16 bg-gradient-to-r from-brandOrange to-brandOrange-dark flex items-center justify-between px-4 z-10 transition-colors duration-300">
                         <div class="text-right">
                             <span class="block text-2xs font-extrabold text-white leading-tight">جمعية بناء وتنمية مساكن بجازان</span>
                         </div>
                         <div class="h-10 w-10 bg-white p-1 rounded-lg flex items-center justify-center shadow-sm">
-                            <!-- Logo Image fallback using SVG placeholder to guarantee visual representation -->
                             <img id="cardLogoFront" src="https://cdn.discordapp.com/attachments/1174423801866498163/1517850729296167082/OIP.webp?ex=6a37c826&is=6a3676a6&hm=ea2f3faf228909ae180875f0b55e42cf6119827c936bf7e22b2b795aea358d54" 
                                  onerror="this.onerror=null; this.src='https://placehold.co/100x100/f37021/ffffff?text=Bena';" 
                                  class="max-h-full max-w-full object-contain" alt="شعار الجمعية">
@@ -341,7 +337,7 @@
                     <!-- Card Body Elements -->
                     <div class="relative z-10 flex flex-col items-center justify-between h-full pt-20 pb-4 px-6 text-center">
                         
-                        <!-- Employee Avatar Framing (Circular/Rounded badge matching manual style) -->
+                        <!-- Employee Avatar Framing -->
                         <div class="relative mt-2">
                             <div id="avatarFrame" class="w-28 h-28 rounded-full border-4 border-brandOrange/30 shadow-md overflow-hidden bg-gray-50 flex items-center justify-center transition-colors duration-300">
                                 <img id="previewPhotoFront" src="https://placehold.co/300x300/e2e8f0/64748b?text=Photo" class="w-full h-full object-cover" alt="صورة الموظف">
@@ -356,10 +352,10 @@
                             </div>
                         </div>
 
-                        <!-- Barcode & QR Metadata -->
-                        <div class="w-full bg-gray-50/80 backdrop-blur-sm border border-gray-100 rounded-xl p-3 grid grid-cols-12 items-center gap-2 mt-auto">
-                            <div class="col-span-8 text-right space-y-1">
-                                <div class="flex items-center gap-1">
+                        <!-- QR & Metadata Section (Without Barcode) -->
+                        <div class="w-full bg-gray-50/80 backdrop-blur-sm border border-gray-100 rounded-xl p-3 flex items-center justify-between gap-2 mt-auto">
+                            <div class="text-right space-y-1">
+                                <div id="jobIdContainer" class="flex items-center gap-1">
                                     <span class="text-4xs text-gray-400 font-bold">الرقم الوظيفي:</span>
                                     <span id="previewId" class="text-2xs font-extrabold text-gray-700 tracking-wider">EMP-2026-389</span>
                                 </div>
@@ -367,28 +363,13 @@
                                     <span class="text-4xs text-gray-400 font-bold">تاريخ الانتهاء:</span>
                                     <span id="previewExpiry" class="text-2xs font-extrabold text-gray-700">12/2028</span>
                                 </div>
-                                <!-- Visual simulated barcode (lines of custom widths) -->
-                                <div class="flex items-center gap-0.5 h-4 mt-2">
-                                    <span class="bg-gray-800 h-full w-[2px]"></span>
-                                    <span class="bg-gray-800 h-full w-[1px]"></span>
-                                    <span class="bg-gray-800 h-full w-[3px]"></span>
-                                    <span class="bg-gray-800 h-full w-[1px]"></span>
-                                    <span class="bg-gray-800 h-full w-[2px]"></span>
-                                    <span class="bg-gray-800 h-full w-[1px]"></span>
-                                    <span class="bg-gray-800 h-full w-[4px]"></span>
-                                    <span class="bg-gray-800 h-full w-[1px]"></span>
-                                    <span class="bg-gray-800 h-full w-[2px]"></span>
-                                    <span class="bg-gray-800 h-full w-[3px]"></span>
-                                    <span class="bg-gray-800 h-full w-[1px]"></span>
-                                    <span class="bg-gray-800 h-full w-[2px]"></span>
-                                </div>
                             </div>
-                            <div class="col-span-4 flex justify-end">
+                            <div class="flex justify-end">
                                 <img id="previewQr" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=BenaJazan-Ahmed-EMP2026389" class="w-14 h-14 object-contain rounded border border-gray-200" alt="رمز الاستجابة">
                             </div>
                         </div>
 
-                        <!-- Footer Accent Line matching visual elements -->
+                        <!-- Footer Accent Line -->
                         <div id="footerAccentFront" class="absolute bottom-0 inset-x-0 h-1.5 bg-brandGreen transition-colors duration-300"></div>
 
                     </div>
@@ -432,7 +413,7 @@
                             </div>
                         </div>
 
-                        <!-- Instructions / Terms of usage (Official Legal Standard text) -->
+                        <!-- Instructions / Terms of usage -->
                         <div class="text-right space-y-2 my-4 w-full">
                             <h5 class="text-3xs font-extrabold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-1">
                                 <i class="fa-solid fa-circle-info text-brandOrange"></i>
@@ -446,7 +427,7 @@
                             </ul>
                         </div>
 
-                        <!-- Signature View Box showing live custom drawn signature -->
+                        <!-- Signature View Box -->
                         <div class="w-full flex flex-col items-center justify-center bg-gray-50/50 rounded-xl p-2 border border-gray-100 relative">
                             <span class="text-4xs text-gray-400 block mb-1">اعتماد وتوقيع المدير العام للجمعية</span>
                             <div class="h-10 w-32 flex items-center justify-center">
@@ -454,7 +435,7 @@
                             </div>
                         </div>
 
-                        <!-- Contact Details & Social accounts (Matching Page 8) -->
+                        <!-- Contact Details & Social accounts -->
                         <div class="w-full text-right mt-auto pt-3 border-t border-gray-100 space-y-2">
                             <div class="flex items-center justify-between text-4xs text-gray-500">
                                 <span class="flex items-center gap-1">
@@ -476,7 +457,7 @@
                             </div>
                         </div>
 
-                        <!-- Footer Accent Line matching identity style -->
+                        <!-- Footer Accent Line -->
                         <div id="footerAccentBack" class="absolute bottom-0 inset-x-0 h-1.5 bg-brandOrange transition-colors duration-300"></div>
 
                     </div>
@@ -515,7 +496,6 @@
 
     <!-- Application Interactive Logic -->
     <script>
-        // Default brand colors used in the manual
         const colorPalette = {
             orange: {
                 primary: '#f37021',
@@ -546,12 +526,10 @@
             }
         };
 
-        // Application State variables
         let currentTheme = 'orange';
         let currentOrientation = 'vertical';
         let defaultPhoto = 'https://placehold.co/300x300/e2e8f0/64748b?text=Photo';
 
-        // Element Selectors
         const inputName = document.getElementById('inputName');
         const inputTitle = document.getElementById('inputTitle');
         const inputId = document.getElementById('inputId');
@@ -562,6 +540,7 @@
         const previewName = document.getElementById('previewName');
         const previewTitle = document.getElementById('previewTitle');
         const previewId = document.getElementById('previewId');
+        const jobIdContainer = document.getElementById('jobIdContainer');
         const previewExpiry = document.getElementById('previewExpiry');
         const previewPhotoFront = document.getElementById('previewPhotoFront');
         const previewQr = document.getElementById('previewQr');
@@ -576,8 +555,15 @@
             previewTitle.innerText = e.target.value || 'المدير العام';
         });
 
+        // Handle optional job ID input
         inputId.addEventListener('input', (e) => {
-            previewId.innerText = e.target.value || 'EMP-2026-389';
+            const val = e.target.value.trim();
+            if (val === '') {
+                jobIdContainer.style.display = 'none';
+            } else {
+                jobIdContainer.style.display = 'flex';
+                previewId.innerText = val;
+            }
             updateQrCode();
         });
 
@@ -605,12 +591,12 @@
         // Dynamic QR code API update
         function updateQrCode() {
             const name = inputName.value || 'Ahmed';
-            const id = inputId.value || 'EMP-2026';
-            const encodedData = encodeURIComponent(`BenaJazan-Emp:${name}-ID:${id}`);
+            const id = inputId.value ? `-ID:${inputId.value}` : '';
+            const encodedData = encodeURIComponent(`BenaJazan-Emp:${name}${id}`);
             previewQr.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodedData}`;
         }
 
-        // Toggle Decorative Backgrounds (Dots / Waves)
+        // Toggle Decorative Backgrounds
         function toggleDecorative() {
             const showDots = document.getElementById('chkShowDots').checked;
             const showWaves = document.getElementById('chkShowWaves').checked;
@@ -628,7 +614,6 @@
             currentTheme = themeName;
             const theme = colorPalette[themeName];
 
-            // 1. Update active button borders
             document.querySelectorAll('.theme-btn').forEach(btn => {
                 const btnTheme = btn.getAttribute('data-theme');
                 if (btnTheme === themeName) {
@@ -640,25 +625,21 @@
                 }
             });
 
-            // 2. Front Card Accent Changes
             const headerAccent = document.getElementById('headerAccent');
             const footerAccentFront = document.getElementById('footerAccentFront');
             const footerAccentBack = document.getElementById('footerAccentBack');
             const avatarFrame = document.getElementById('avatarFrame');
 
-            // Reset gradients & text colors
             headerAccent.className = `absolute top-0 inset-x-0 h-16 bg-gradient-to-r ${theme.gradientStart} ${theme.gradientEnd} flex items-center justify-between px-4 z-10 transition-all duration-300`;
             previewTitle.className = `text-xs font-semibold ${theme.textCol} ${theme.textBg} px-2.5 py-0.5 rounded-full inline-block transition-colors duration-300`;
             
-            // Re-apply frame color based on branding rules
-            avatarFrame.style.borderColor = theme.primary + '4D'; // Hex code with alpha for border matching
+            avatarFrame.style.borderColor = theme.primary + '4D';
             
-            // Footer bands
             footerAccentFront.style.backgroundColor = theme.secondary;
             footerAccentBack.style.backgroundColor = theme.primary;
         }
 
-        // Card Orientation Switch (Vertical/Horizontal CR-80)
+        // Card Orientation Switch
         function changeOrientation(orientation) {
             currentOrientation = orientation;
             const front = document.getElementById('idCardFront');
@@ -671,7 +652,6 @@
                 front.className = 'card-horizontal bg-white select-none relative shadow-xl overflow-hidden transition-all duration-300';
                 back.className = 'card-horizontal bg-white select-none relative shadow-xl overflow-hidden transition-all duration-300';
                 
-                // Adjust style classes for horizontal view alignment
                 btnOptHorizontal.className = 'border-2 border-brandOrange p-2.5 rounded-xl flex items-center justify-center gap-2 bg-brandOrange/5 font-bold text-xs text-brandOrange';
                 btnOptVertical.className = 'border border-gray-200 p-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-50 text-xs text-gray-600';
             } else {
@@ -689,7 +669,6 @@
         const previewSignature = document.getElementById('previewSignature');
         let isDrawing = false;
 
-        // Signature Canvas Draw Functions
         function getMousePos(canvasDom, touchOrMouseEvent) {
             const rect = canvasDom.getBoundingClientRect();
             if (touchOrMouseEvent.touches && touchOrMouseEvent.touches.length > 0) {
@@ -716,7 +695,7 @@
             if (!isDrawing) return;
             const pos = getMousePos(signatureCanvas, e);
             signatureCtx.lineTo(pos.x, pos.y);
-            signatureCtx.strokeStyle = '#2d3748'; // Elegant dark grey color for natural ink look
+            signatureCtx.strokeStyle = '#2d3748';
             signatureCtx.lineWidth = 2.5;
             signatureCtx.lineCap = 'round';
             signatureCtx.lineJoin = 'round';
@@ -727,35 +706,28 @@
         function stopDrawing() {
             if (isDrawing) {
                 isDrawing = false;
-                // Sync drawn signature directly to back card view
                 previewSignature.src = signatureCanvas.toDataURL();
             }
         }
 
         function clearSignature() {
             signatureCtx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
-            // Revert back to empty SVG layout
             previewSignature.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='30'></svg>";
         }
 
-        // Event listeners for desktop mouse
         signatureCanvas.addEventListener('mousedown', startDrawing);
         signatureCanvas.addEventListener('mousemove', draw);
         window.addEventListener('mouseup', stopDrawing);
 
-        // Event listeners for mobile/tablet touchscreen
         signatureCanvas.addEventListener('touchstart', startDrawing);
         signatureCanvas.addEventListener('touchmove', draw);
         window.addEventListener('touchend', stopDrawing);
 
-        // Initial trigger to update dynamic QR server on load
         window.onload = function() {
             updateQrCode();
-            // Match the canvas visual size ratio with coordinates size
             signatureCanvas.width = signatureCanvas.offsetWidth;
         };
 
-        // Resize handler to avoid stretching signature lines on dynamic page scale
         window.addEventListener('resize', () => {
             const currentData = signatureCanvas.toDataURL();
             const tempImg = new Image();
