@@ -73,13 +73,13 @@
         /* --- أنيميشن تحريك الأمواج والنقاط --- */
         @keyframes floatWaves {
             0% {
-                transform: translateY(0px) scale(1) rotate(0deg);
+                transform: translateY(var(--wave-translate-y, 0px)) scale(1) rotate(0deg);
             }
             50% {
-                transform: translateY(-8px) scale(1.04) rotate(1deg);
+                transform: translateY(calc(var(--wave-translate-y, 0px) - 8px)) scale(1.04) rotate(1deg);
             }
             100% {
-                transform: translateY(0px) scale(1) rotate(0deg);
+                transform: translateY(var(--wave-translate-y, 0px)) scale(1) rotate(0deg);
             }
         }
 
@@ -171,7 +171,7 @@
                 </div>
                 <div>
                     <h1 class="text-xl sm:text-2xl font-extrabold text-gray-900 font-tajawal">منصة تصميم بطاقات الموظفين</h1>
-                    <p class="text-xs sm:text-sm text-gray-500 font-semibold text-brandOrange">جمعية بناء وتنمية مساكن بمنطقة جازان</p>
+                    <p class="text-xs sm:text-sm text-gray-500 font-semibold text-brandOrange">جمعية بناء وتنمية مساكن</p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
@@ -251,8 +251,21 @@
                     <select id="selectWaveStyle" onchange="changeWaveStyle(this.value)" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brandOrange text-xs bg-white font-bold text-gray-700">
                         <option value="style1">النمط الأول: الأمواج السفلية الهادئة</option>
                         <option value="style2">النمط الثاني: المتموج المزدوج (تعبئة أكبر للمساحات البيضاء)</option>
-                        <option value="style3">النمط الثالث: خطوط وطبقات هندسية متداخلة</option>
+                        <option value="style3">النمط الثالث: خطوط وطبقات هندسية معتمة</option>
                     </select>
+                </div>
+
+                <!-- Wave Y-Position Adjustment Slider -->
+                <div class="bg-gray-50 p-3 rounded-xl border border-gray-100 space-y-2">
+                    <div class="flex items-center justify-between text-xs font-bold text-gray-700">
+                        <span class="flex items-center gap-1">
+                            <i class="fa-solid fa-up-down text-brandOrange"></i>
+                            <span>التحكم بمكان وارتفاع الموجات</span>
+                        </span>
+                        <span id="lblWavePos" class="text-brandOrange font-mono">0px</span>
+                    </div>
+                    <input type="range" id="inputWavePos" min="-120" max="120" value="0" step="5" oninput="adjustWavePosition(this.value)" class="w-full accent-brandOrange cursor-pointer">
+                    <p class="text-4xs text-gray-400">حرك الشريط للأعلى أو الأسفل لرفع الخطوط وتغطية البياض حسب الحاجة.</p>
                 </div>
 
                 <!-- Color Palette Selection -->
@@ -356,7 +369,7 @@
                 <div id="idCardFront" class="card-vertical bg-white select-none relative shadow-xl overflow-hidden transition-all duration-300">
                     
                     <!-- Decorative Background Waves (Front Container) -->
-                    <div id="waveContainerFront" class="wave-bg animated-waves absolute inset-0 opacity-15 pointer-events-none z-0">
+                    <div id="waveContainerFront" class="wave-bg animated-waves absolute inset-0 opacity-15 pointer-events-none z-0 transition-transform duration-200">
                         <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
                             <path class="fill-brandOrange" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,122.7C960,117,1056,171,1152,186.7C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
                         </svg>
@@ -377,7 +390,7 @@
                     <!-- Top Design Header Block -->
                     <div id="headerAccent" class="absolute top-0 inset-x-0 h-16 bg-gradient-to-r from-brandOrange to-brandOrange-dark flex items-center justify-between px-4 z-10 transition-colors duration-300">
                         <div class="text-right">
-                            <span class="block text-2xs font-extrabold text-white leading-tight">جمعية بناء وتنمية مساكن بجازان</span>
+                            <span class="block text-2xs font-extrabold text-white leading-tight">جمعية بناء وتنمية مساكن</span>
                         </div>
                         <div class="h-10 w-10 bg-white p-1 rounded-lg flex items-center justify-center shadow-sm">
                             <img id="cardLogoFront" src="https://cdn.discordapp.com/attachments/1174423801866498163/1517850729296167082/OIP.webp?ex=6a37c826&is=6a3676a6&hm=ea2f3faf228909ae180875f0b55e42cf6119827c936bf7e22b2b795aea358d54" 
@@ -427,7 +440,7 @@
                 <div id="idCardBack" class="card-vertical bg-white select-none relative shadow-xl overflow-hidden transition-all duration-300">
                     
                     <!-- Decorative Background Waves (Back Container) -->
-                    <div id="waveContainerBack" class="wave-bg animated-waves absolute inset-0 opacity-10 pointer-events-none z-0">
+                    <div id="waveContainerBack" class="wave-bg animated-waves absolute inset-0 opacity-10 pointer-events-none z-0 transition-transform duration-200">
                         <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
                             <path class="fill-brandGreen" d="M0,192L60,186.7C120,181,240,171,360,144C480,117,600,75,720,80C840,85,960,139,1080,144C1200,149,1320,107,1380,85.3L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
                         </svg>
@@ -457,7 +470,7 @@
                             </div>
                             <div class="text-right">
                                 <span class="block text-2xs font-extrabold text-gray-800">جمعية بناء وتنمية مساكن</span>
-                                <span class="block text-4xs text-gray-400">بمنطقة جازان - مسجلة برقم ٨٣٤</span>
+                                <span class="block text-4xs text-gray-400">مسجلة برقم ٨٣٤</span>
                             </div>
                         </div>
 
@@ -533,7 +546,7 @@
     <!-- Footer of the page -->
     <footer class="bg-white border-t border-gray-100 py-6 mt-12 text-center text-xs text-gray-500 no-print">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>© 2026 جميع الحقوق محفوظة لـ جمعية بناء وتنمية مساكن بمنطقة جازان.</p>
+            <p>© 2026 جميع الحقوق محفوظة لـ جمعية بناء وتنمية مساكن.</p>
             <div class="flex items-center gap-4">
                 <span>تطوير وتصميم الهوية الرقمية للجمعية</span>
                 <span class="text-gray-300">|</span>
@@ -574,7 +587,6 @@
             }
         };
 
-        // الأشكال والنماذج المتعددة للخطوط المتموجة
         const waveSVGStyles = {
             style1: {
                 front: `<svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path class="fill-brandOrange" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,122.7C960,117,1056,171,1152,186.7C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>`,
@@ -650,6 +662,18 @@
         function updateQrCode() {
             const websiteUrl = encodeURIComponent('https://www.bena-jazan.sa/');
             previewQr.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${websiteUrl}`;
+        }
+
+        // Adjust Wave vertical Y Position
+        function adjustWavePosition(val) {
+            document.getElementById('lblWavePos').innerText = `${val}px`;
+            document.documentElement.style.setProperty('--wave-translate-y', `-${val}px`);
+            
+            const frontWave = document.getElementById('waveContainerFront');
+            const backWave = document.getElementById('waveContainerBack');
+            
+            frontWave.style.transform = `translateY(-${val}px)`;
+            backWave.style.transform = `translateY(-${val}px)`;
         }
 
         // Change wave design style
