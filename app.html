@@ -156,7 +156,34 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #f37021;
         }
-    </style>
+    
+/* بوابة الدخول قبل إنشاء البطاقة */
+.auth-gate{position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;padding:22px;background:
+radial-gradient(circle at 15% 15%,rgba(116,189,44,.16),transparent 30%),
+radial-gradient(circle at 85% 10%,rgba(240,111,23,.18),transparent 32%),
+linear-gradient(145deg,#f7f8f6,#eef1ee);transition:opacity .28s ease,visibility .28s ease}
+.auth-gate.unlocked{opacity:0;visibility:hidden;pointer-events:none}
+.auth-card{width:min(430px,100%);background:rgba(255,255,255,.97);border:1px solid rgba(31,35,40,.08);border-radius:28px;box-shadow:0 28px 80px rgba(31,35,40,.15);padding:30px 28px;text-align:center;position:relative;overflow:hidden}
+.auth-card:before{content:"";position:absolute;right:-80px;top:-95px;width:210px;height:210px;border-radius:50%;border:34px solid rgba(240,111,23,.07)}
+.auth-card:after{content:"";position:absolute;left:-80px;bottom:-110px;width:220px;height:220px;border-radius:50%;border:34px solid rgba(116,189,44,.07)}
+.auth-logo{width:92px;height:92px;object-fit:contain;margin:0 auto 12px;position:relative;z-index:1}
+.auth-card h2{margin:0;font-size:23px;font-weight:900;position:relative;z-index:1}
+.auth-card .auth-sub{margin:7px 0 22px;color:#7b8186;font-size:12px;font-weight:700;line-height:1.7;position:relative;z-index:1}
+.auth-field{position:relative;z-index:1;text-align:right}
+.auth-field label{display:block;font-size:11px;font-weight:900;color:#555d63;margin:0 3px 7px}
+.auth-input-wrap{position:relative}
+.auth-input-wrap i{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--p)}
+.auth-input{width:100%;height:50px;border:1px solid #e1e5e7;border-radius:14px;background:#fafafa;outline:0;padding:0 42px 0 14px;font-size:14px;font-weight:800;letter-spacing:.8px;transition:.18s}
+.auth-input:focus{background:#fff;border-color:rgba(240,111,23,.7);box-shadow:0 0 0 4px rgba(240,111,23,.09)}
+.auth-submit{position:relative;z-index:1;width:100%;height:50px;border:0;border-radius:14px;margin-top:12px;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;font-weight:900;font-size:13px;box-shadow:0 12px 28px rgba(240,111,23,.24)}
+.auth-submit:hover{transform:translateY(-1px)}
+.auth-error{position:relative;z-index:1;min-height:20px;margin:9px 0 0;color:#c43d32;font-size:10px;font-weight:900}
+.auth-secure{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:11px;color:#8b9196;font-size:9px;font-weight:700}
+.auth-secure i{color:var(--s)}
+body.auth-locked{overflow:hidden}
+@media(max-width:560px){.auth-card{padding:25px 20px;border-radius:22px}.auth-logo{width:78px;height:78px}.auth-card h2{font-size:20px}}
+
+</style>
 </head>
 <body class="min-h-screen text-gray-800 flex flex-col transition-colors duration-300">
 
@@ -909,5 +936,55 @@
             }
         });
     </script>
+
+<script>
+(function(){
+  const gate=document.getElementById('authGate');
+  const form=document.getElementById('authForm');
+  const input=document.getElementById('accessPassword');
+  const error=document.getElementById('authError');
+  const ACCESS_HASH='31b42f65445ed7682d64a060a6b27528f078b122e2d3c05d9195d58f77be8727';
+  document.body.classList.add('auth-locked');
+
+  function unlock(){
+    sessionStorage.setItem('benaCardAccess','1');
+    gate.classList.add('unlocked');
+    document.body.classList.remove('auth-locked');
+    input.value='';
+  }
+
+  if(sessionStorage.getItem('benaCardAccess')==='1'){
+    unlock();
+    return;
+  }
+
+  async function sha256(value){
+    const data=new TextEncoder().encode(value);
+    const digest=await crypto.subtle.digest('SHA-256',data);
+    return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+
+  form.addEventListener('submit',async function(e){
+    e.preventDefault();
+    error.textContent='';
+    const value=input.value;
+    if(!value){error.textContent='أدخل كلمة المرور.';return;}
+    try{
+      const hash=await sha256(value);
+      if(hash===ACCESS_HASH){
+        unlock();
+      }else{
+        error.textContent='كلمة المرور غير صحيحة.';
+        input.select();
+      }
+    }catch(err){
+      error.textContent='تعذر التحقق من كلمة المرور.';
+    }
+  });
+
+  setTimeout(()=>input.focus(),150);
+})();
+</script>
+
 </body>
 </html>
